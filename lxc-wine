@@ -159,9 +159,9 @@ finalize_user()
         echo "Inserted SSH public key from $auth_key into /home/${user}/.ssh/authorized_keys"
     fi
     chroot $rootfs chown -R ${user}: "$u_path"
-    chroot $rootfs add-apt-repository ppa:ubuntu-wine/ppa
+    chroot $rootfs add-apt-repository -y -s ppa:ubuntu-wine/ppa
     chroot $rootfs apt-get update
-    chroot $rootfs apt-get build-dep wine
+    #chroot $rootfs apt-get build-dep wine
     git clone git://source.winehq.org/git/wine.git $rootfs/home/${user}/wine-git
     chroot $rootfs chown -R ${user}: "$home_path"
     return 0
@@ -285,7 +285,7 @@ install_packages()
         chroot $rootfs apt-get install --force-yes -y ${packages}
     fi
 
-    chroot $rootfs apt-get install --force-yes -y 
+    chroot $rootfs apt-get install --force-yes -y
 }
 
 cleanup()
@@ -519,7 +519,7 @@ EOF
         # ppa and install lxcguest
         if [ $release = "lucid" ]; then
             chroot $rootfs apt-get update
-            install_packages $rootfs "python-software-properties"
+            install_packages $rootfs
             chroot $rootfs add-apt-repository ppa:ubuntu-virt/ppa
         fi
 
@@ -693,7 +693,7 @@ fi
 debug=0
 hostarch=$arch
 flushcache=0
-packages="git,curl,python,tmux,zsh,rsync,ca-certificates"
+packages="git,curl,python,tmux,zsh,rsync,ca-certificates,python-software-properties,software-properties-common"
 user="wine"
 password="wine"
 while true
