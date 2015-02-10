@@ -61,9 +61,9 @@ then
 fi
 if test $(uname -m) = x86_64
 then
-    ALLEGRO_MODULES="$SCRIPTPATH/data/lib64" "$SCRIPTPATH/ags" "$@" "$SCRIPTPATH/data/"
+    ALLEGRO_MODULES="$SCRIPTPATH/data/lib64" "$SCRIPTPATH/ags" "$@"
 else
-    ALLEGRO_MODULES="$SCRIPTPATH/data/lib32" "$SCRIPTPATH/ags" "$@" "$SCRIPTPATH/data/"
+    ALLEGRO_MODULES="$SCRIPTPATH/data/lib32" "$SCRIPTPATH/ags" "$@"
 fi
 EOF
 ) > ags/ags.sh
