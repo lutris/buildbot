@@ -3,7 +3,7 @@
 sourcedir="$HOME/wine-git"
 builddir="$HOME/wine32"
 installdir="/opt"
-version="1.7.37"
+version="1.7.38"
 arch="i386"
 
 destdir="${version}-${arch}"
