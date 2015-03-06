@@ -8,6 +8,11 @@ arch="i386"
 
 destdir="${version}-${arch}"
 
+cd $sourcedir
+git co master
+git pull
+git co -b wine-${version}
+
 rm -rf "$builddir"
 mkdir $builddir
 cd $builddir
