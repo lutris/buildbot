@@ -10,6 +10,8 @@ mkdir $build_dir
 cd $build_dir
 qmake-qt4 ../${source_dir}
 make
+make clean
+rm Makefile
 
 strip osmose
 cp ../${source_dir}/README README
