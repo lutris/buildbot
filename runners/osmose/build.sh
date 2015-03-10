@@ -6,14 +6,14 @@ version="0.9.96"
 arch=$(uname -m)
 
 git clone https://github.com/lutris/osmose.git $source_dir
-cd $source_dir
+mkdir $build_dir
+cd $build_dir
+qmake-qt4 ../${source_dir}
 make
 
-mkdir ../${build_dir}
-strip Osmose-0-9-96-QT
-mv Osmose-0-9-96-QT ../${build_dir}/osmose
-cp README ../${build_dir}/README
-cp License.txt ../${build_dir}/LICENSE
+strip osmose
+cp ../${source_dir}/README README
+cp ../${source_dir}/License.txt LICENSE
 
 cd ../
 tar cvzf osmose-${version}-${arch}.tar.gz ${build_dir}
