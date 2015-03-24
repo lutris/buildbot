@@ -18,7 +18,7 @@ else
     git clone git://source.winehq.org/git/wine.git $source_dir
     cd $source_dir
 fi
-git checkout -b wine-${version}
+git checkout wine-${version}
 
 mkdir -p $build_dir
 cd $build_dir
