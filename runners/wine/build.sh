@@ -1,10 +1,11 @@
 #!/bin/bash
 
-sourcedir="$HOME/wine-git"
-builddir="$HOME/wine32"
+rootdir=$(pwd)
+sourcedir="${rootdir}/wine-src"
+builddir="${rootdir}/wine"
 installdir="/opt"
-version="1.7.38"
-arch="i386"
+version="1.7.39"
+arch=$(uname -m)
 
 destdir="${version}-${arch}"
 
