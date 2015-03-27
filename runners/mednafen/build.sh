@@ -2,7 +2,7 @@
 
 set -e
 
-sudo apt-get install libsndfile-dev
+sudo apt-get install -y libsndfile-dev wget
 
 pkg_name="mednafen"
 version="0.9.38.3"
@@ -30,5 +30,5 @@ cd ${build_dir}
 strip bin/mednafen
 
 cd ..
-tar cvf ${pkg_name}-${version}-${arch}.tar.gz ${pkg_name}
+tar czf ${pkg_name}-${version}-${arch}.tar.gz ${pkg_name}
 rm -rf ${build_dir} ${source_dir}
