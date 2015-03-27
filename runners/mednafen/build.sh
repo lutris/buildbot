@@ -2,6 +2,8 @@
 
 set -e
 
+sudo apt-get install libsndfile-dev
+
 pkg_name="mednafen"
 version="0.9.38.3"
 arch="$(uname -m)"
