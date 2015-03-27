@@ -2,6 +2,8 @@
 
 set -e
 
+sudo apt-get install -y flex bison
+
 root_dir=$(pwd)
 source_dir="${root_dir}/wine-src"
 build_dir="${root_dir}/wine"

@@ -2,6 +2,8 @@
 
 source_dir="osmose-src"
 build_dir="osmose"
+
+pkg_name="osmose"
 version="0.9.96"
 arch=$(uname -m)
 
@@ -17,6 +19,6 @@ strip osmose
 cp ../${source_dir}/README README
 cp ../${source_dir}/License.txt LICENSE
 
-cd ../
-tar cvzf osmose-${version}-${arch}.tar.gz ${build_dir}
+cd ..
+tar cvf ${pkg_name}-${version}-${arch}.tar.gz ${pkg_name}
 rm -rf ${build_dir} ${source_dir}
