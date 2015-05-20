@@ -7,7 +7,7 @@ source_dir="${root_dir}/${pkg_name}-src"
 version="1.53"
 arch=$(uname -m)
 sudo apt-get install -y autoconf libtool gettext libglib2.0-dev \
-    intltool libgtk-3-dev libxml2-dev libsdl1.2-dev
+    intltool libgtk2.0-dev libxml2-dev libsdl1.2-dev
 
 git clone https://github.com/snes9xgit/snes9x.git $source_dir
 
