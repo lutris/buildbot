@@ -14,7 +14,10 @@ git clone https://github.com/snes9xgit/snes9x.git $source_dir
 cd ${source_dir}/gtk
 ./autogen.sh
 
-./configure --with-gtk3 --without-screenshot --without-xv --prefix=${build_dir}
+# Compiling with gtk3 produces lots of warning messages
+# and a segfault on 2 Ubuntu 15.04 machines
+# ./configure --prefix=${build_dir} --without-screenshot --without-xv --with-gtk3
+./configure --prefix=${build_dir} --without-screenshot --without-xv
 make
 make install
 
