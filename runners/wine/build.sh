@@ -7,7 +7,7 @@ sudo apt-get install -y flex bison
 root_dir=$(pwd)
 source_dir="${root_dir}/wine-src"
 build_dir="${root_dir}/wine"
-version="1.7.39"
+version="1.7.45"
 arch=$(uname -m)
 
 dest_dir="${version}-${arch}"
