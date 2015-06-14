@@ -2,7 +2,7 @@
 
 set -e
 
-sudo apt-get install -y flex bison
+sudo apt-get install -y flex bison libfreetype6-dev
 
 root_dir=$(pwd)
 source_dir="${root_dir}/wine-src"
