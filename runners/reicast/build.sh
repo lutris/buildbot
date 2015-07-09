@@ -14,6 +14,7 @@ sudo apt-get install libegl1-mesa-dev libgles2-mesa-dev libasound2-dev mesa-comm
 
 git clone https://github.com/lutris/reicast-emulator.git ${source_dir}
 
+export USE_PULSEAUDIO=1
 cd ${source_dir}/shell/lin86
 make
 
