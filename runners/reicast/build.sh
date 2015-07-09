@@ -12,13 +12,7 @@ build_dir="${root_dir}/${pkg_name}"
 
 sudo apt-get install libegl1-mesa-dev libgles2-mesa-dev libasound2-dev mesa-common-dev freeglut3-dev
 
-git clone https://github.com/reicast/reicast-emulator.git ${source_dir}
-
-if [ "${arch}" == "i686" ]; then
-    git checkout origin/skmp/linux86 -b linux86
-else
-    git checkout origin/skmp/linux-x64 -b linux-x64
-fi
+git clone https://github.com/lutris/reicast-emulator.git ${source_dir}
 
 cd ${source_dir}/shell/lin86
 make
