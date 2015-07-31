@@ -25,9 +25,16 @@ else
 fi
 git checkout wine-${version}
 
+if [ $STAGING ]; then
+    wget https://github.com/wine-compholio/wine-staging/archive/v${version}.tar.gz
+    tar xvzf v${version}.tar.gz --strip-components 1
+    ./patches/patchinstall.sh DESTDIR="$(pwd)" --all
+    configure_opts="--with-xattr"
+fi
+
 mkdir -p $build_dir
 cd $build_dir
-$source_dir/configure --prefix=${root_dir}/${dest_dir}
+$source_dir/configure ${configure_opts} --prefix=${root_dir}/${dest_dir}
 make -j4
 make install
 
