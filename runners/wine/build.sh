@@ -4,7 +4,7 @@ set -e
 
 sudo apt-get install -y flex bison libfreetype6-dev \
                         libpulse-dev libattr1-dev libtxc-dxtn-dev \
-                        libva-dev libva-drm1
+                        libva-dev libva-drm1 autoconf
 
 
 root_dir=$(pwd)
@@ -46,5 +46,5 @@ make install
 
 cd ${root_dir}
 find . -type f -exec strip {} \;
-tar cvzf wine-{$filename_opts}${version}-${arch}.tar.gz ${dest_dir}
+tar cvzf wine-${filename_opts}${version}-${arch}.tar.gz ${dest_dir}
 rm -rf ${build_dir} ${source_dir}
