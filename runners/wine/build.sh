@@ -2,12 +2,15 @@
 
 set -e
 
-sudo apt-get install -y flex bison libfreetype6-dev
+sudo apt-get install -y flex bison libfreetype6-dev \
+                        libpulse-dev libattr1-dev libtxc-dxtn-dev \
+                        libva-dev libva-drm1
+
 
 root_dir=$(pwd)
 source_dir="${root_dir}/wine-src"
 build_dir="${root_dir}/wine"
-version="1.7.45"
+version="1.7.48"
 arch=$(uname -m)
 
 dest_dir="${version}-${arch}"
