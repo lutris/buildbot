@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo apt-get install libqt4-dev libqt4-dev-bin qt4-qmake
+
 source_dir="osmose-src"
 build_dir="osmose"
 
