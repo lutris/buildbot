@@ -1,13 +1,18 @@
 #!/bin/bash
 
-sudo apt-get install libqt4-dev libqt4-dev-bin qt4-qmake
+lib_path="../../lib/"
+source ${lib_path}path.sh
+source ${lib_path}upload_handler.sh
+set -e
 
-source_dir="osmose-src"
-build_dir="osmose"
-
-pkg_name="osmose"
-version="0.9.96"
+runner_name=$(get_runner)
+root_dir=$(pwd)
+source_dir="${runner_name}-src"
+build_dir="${runner_name}"
 arch=$(uname -m)
+version="0.9.96"
+
+sudo apt-get install libqt4-dev libqt4-dev-bin qt4-qmake
 
 git clone https://github.com/lutris/osmose.git $source_dir
 mkdir $build_dir
@@ -22,5 +27,8 @@ cp ../${source_dir}/README README
 cp ../${source_dir}/License.txt LICENSE
 
 cd ..
-tar cvf ${pkg_name}-${version}-${arch}.tar.gz ${pkg_name}
+dest_file="${runner_name}-${version}-${arch}.tar.gz"
+tar czf ${dest_file} ${runner_name}
 rm -rf ${build_dir} ${source_dir}
+
+runner_upload ${runner_name} ${version} ${arch} ${dest_file}

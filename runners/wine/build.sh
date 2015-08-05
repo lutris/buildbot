@@ -1,18 +1,21 @@
 #!/bin/bash
 
 set -e
+lib_path="../../lib/"
+source ${lib_path}path.sh
+source ${lib_path}upload_handler.sh
+
+runner_name=$(get_runner)
+root_dir=$(pwd)
+source_dir="${root_dir}/${runner_name}-src"
+build_dir="${root_dir}/${runner_name}"
+arch=$(uname -m)
+version="1.7.48"
+repo_url="git://source.winehq.org/git/wine.git"
 
 sudo apt-get install -y flex bison libfreetype6-dev \
                         libpulse-dev libattr1-dev libtxc-dxtn-dev \
                         libva-dev libva-drm1 autoconf
-
-
-root_dir=$(pwd)
-source_dir="${root_dir}/wine-src"
-build_dir="${root_dir}/wine"
-version="1.7.48"
-arch=$(uname -m)
-
 
 if [ -d ${source_dir} ]; then
     echo "Updating sources"
@@ -21,7 +24,7 @@ if [ -d ${source_dir} ]; then
     git pull
 else
     echo "Cloning sources"
-    git clone git://source.winehq.org/git/wine.git $source_dir
+    git clone ${repo_url} ${source_dir}
     cd $source_dir
 fi
 
@@ -46,5 +49,9 @@ make install
 
 cd ${root_dir}
 find . -type f -exec strip {} \;
-tar cvzf wine-${filename_opts}${version}-${arch}.tar.gz ${dest_dir}
+
+dest_file="wine-${filename_opts}${version}-${arch}.tar.gz"
+tar czf ${dest_file} ${dest_dir}
 rm -rf ${build_dir} ${source_dir}
+
+runner_upload ${runner_name} ${version} ${arch} ${dest_file}

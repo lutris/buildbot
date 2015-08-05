@@ -1,6 +1,8 @@
 #!/bin/bash
 
-token_url="https://lutris.net/api/accounts/token"
+#host="http://localhost:8000"
+host="https://lutris.net"
+token_url="${host}/api/accounts/token"
 
 
 read -p "Username: " username
@@ -18,5 +20,5 @@ if [[ "$access_token" == *"Unable"* ]]; then
     echo "Auth failed:" $access_token
 else
     echo "Login successful"
-    echo $access_token >> .lutris_token
+    echo $access_token > .lutris_token
 fi
