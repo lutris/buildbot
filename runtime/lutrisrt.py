@@ -2,7 +2,7 @@ import os
 import subprocess
 import shutil
 
-RUNTIME_DIR = "/runtime"
+RUNTIME_DIR = "runtime"
 
 
 def get_libs():
