@@ -158,16 +158,20 @@ wget http://www.rigsofrods.com/repository/viewTag/id:981/download:1 -O content-p
 unzip content-pack-0.4.zip -d packs/
 mv packs/ContentPack04/* -t packs/
 rmdir packs/ContentPack04
+rm content-pack-0.4.zip
 
 wget http://www.rigsofrods.com/repository/viewTag/id:982/download:1 -O hq-pack-0.4.zip
 unzip hq-pack-0.4.zip -d packs/
 mv packs/HighQuality04/* -t packs/
 rmdir packs/HighQuality04
+rm hq-pack-0.4.zip
+
+rm -r include doc
 
 cp /usr/lib/x86_64-linux-gnu/libboost_system.so.1.54.0 ${builddir}/lib 
 cp /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.54.0 ${builddir}/lib 
 cp /usr/lib/x86_64-linux-gnu/libboost_regex.so.1.54.0 ${builddir}/lib 
-cp /usrlib/libfreeimage.so.3 ${builddir}/lib 
+cp /usr/lib/libfreeimage.so.3 ${builddir}/lib
 cp /usr/lib/x86_64-linux-gnu/libzzip-0.so.13 ${builddir}/lib
 cp /usr/lib/x86_64-linux-gnu/libopenjpeg.so.2 ${builddir}/lib
 cp /usr/lib/x86_64-linux-gnu/libraw.so.9 ${builddir}/lib 
