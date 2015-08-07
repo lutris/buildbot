@@ -104,6 +104,7 @@ if [ ! -e mysocketw ]; then
 fi
 cd mysocketw
 git pull
+sed -i '/^PREFIX *=/d' Makefile.conf
 make ${make_opts} shared
 PREFIX="${builddir}" make install
 
