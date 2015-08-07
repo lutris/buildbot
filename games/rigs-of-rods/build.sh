@@ -116,9 +116,9 @@ cd sdk/angelscript/projects/gnuc
 sed -i '/^LOCAL *=/d' makefile
 # make fails when making the symbolic link, this removes the existing versions
 rm -f ../../lib/*
-SHARED=1 VERSION=2.22.1 make $ROR_MAKEOPTS
+SHARED=1 VERSION=2.22.1 make ${make_opts}
 rm -f ../../lib/*
-SHARED=1 VERSION=2.22.1 LOCAL="$ROR_INSTALL_DIR" make -s install
+SHARED=1 VERSION=2.22.1 LOCAL="${builddir}" make -s install
 
 cd $rootdir
 
