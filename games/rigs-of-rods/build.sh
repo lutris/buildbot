@@ -190,7 +190,7 @@ if [ -e $packdir ] && [ ! -h $packdir ]; then
 fi
 
 if [ ! -e $packdir ]; then
-    ln -s ${DIR}/packs $packdir
+    ln -s ${rootdir}/packs $packdir
 fi
 
 export LD_LIBRARY_PATH=${libdir}:$LD_LIBRARY_PATH
