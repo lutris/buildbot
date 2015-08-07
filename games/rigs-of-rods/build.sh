@@ -168,16 +168,16 @@ rm hq-pack-0.4.zip
 
 rm -r include doc
 
-cp /usr/lib/x86_64-linux-gnu/libboost_system.so.1.54.0 ${builddir}/lib 
-cp /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.54.0 ${builddir}/lib 
-cp /usr/lib/x86_64-linux-gnu/libboost_regex.so.1.54.0 ${builddir}/lib 
+cp /usr/lib/x86_64-linux-gnu/libboost_system.so.1.54.0 ${builddir}/lib
+cp /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.54.0 ${builddir}/lib
+cp /usr/lib/x86_64-linux-gnu/libboost_regex.so.1.54.0 ${builddir}/lib
 cp /usr/lib/libfreeimage.so.3 ${builddir}/lib
 cp /usr/lib/x86_64-linux-gnu/libzzip-0.so.13 ${builddir}/lib
 cp /usr/lib/x86_64-linux-gnu/libopenjpeg.so.2 ${builddir}/lib
-cp /usr/lib/x86_64-linux-gnu/libraw.so.9 ${builddir}/lib 
+cp /usr/lib/x86_64-linux-gnu/libraw.so.9 ${builddir}/lib
 cp /usr/lib/x86_64-linux-gnu/libOIS-1.3.0.so ${builddir}/lib
 
-cat > rigsofrods << EOF
+cat > rigsofrods << 'EOF'
 #!/bin/bash
 
 rootdir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -193,9 +193,9 @@ if [ ! -e $packdir ]; then
     ln -s ${DIR}/packs $packdir
 fi
 
-export LD_LIBRARY_PATH=${libdir};${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${libdir}:$LD_LIBRARY_PATH
 cd bin
-sed -i -e "s#PluginFolder=.*#PluginFolder=$(pwd)#" plugins.cfg
+sed -i -e "s#PluginFolder=.*#PluginFolder=$libdir/OGRE#" plugins.cfg
 ./RoRConfig
 EOF
 
