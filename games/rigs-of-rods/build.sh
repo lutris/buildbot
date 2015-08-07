@@ -95,7 +95,8 @@ cmake -DCMAKE_INSTALL_PREFIX="${builddir}" \
 make ${make_opts}
 make install
 # important step, so the plugin can load:
-ln -s ${builddir}/lib/libCaelum.so ${builddir}/lib/OGRE/
+cd ${builddir}/lib/OGRE
+ln -s ../libCaelum.so .
 
 # MySocketW
 cd ${depsdir}
@@ -160,5 +161,41 @@ rmdir packs/ContentPack04
 
 wget http://www.rigsofrods.com/repository/viewTag/id:982/download:1 -O hq-pack-0.4.zip
 unzip hq-pack-0.4.zip -d packs/
-mv HighQuality04/* -t packs/
+mv packs/HighQuality04/* -t packs/
 rmdir packs/HighQuality04
+
+cp /usr/lib/x86_64-linux-gnu/libboost_system.so.1.54.0 ${builddir}/lib 
+cp /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.54.0 ${builddir}/lib 
+cp /usr/lib/x86_64-linux-gnu/libboost_regex.so.1.54.0 ${builddir}/lib 
+cp /usrlib/libfreeimage.so.3 ${builddir}/lib 
+cp /usr/lib/x86_64-linux-gnu/libzzip-0.so.13 ${builddir}/lib
+cp /usr/lib/x86_64-linux-gnu/libopenjpeg.so.2 ${builddir}/lib
+cp /usr/lib/x86_64-linux-gnu/libraw.so.9 ${builddir}/lib 
+cp /usr/lib/x86_64-linux-gnu/libOIS-1.3.0.so ${builddir}/lib
+
+cat > rigsofrods << EOF
+#!/bin/bash
+
+rootdir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+packdir=$HOME/.rigsofrods/packs
+libdir=${rootdir}/lib
+
+mkdir -p $HOME/.rigsofrods
+if [ -e $packdir ] && [ ! -h $packdir ]; then
+    mv $packdir $packdir.bak
+fi
+
+if [ ! -e $packdir ]; then
+    ln -s ${DIR}/packs $packdir
+fi
+
+export LD_LIBRARY_PATH=${libdir};${LD_LIBRARY_PATH}
+cd bin
+sed -i -e "s#PluginFolder=.*#PluginFolder=$(pwd)#" plugins.cfg
+./RoRConfig
+EOF
+
+chmod +x rigsofrods
+uid=$(id -u)
+gid=$(id -g)
+sudo chown -R $uid:$gid *
