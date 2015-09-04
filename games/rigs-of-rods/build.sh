@@ -154,11 +154,13 @@ cp -R bin "${builddir}"
 cd ${builddir}
 mkdir -p packs
 
-wget http://www.rigsofrods.com/repository/viewTag/id:981/download:1 -O content-pack-0.4.zip
-unzip content-pack-0.4.zip -d packs/
-mv packs/ContentPack04/* -t packs/
-rmdir packs/ContentPack04
-rm content-pack-0.4.zip
+# Low quality pack also available
+
+#wget http://www.rigsofrods.com/repository/viewTag/id:981/download:1 -O content-pack-0.4.zip
+#unzip content-pack-0.4.zip -d packs/
+#mv packs/ContentPack04/* -t packs/
+#rmdir packs/ContentPack04
+#rm content-pack-0.4.zip
 
 wget http://www.rigsofrods.com/repository/viewTag/id:982/download:1 -O hq-pack-0.4.zip
 unzip hq-pack-0.4.zip -d packs/
