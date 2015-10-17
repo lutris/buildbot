@@ -10,7 +10,7 @@ root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-version="1.7.52"
+version="1.7.53"
 repo_url="git://source.winehq.org/git/wine.git"
 
 sudo apt-get install -y flex bison libfreetype6-dev \
