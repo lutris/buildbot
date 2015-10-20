@@ -54,4 +54,6 @@ dest_file="wine-${filename_opts}${version}-${arch}.tar.gz"
 tar czf ${dest_file} ${dest_dir}
 rm -rf ${build_dir} ${source_dir}
 
-runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+if [ ! $NOUPLOAD ]; then
+    runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+fi
