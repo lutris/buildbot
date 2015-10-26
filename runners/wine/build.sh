@@ -55,5 +55,5 @@ tar czf ${dest_file} ${dest_dir}
 rm -rf ${build_dir} ${source_dir}
 
 if [ ! $NOUPLOAD ]; then
-    runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+    runner_upload ${runner_name} ${filename_opts}${version} ${arch} ${dest_file}
 fi
