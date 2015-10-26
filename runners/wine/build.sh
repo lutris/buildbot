@@ -3,6 +3,7 @@
 set -e
 lib_path="../../lib/"
 source ${lib_path}path.sh
+source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
@@ -17,16 +18,7 @@ sudo apt-get install -y flex bison libfreetype6-dev \
                         libpulse-dev libattr1-dev libtxc-dxtn-dev \
                         libva-dev libva-drm1 autoconf
 
-if [ -d ${source_dir} ]; then
-    echo "Updating sources"
-    cd ${source_dir}
-    git checkout master
-    git pull
-else
-    echo "Cloning sources"
-    git clone ${repo_url} ${source_dir}
-    cd $source_dir
-fi
+clone ${repo_url} ${source_dir}
 
 echo "Checking out wine ${version}"
 git checkout wine-${version}
