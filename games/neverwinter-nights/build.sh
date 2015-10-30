@@ -25,5 +25,5 @@ cd ..
 
 git clone https://github.com/nwnlinux/nwmouse.git
 cd nwmouse
-cp mwmouse/nwmouse.so ../lib
+cp nwmouse/nwmouse.so ../lib
 ./nwmouse_install.pl
