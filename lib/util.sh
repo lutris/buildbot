@@ -14,5 +14,6 @@ function clone {
 }
 
 function install_deps {
-    sudo apt-get install $1
+    echo "Installing $@"
+    sudo apt-get install $@
 }

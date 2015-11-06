@@ -12,12 +12,20 @@ function runner_upload {
     fi
 
     filename=$4
-    #host="http://localhost:8000"
+
+    if [ ! -f ../../.lutris_token ]; then
+        echo "You are not authenticated, runner won't upload"
+        return
+    fi
+    
+    access_token=$(cat ../../.lutris_token)
+
     host="https://lutris.net"
 
     upload_url="${host}/api/runners/${runner}/versions"
-    access_token=$(cat ../../.lutris_token)
     content_type="multipart/form-data"
+
+    echo "Uploading to ${upload_url}"
 
     curl \
         -v \
