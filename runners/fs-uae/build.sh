@@ -39,6 +39,8 @@ cp -a share ${build_dir}
 cp -a licenses ${build_dir}
 cp -a README ${build_dir}
 
+cd ..
+
 dest_file="${runner_name}-${version}-${arch}.tar.gz"
 tar czf ${dest_file} ${runner_name}
 
