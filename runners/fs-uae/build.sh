@@ -13,7 +13,7 @@ build_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
 repo_url="https://github.com/FrodeSolheim/fs-uae.git"
 
-deps="libglew-dev libmpeg2-4-dev"
+deps="libglew-dev libmpeg2-4-dev libsdl2-dev"
 
 install_deps $deps
 clone $repo_url $source_dir
