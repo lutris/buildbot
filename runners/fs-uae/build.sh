@@ -11,7 +11,6 @@ root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-version="2.6.1"
 repo_url="https://github.com/FrodeSolheim/fs-uae.git"
 
 deps="libglew-dev libmpeg2-4-dev"
@@ -22,6 +21,10 @@ clone $repo_url $source_dir
 mkdir -p ${build_dir}
 
 cd $source_dir
+
+version=$(cat ChangeLog | head -n 1 | cut -d " " -f 2)
+version=${version//:}
+
 ./bootstrap
 ./configure
 make
@@ -36,4 +39,8 @@ cp -a share ${build_dir}
 cp -a licenses ${build_dir}
 cp -a README ${build_dir}
 
+dest_file="${runner_name}-${version}-${arch}.tar.gz"
+tar czf ${dest_file} ${runner_name}
+
+runner_upload ${runner_name} ${version} ${arch} ${dest_file}
 
