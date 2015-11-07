@@ -1,4 +1,10 @@
 #!/bin/bash
+#
+# Compiling Dolphin on Ubuntu 14.04 requires a newer version of GCC with C++11
+# support. It is available here:
+# https://launchpad.net/~dolphin-emu/+archive/ubuntu/gcc-for-dolphin 
+#
+
 
 set -e
 lib_path="../../lib/"
