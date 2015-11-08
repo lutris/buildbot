@@ -38,6 +38,7 @@ version=$(grep SCM_DESC_STR Source/Core/Common/scmrev.h | cut -f 3 -d " " | tr -
 version=${version%-dirty}
 
 rm -rf ${bin_dir}
+mkdir -p ${bin_dir}
 mv Binaries/* ${bin_dir}
 cp -a ${source_dir}/Data/Sys ${bin_dir}
 
