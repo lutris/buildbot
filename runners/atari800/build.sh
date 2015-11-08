@@ -21,6 +21,8 @@ cd atari800-${version}/src
 make
 make install 
 
+cd ../..
+
 dest_file="${runner_name}-${version}-${arch}.tar.gz"
 tar czf ${dest_file} ${runner_name}
 runner_upload ${runner_name} ${version} ${arch} ${dest_file}
