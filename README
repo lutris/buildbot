@@ -5,15 +5,15 @@ This repository contains various build scripts for runners and games used by
 Lutris. The target system for these scripts is Debian Jessie (the same system
 used by the Lutris runtime).
 
-It is advised to run these scripts from a LXC container. You can create one 
+It is advised to run these scripts from a LXC container. You can create one
 with the following command::
 
-    sudo lxc-create -t debian -n buildbot64 -- -r jessie
+    sudo lxc-create -t ubuntu -n buildbot64 -- -r trusty
 
 or for the 32bit container::
 
-    sudo lxc-create -t debian -n buildbot32 -- -r jessie --arch i386
+    sudo lxc-create -t ubuntu -n buildbot32 -- -r trusty --arch i386
 
 The minimal system should have the following packages installed::
 
-    sudo apt-get install -y build-essential sudo vim git wget
+    sudo apt-get install -y build-essential vim git wget curl

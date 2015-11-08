@@ -2,7 +2,7 @@
 #
 # Compiling Dolphin on Ubuntu 14.04 requires a newer version of GCC with C++11
 # support. It is available here:
-# https://launchpad.net/~dolphin-emu/+archive/ubuntu/gcc-for-dolphin 
+# https://launchpad.net/~dolphin-emu/+archive/ubuntu/gcc-for-dolphin
 #
 
 
@@ -22,7 +22,7 @@ arch=$(uname -m)
 version="4.0"
 repo_url="https://github.com/lutris/dolphin.git"
 
-deps="libwxbase3.0-dev libwxgtk3.0-dev libgtk2.0-dev libxext-dev libreadline-dev libgl1-mesa-dev libevdev-dev libudev-dev"
+deps="cmake libwxbase3.0-dev libwxgtk3.0-dev libgtk2.0-dev libxext-dev libreadline-dev libgl1-mesa-dev libevdev-dev libudev-dev"
 
 install_deps $deps
 clone $repo_url $source_dir
