@@ -33,6 +33,7 @@ cd ${build_dir}/bin
 strip snes9x-gtk
 
 cd ../..
-tar czf ${runner_name}-${version}-${arch}.tar.gz ${runner_name}
+dest_file="${runner_name}-${version}-${arch}.tar.gz"
+tar czf $dest_file ${runner_name}
 runner_upload ${runner_name} ${version} ${arch} ${dest_file}
 rm -rf ${build_dir} ${source_dir}
