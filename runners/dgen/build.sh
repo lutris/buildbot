@@ -14,6 +14,8 @@ version="1.33"
 arch=$(uname -m)
 repo_url="git://git.code.sf.net/p/dgen/dgen"
 
+clone ${repo_url} ${source_dir}
+
 cd ${source_dir}
 ./configure --prefix=${build_dir}
 make
