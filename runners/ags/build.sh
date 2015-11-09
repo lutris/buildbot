@@ -1,9 +1,12 @@
 #!/bin/bash
 
-sudo apt-get install -y git debhelper build-essential pkg-config libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev
 
-git clone git://github.com/adventuregamestudio/ags.git
-cd ags
+deps="debhelper build-essential pkg-config libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev"
+
+install_deps $deps
+
+git clone git://github.com/adventuregamestudio/ags.git ags-src
+cd ags-src
 make --directory=Engine
 cd Engine
 mkdir ags.dir
