@@ -17,7 +17,7 @@ repo_url="https://github.com/lutris/jzintv.git"
 
 bin_dir="jzintv-20150213-linux-x86-64"
 archive="${bin_dir}.zip"
-wget http://spatula-city.org/~im14u2c/intv/dl/ 
+wget "http://spatula-city.org/~im14u2c/intv/dl/${archive}"
 unzip $archive
 mv ${bin_dir} ${runner_name}
 
