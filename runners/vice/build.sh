@@ -12,7 +12,7 @@ bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
 version="2.4"
 
-deps="libxxf86vm-dev libxmu-dev libxaw7-dev"
+deps="libxxf86vm-dev libxmu-dev libxaw7-dev libreadline-dev"
 install_deps $deps
 
 src_dir="${runner_name}-${version}"
