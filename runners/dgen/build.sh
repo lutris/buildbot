@@ -8,7 +8,7 @@ source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
 root_dir=$(pwd)
-source_dir="${root_dir}/${runner_name}"
+source_dir="${root_dir}/${runner_name}-src"
 build_dir=${root_dir}/${runner_name}
 version="1.33"
 arch=$(uname -m)
@@ -17,6 +17,7 @@ repo_url="git://git.code.sf.net/p/dgen/dgen"
 clone ${repo_url} ${source_dir}
 
 cd ${source_dir}
+./autogen.sh
 ./configure --prefix=${build_dir}
 make
 make install
