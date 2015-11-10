@@ -12,19 +12,15 @@ root_dir="$(pwd)"
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
 arch="$(uname -m)"
-version="1.18"
+version="0.3.0git"
 
-deps="liballegro4-dev"
-install_deps $deps
+repo_url="https://github.com/residualvm/residualvm.git"
+clone $repo_url $source_dir
 
-repo_url="https://github.com/lutris/o2em.git"
-clone $repo_url ${source_dir}
-
-cd ${source_dir}
+cd $source_dir
+./configure --prefix=${build_dir}
 make
-
-mkdir ${build_dir}
-mv o2em dis48 README ${build_dir}
+make install
 
 cd ..
 dest_file=${runner_name}-${version}-${arch}.tar.gz
