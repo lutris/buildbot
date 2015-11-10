@@ -14,6 +14,9 @@ build_dir="${root_dir}/${runner_name}"
 arch="$(uname -m)"
 version="1.9.95"
 
+deps="libxtst-dev"
+install_deps $deps
+
 # repo_url="https://pcsxr.svn.codeplex.com/svn/pcsxr"
 # svn checkout $repo_url $source_dir
 repo_url="https://github.com/lutris/pcsxr"
