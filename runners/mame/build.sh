@@ -36,9 +36,18 @@ unset FULLNAME
 
 if [ "$RUNNER" = "mess" ]; then
     NO_OPENGL=0 TARGET=mess make -j 8
+    if [ "$arch" = "x86_64" ]; then
+        mv mess64 mess
+    fi
 else
     NO_OPENGL=0 make -j 8
+    if [ "$arch" = "x86_64" ]; then
+        mv mame64 mame
+    fi
 fi
+
+mkdir -p ${build_dir}
+mv ${runner_name} ${build_dir}
 
 cd ..
 dest_file=${runner_name}-${version}-${arch}.tar.gz
