@@ -17,7 +17,7 @@ version="1.18"
 deps="liballegro4-dev"
 install_deps $deps
 
-repo_url="git@github.com:lutris/o2em.git"
+repo_url="http://github.com/lutris/o2em.git"
 clone $repo_url ${source_dir}
 
 cd ${source_dir}
