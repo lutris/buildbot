@@ -17,7 +17,7 @@ version="1.9.95"
 # repo_url="https://pcsxr.svn.codeplex.com/svn/pcsxr"
 # svn checkout $repo_url $source_dir
 repo_url="https://github.com/lutris/pcsxr"
-clone $repo_url
+clone $repo_url ${source_dir}
 
 cd ${source_dir}
 ./autogen.sh
