@@ -29,8 +29,6 @@ revision=$(svn info | grep "^Revision" | cut -d" " -f 2)
 version="svn${revision}"
 
 cd ..
-
 dest_file="${runner_name}-${version}-${arch}.tar.gz"
 tar czf ${dest_file} ${runner_name}
-
 runner_upload ${runner_name} ${version} ${arch} ${dest_file}

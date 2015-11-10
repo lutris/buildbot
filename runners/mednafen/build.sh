@@ -1,19 +1,24 @@
 #!/bin/bash
 
 set -e
+lib_path="../../lib/"
 
-sudo apt-get install -y libsndfile-dev wget
+source ${lib_path}path.sh
+source ${lib_path}util.sh
+source ${lib_path}upload_handler.sh
 
-pkg_name="mednafen"
-version="0.9.38.3"
-arch="$(uname -m)"
-
+runner_name=$(get_runner)
 root_dir="$(pwd)"
-source_dir="${root_dir}/${pkg_name}-src"
-build_dir="${root_dir}/${pkg_name}"
+source_dir="${root_dir}/${runner_name}-src"
+build_dir="${root_dir}/${runner_name}"
+arch="$(uname -m)"
+version="0.9.38.7"
 
-src_archive="${pkg_name}-${version}.tar.bz2"
+src_archive="${runner_name}-${version}.tar.bz2"
 src_url="http://freefr.dl.sourceforge.net/project/mednafen/Mednafen/${version}/${src_archive}"
+
+deps="libsndfile-dev"
+install_deps $deps
 
 wget ${src_url}
 tar xjf ${src_archive}
@@ -30,5 +35,7 @@ cd ${build_dir}
 strip bin/mednafen
 
 cd ..
-tar czf ${pkg_name}-${version}-${arch}.tar.gz ${pkg_name}
+dest_file=${runner_name}-${version}-${arch}.tar.gz
+tar czf ${dest_file} ${runner_name}
+runner_upload ${runner_name} ${version} ${arch} ${dest_file}
 rm -rf ${build_dir} ${source_dir}

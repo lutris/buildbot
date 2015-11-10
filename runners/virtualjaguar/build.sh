@@ -14,6 +14,9 @@ arch=$(uname -m)
 version="2.1.2"
 repo_url="http://shamusworld.gotdns.org/git/virtualjaguar"
 
+deps="qt5base-dev"
+install_deps $deps
+
 clone $repo_url $source_dir
 
 cd $source_dir
@@ -21,6 +24,7 @@ QT_SELECT=5 qmake
 make 
 
 cd ..
+rm -rf ${build_dir}
 mkdir -p ${build_dir}
 cp ${source_dir}/virtualjaguar ${build_dir}
 
