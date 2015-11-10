@@ -15,7 +15,7 @@ arch="$(uname -m)"
 version="0.9.38.7"
 
 src_archive="${runner_name}-${version}.tar.bz2"
-src_url="http://freefr.dl.sourceforge.net/project/mednafen/Mednafen/${version}/${src_archive}"
+src_url="http://mednafen.fobby.net/releases/files/${src_archive}"
 
 deps="libsndfile-dev"
 install_deps $deps
