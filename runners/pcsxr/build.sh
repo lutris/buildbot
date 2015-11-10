@@ -14,7 +14,7 @@ build_dir="${root_dir}/${runner_name}"
 arch="$(uname -m)"
 version="1.9.95"
 
-deps="libxtst-dev"
+deps="libxtst-dev libgtk-3-dev"
 install_deps $deps
 
 # repo_url="https://pcsxr.svn.codeplex.com/svn/pcsxr"
