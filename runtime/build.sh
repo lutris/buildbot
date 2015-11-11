@@ -1,27 +1,36 @@
 #!/bin/bash
 
-if [[ "$(uname -m)" == "i686" ]]; then
-    arch="32"
-    steam_rt="i386"
+root_dir="$(pwd)"
+arch=$(uname -m)
+if [[ "$arch" == "i686" ]]; then
+    bit="32"
 else
-    arch="64"
-    steam_rt="amd64"
+    bit="64"
 fi
+runtime_dir="lib${bit}"
 
+# Lutris runtime
+mkdir -p ${runtime_dir}
 sudo python2 lutrisrt.py
 sudo chown $(id -u):$(id -g) runtime -R
+cp -a runtime/* ${runtime_dir}
 
-cd steam-runtime
-python2 build-runtime.py
-cd ..
+# Copy Lutris runtime extra libs
+cp -a extra/${runtime_dir}/* ${runtime_dir}
 
-runtime_root="runtime${arch}"
+runtime_archive="${runtime_dir}.tar.bz2"
+tar cjf ${runtime_archive} ${runtime_root}
+runtime_upload ${runtime_dir} ${runtime_archive}
 
-mkdir -p ${runtime_root}
-mkdir -p ${runtime_root}
-cp -r steam-runtime/runtime/${steam_rt}/* ${runtime_root}
-mv runtime ${runtime_root}/lib${arch}
-cp extra/lib${arch}/* ${runtime_root}/lib${arch}
-
-tar cjf ${runtime_root}.tar.bz2 ${runtime_root}
-rm -rf ${runtime_root}
+# Steam runtime
+# Only build steam runtime once since it contains both archs
+if [ $arch = 'x86_64' ]; then
+    steam_runtime_file="stream-runtime.tar.bz2"
+    cd steam-runtime
+    python2 build-runtime.py
+    mv runtime steam
+    tar cjf $steam_runtime_file steam
+    mv $steam_runtime_file ..
+    cd ..
+    runtime_upload steam $steam_runtime_file
+fi
