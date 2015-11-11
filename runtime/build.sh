@@ -1,6 +1,9 @@
 #!/bin/bash
 
-root_dir="$(pwd)"
+set -e
+lib_path="../lib/"
+source ${lib_path}upload_handler.sh
+
 arch=$(uname -m)
 if [[ "$arch" == "i686" ]]; then
     bit="32"
@@ -19,7 +22,7 @@ cp -a runtime/* ${runtime_dir}
 cp -a extra/${runtime_dir}/* ${runtime_dir}
 
 runtime_archive="${runtime_dir}.tar.bz2"
-tar cjf ${runtime_archive} ${runtime_root}
+tar cjf ${runtime_archive} ${runtime_dir}
 runtime_upload ${runtime_dir} ${runtime_archive}
 
 # Steam runtime
