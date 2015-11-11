@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function runner_upload {
+runner_upload() {
     runner=$1
     version=$2
     architecture=$3
@@ -13,26 +13,46 @@ function runner_upload {
 
     filename=$4
 
-    if [ ! -f ../../.lutris_token ]; then
+    token_path="../../.lutris_token"
+    if [ ! -f $token_path ]; then
         echo "You are not authenticated, runner won't upload"
         return
     fi
-    
-    access_token=$(cat ../../.lutris_token)
+    access_token=$(cat $token_path)
 
     host="https://lutris.net"
-
     upload_url="${host}/api/runners/${runner}/versions"
-    content_type="multipart/form-data"
-
     echo "Uploading to ${upload_url}"
-
     curl \
         -v \
         --request POST \
         --header "Authorization: Token $access_token" \
         --form "version=${version}" \
         --form "architecture=${architecture}" \
+        --form "file=@${filename}" \
+        "$upload_url"
+}
+
+runtime_upload() {
+    name=$1
+    filename=$2
+
+    token_path="../.lutris_token"
+    if [ ! -f $token_path ]; then
+        echo "You are not authenticated, runner won't upload"
+        return
+    fi
+    access_token=$(cat $token_path)
+
+    host="https://lutris.net"
+    host="http://localhost:8000"
+    upload_url="${host}/api/runtime"
+    echo "Uploading to ${upload_url}"
+    curl \
+        -v \
+        --request POST \
+        --header "Authorization: Token $access_token" \
+        --form "name=${name}" \
         --form "file=@${filename}" \
         "$upload_url"
 }
