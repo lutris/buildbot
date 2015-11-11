@@ -45,7 +45,6 @@ runtime_upload() {
     access_token=$(cat $token_path)
 
     host="https://lutris.net"
-    host="http://localhost:8000"
     upload_url="${host}/api/runtime"
     echo "Uploading to ${upload_url}"
     curl \
