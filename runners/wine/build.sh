@@ -56,7 +56,9 @@ make -j 8
 make install
 
 cd ${root_dir}
-find ${dest_dir} -type f -exec strip {} \;
+find ${dest_dir}/bin -type f -exec strip {} \;
+find ${dest_dir}/lib -name "*.so" -exec strip {} \;
+rm -rf ${dest_dir}/include
 
 dest_file="wine-${filename_opts}${version}-${arch}.tar.gz"
 tar czf ${dest_file} ${dest_dir}
