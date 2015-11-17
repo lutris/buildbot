@@ -15,11 +15,12 @@ runtime_dir="lib${bit}"
 # Steam runtime
 # Only build steam runtime once since it contains both archs
 if [ "$STEAM" = '1' ]; then
-    # Remove old runtime build
-    rm -rf steam
 
     steam_runtime_file="steam.tar.bz2"
     cd steam-runtime
+    # Remove old runtime build
+    rm -rf steam
+
     python2 build-runtime.py
     mv runtime steam
     cd steam
