@@ -19,6 +19,41 @@ if [ '$STEAM' = '1' ]; then
     cd steam-runtime
     python2 build-runtime.py
     mv runtime steam
+    cd steam
+    rm -rf runtime
+    rm -rf amd64/lib/x86_64-linux-gnu/libgcc_s.so.1
+    rm -rf amd64/lib/x86_64-linux-gnu/libglib-2.0.so.0*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/gio
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/glib-2.0
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libSDL-1.2.so.0*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libX11-xcb.so*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libX11.so*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libatk-1.0.so.0*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libcairo.so.2*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libfontconfig.so*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libgio-2.0.so*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libgmodule-2.0.so*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libgobject-2.0.so*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libgthread-2.0.so*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libstdc++.so.6*
+    rm -rf amd64/usr/share/doc
+    rm -rf amd64/usr/share/glib-2.0
+    rm -rf i386/lib/i386-linux-gnu/libgcc_s.so.1
+    rm -rf i386/lib/i386-linux-gnu/libglib-2.0.so.0*
+    rm -rf i386/usr/lib/i386-linux-gnu/gio
+    rm -rf i386/usr/lib/i386-linux-gnu/glib-2.0
+    rm -rf i386/usr/lib/i386-linux-gnu/libSDL-1.2.so.0*
+    rm -rf i386/usr/lib/i386-linux-gnu/libX11-xcb.so*
+    rm -rf i386/usr/lib/i386-linux-gnu/libX11.so*
+    rm -rf i386/usr/lib/i386-linux-gnu/libatk-1.0.so.0*
+    rm -rf i386/usr/lib/i386-linux-gnu/libcairo.so.2*
+    rm -rf i386/usr/lib/i386-linux-gnu/libfontconfig.so*
+    rm -rf i386/usr/lib/i386-linux-gnu/libgio-2.0.so*
+    rm -rf i386/usr/lib/i386-linux-gnu/libgmodule-2.0.so*
+    rm -rf i386/usr/lib/i386-linux-gnu/libgobject-2.0.so*
+    rm -rf i386/usr/lib/i386-linux-gnu/libgthread-2.0.so*
+    rm -rf i386/usr/lib/i386-linux-gnu/libstdc++.so.6*
+
     tar cjf $steam_runtime_file steam
     mv $steam_runtime_file ..
     cd ..
