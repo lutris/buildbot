@@ -24,6 +24,7 @@ liblzma5                          liblzma.so.5
 libmad0                           libmad.so.0
 libmikmod2                        libmikmod.so.2
 libmpeg2-4                        libmpeg2.so.0 libmpeg2convert.so.0
+libmpg123-0                       libmpg123.so.0
 libnih1                           libnih.so.1
 libnih-dbus1                      libnih-dbus.so.1
 libreadline6                      libhistory.so.6 libreadline.so.6
