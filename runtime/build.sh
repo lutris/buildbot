@@ -53,6 +53,7 @@ if [ '$STEAM' = '1' ]; then
     rm -rf i386/usr/lib/i386-linux-gnu/libgobject-2.0.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libgthread-2.0.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libstdc++.so.6*
+    cd ..
 
     tar cjf $steam_runtime_file steam
     mv $steam_runtime_file ..
