@@ -52,11 +52,11 @@ dest_dir="${filename_opts}${version}-${arch}"
 mkdir -p $build_dir
 cd $build_dir
 $source_dir/configure ${configure_opts} --prefix=${root_dir}/${dest_dir}
-make -j4
+make -j 8
 make install
 
 cd ${root_dir}
-find . -type f -exec strip {} \;
+find ${dest_dir} -type f -exec strip {} \;
 
 dest_file="wine-${filename_opts}${version}-${arch}.tar.gz"
 tar czf ${dest_file} ${dest_dir}
