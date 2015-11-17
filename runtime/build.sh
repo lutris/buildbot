@@ -14,7 +14,7 @@ runtime_dir="lib${bit}"
 
 # Steam runtime
 # Only build steam runtime once since it contains both archs
-if [ $STEAM = '1' ]; then
+if [ '$STEAM' = '1' ]; then
     steam_runtime_file="steam.tar.bz2"
     cd steam-runtime
     python2 build-runtime.py
