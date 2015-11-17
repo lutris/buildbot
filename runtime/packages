@@ -22,7 +22,7 @@ liblua5.2-0                       liblua5.2.so.0
 libluajit-5.1-2                   libluajit-5.1.so.2
 liblzma5                          liblzma.so.5
 libmad0                           libmad.so.0
-libmikmod3                        libmikmod.so.3
+libmikmod2                        libmikmod.so.2
 libmpeg2-4                        libmpeg2.so.0 libmpeg2convert.so.0
 libnih1                           libnih.so.1
 libnih-dbus1                      libnih-dbus.so.1
