@@ -40,6 +40,7 @@ libupnp6                          libixml.so.2 libthreadutil.so.6 libupnp.so.6
 libwayland-client0                libwayland-client.so.0
 libwayland-cursor0                libwayland-cursor.so.0
 libxshmfence1                     libxshmfence.so.1
+libxml2                           libxml.so.2
 libxslt1.1                        libxslt.so.1 libexslt.so.0
 libxxf86dga1                      libXxf86dga.so.1
 libzzip-0-13                      libzzip-0.so.13
