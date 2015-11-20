@@ -25,6 +25,8 @@ libmad0                           libmad.so.0
 libmikmod2                        libmikmod.so.2
 libmpeg2-4                        libmpeg2.so.0 libmpeg2convert.so.0
 libmpg123-0                       libmpg123.so.0
+libncurses5                       libncurses.so.5
+libncursesw5                      libncursesw.so.5
 libnih1                           libnih.so.1
 libnih-dbus1                      libnih-dbus.so.1
 libreadline6                      libhistory.so.6 libreadline.so.6
@@ -36,6 +38,7 @@ libsdl-ttf2.0-0                   libSDL_ttf-2.0.so.0
 libsnappy1                        libsnappy.so.1
 libthai0                          libthai.so.0
 libtiff5                          libtiff.so.5
+libtinfo5                         libtinfo.so.5
 libudev1                          libudev.so.1
 libupnp6                          libixml.so.2 libthreadutil.so.6 libupnp.so.6
 libwayland-client0                libwayland-client.so.0
