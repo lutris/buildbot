@@ -1,18 +1,18 @@
 Lutris runtime
 --------------
 
-The Lutris runtime is a set of libs used by the Lutris client in order to avoid
-depending on what's installed on the system thus providing support for a large
-quantity of games out of the box.
+The Lutris runtime is a set of shared libs used by the Lutris client in order
+to avoid depending on what's installed on the system, thus providing support
+for a large quantity of games out of the box.
 
-The scripts provided build Debian chroots and installs the required packages.
+The scripts provided build the Steam runtime (used as a base), then install
+the packages for extra libs used by Lutris. You must be running Ubuntu 14.04.
 Then, with ldconfig -p, it looks for the path of the required .so paths and
 copies them into the runtime directory.
 
-Extra libraries that are not available in Debian are included directly in the
-repo. Here's a list of the extra libs and their source:
+Extra libraries that are not available in Ubuntu are included directly in the
+repo. Here's a list of these libs and their source:
 
-- libboost-locale1.54.0       Debian sid
 - libfmodex                   http://www.fmod.org/browse-fmod-ex-api/
 - libmodplug                  OpenSuse 11.4
 - libpng14                    ?
