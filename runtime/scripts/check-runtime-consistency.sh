@@ -10,18 +10,25 @@ if [ "$1" ]; then
 else
     CHECK_PATH="${TOP}"
 fi
-
+echo $CHECK_PATH
 STATUS=0
-find "${CHECK_PATH}" -type f | grep -v 'ld.*so' | \
-while read file; do
-    if ! (file "${file}" | fgrep " ELF " >/dev/null); then
-        continue
-    fi
 
-    echo "Checking ${file}"
-    if ! "${TOP}/scripts/check-program.sh" "${file}"; then
-        STATUS=1
-    fi
+for FOLDER in "lib32" "lib64" "steam/amd64/lib/x86_64-linux-gnu" \
+"steam/amd64/lib" "steam/amd64/usr/lib/x86_64-linux-gnu" "steam/amd64/usr/lib" \
+"steam/i386/lib/i386-linux-gnu" "steam/i386/lib" \
+"steam/i386/usr/lib/i386-linux-gnu" "steam/i386/usr/lib"
+do
+    find "${CHECK_PATH}/${FOLDER}" -type f | grep -v 'ld.*so' | \
+    while read file; do
+        if ! (file "${file}" | fgrep " ELF " >/dev/null); then
+            continue
+        fi
+
+        echo "Checking ${file}"
+        if ! "${TOP}/scripts/check-program.sh" "${file}"; then
+            STATUS=1
+        fi
+    done
 done
 exit ${STATUS}
 

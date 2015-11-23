@@ -1,3 +1,10 @@
+run.sh
+------
+
+Usage: check-program.sh executable [args...]
+
+This is a script to run a program in the runtime.
+
 
 check-program.sh
 ----------------
@@ -5,7 +12,7 @@ check-program.sh
 Usage: check-program.sh executable [executable...]
 
 This is a script to check to see if an executable or shared library has all
-of its runtime dependencies met by the Steam Linux Runtime.
+of its runtime dependencies met by the runtime.
 
 Note that the runtime does not provide an OpenGL implementation, so any
 warnings about OpenGL or 3D hardware libraries can be ignored.
