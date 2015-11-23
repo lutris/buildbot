@@ -61,6 +61,8 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/usr/lib/i386-linux-gnu/libstdc++.so.6*
     rm -rf i386/usr/lib/i386-linux-gnu/libncurses*
     rm -rf i386/usr/lib/i386-linux-gnu/libtinfo*
+    rm -rf i386/usr/share/doc
+    rm -rf i386/usr/share/glib-2.0
     cd ..
 
     tar cjf $steam_runtime_file steam
