@@ -1,10 +1,19 @@
 liballegro4.4                     liballeg.so.4.4
 libaudio2                         libaudio.so.2
+libenet2a                         libenet.so.2
+libboost-filesystem1.54.0         libboost_filesystem.so.1.54.0
+libboost-iostreams1.54.0          libboost_iostreams.so.1.54.0
 libboost-iostreams1.55.0          libboost_iostreams.so.1.55.0
+libboost-locale1.54.0             libboost_locale.so.1.54.0
+libboost-locale1.55.0             libboost_locale.so.1.55.0
+libboost-program-options1.54.0    libboost_program_options.so.1.54.0
 libboost-program-options1.55.0    libboost_program_options.so.1.55.0
+libboost-regex1.54.0              libboost_regex.so.1.54.0
 libboost-regex1.55.0              libboost_regex.so.1.55.0
 libboost-serialization1.55.0      libboost_serialization.so.1.55.0 libboost_wserialization.so.1.55.0
+libboost-system1.54.0             libboost_system.so.1.54.0
 libboost-system1.55.0             libboost_system.so.1.55.0
+libboost-thread1.54.0             libboost_thread.so.1.54.0
 libboost-thread1.55.0             libboost_thread.so.1.55.0
 libcairo2                         libcairo.so.2
 libcdio13                         libcdio.so.13
@@ -13,6 +22,9 @@ libdatrie1                        libdatrie.so.1
 libfaad2                          libfaad.so.2
 libfluidsynth1                    libfluidsynth.so.1
 libfontconfig1                    libfontconfig.so.1
+libfribidi0                       libfribidi.so.0
+libfuse2                          libfuse.so.2
+libicu52                          libicui18n.so.52 libicuuc.so.52 libicudata.so.52
 libirrlicht1.8                    libIrrlicht.so.1.8
 libjbig0                          libjbig.so.0
 libjson-c2                        libjson-c.so.2
@@ -23,6 +35,7 @@ libluajit-5.1-2                   libluajit-5.1.so.2
 liblzma5                          liblzma.so.5
 libmad0                           libmad.so.0
 libmikmod2                        libmikmod.so.2
+libmodplug1                       libmodplug.so.1
 libmpeg2-4                        libmpeg2.so.0 libmpeg2convert.so.0
 libmpg123-0                       libmpg123.so.0
 libncurses5                       libncurses.so.5
@@ -43,6 +56,7 @@ libudev1                          libudev.so.1
 libupnp6                          libixml.so.2 libthreadutil.so.6 libupnp.so.6
 libwayland-client0                libwayland-client.so.0
 libwayland-cursor0                libwayland-cursor.so.0
+libwebp5                          libwebp.so.5
 libxshmfence1                     libxshmfence.so.1
 libxml2                           libxml.so.2
 libxslt1.1                        libxslt.so.1 libexslt.so.0
