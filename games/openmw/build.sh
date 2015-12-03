@@ -20,16 +20,20 @@ clone https://github.com/OpenMW/openmw.git $source_dir
 cd $source_dir
 git checkout -b openmw-$version
 
-mkdir -p $build_dir
+rm -rf ${build_dir}
+mkdir $build_dir
 cd $build_dir
 cmake -DCMAKE_BUILD_TYPE=Release $source_dir
 
 make -j$(getconf _NPROCESSORS_ONLN)
 
+rm -rf ${bin_dir}
 mkdir -p ${bin_dir}
-mv bsatool data esmtool gamecontrollerdb.txt opencs.ini openmw openmw-cs \
+mv bsatool esmtool gamecontrollerdb.txt opencs.ini openmw openmw-cs \
    openmw-essimporter openmw-iniimporter openmw-launcher openmw-wizard resources \
-   settings-default.cfg version ${bin_dir}
+   settings-default.cfg ${bin_dir}
 cd ..
 cp openmw.cfg ${bin_dir}
+mkdir ${bin_dir}/data
+
 tar cvzf openmw-${version}.tar.gz openmw
