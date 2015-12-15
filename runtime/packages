@@ -19,6 +19,7 @@ libcairo2                         libcairo.so.2
 libcdio13                         libcdio.so.13
 libcgmanager0                     libcgmanager.so.0
 libdatrie1                        libdatrie.so.1
+libevdev2                         libevdev.so.2
 libfaad2                          libfaad.so.2
 libfluidsynth1                    libfluidsynth.so.1
 libfontconfig1                    libfontconfig.so.1
