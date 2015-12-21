@@ -14,7 +14,7 @@ source_dir=${root_dir}/supertux-${version}
 build_dir=${root_dir}/supertux-build
 bin_dir=${root_dir}/supertux
 
-deps="libphysfs-dev libcurl4-gnutls-dev libglew-dev libsdl2-image-dev"
+deps="libphysfs-dev libcurl4-gnutls-dev libglew-dev libsdl2-image-dev libboost1.54-dev"
 install_deps $deps
 
 clone https://github.com/SuperTux/supertux.git $source_dir
