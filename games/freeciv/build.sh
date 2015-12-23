@@ -14,7 +14,7 @@ source_dir=${root_dir}/freeciv-${version}
 build_dir=${root_dir}/freeciv-build
 bin_dir=${root_dir}/freeciv
 
-deps="pkg-config autoconf automake libgtk-3-dev"
+deps="pkg-config autoconf automake libgtk-3-dev gettext gnulib libbz2-dev libcurl4-gnutls-dev libesd0-dev libgtk-3-dev libgtk2.0-dev liblua5.2-dev liblzma-dev libpng-dev libreadline-dev libsdl-gfx1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsqlite3-dev libtolua-dev libx11-dev python-minimal qtbase5-dev qtbase5-dev-tools x11proto-core-dev zlib1g-dev libgtk-3-dev libgtk2.0-dev"
 install_deps $deps
 
 #clone https://github.com/SuperTux/supertux.git $source_dir
@@ -26,5 +26,6 @@ tar xvjf freeciv-${version}.tar.bz2
 cd freeciv-${version}
 ./autogen.sh
 ./configure
+make
 
-# TODO: Fix other dependencies so that we can build at least one client.
+# TODO: Move compiled peices into a package folder.
