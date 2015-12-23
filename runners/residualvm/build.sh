@@ -13,12 +13,13 @@ source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
 arch="$(uname -m)"
-version="0.3.0git"
+version="0.2.1"
 
 repo_url="https://github.com/residualvm/residualvm.git"
 clone $repo_url $source_dir
 
 cd $source_dir
+git checkout ${version}
 ./configure --prefix=${build_dir}
 make
 make install
