@@ -15,5 +15,5 @@ function clone {
 
 function install_deps {
     echo "Installing $@"
-    sudo apt-get install $@
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y $@
 }

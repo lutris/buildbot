@@ -17,3 +17,8 @@ or for the 32bit container::
 The minimal system should have the following packages installed::
 
     sudo apt-get install -y build-essential vim git wget curl python
+
+To build with Docker, use:
+
+   docker build -t buildbot .
+   docker run -v $(pwd):/buildbot buildbot games/supertux
