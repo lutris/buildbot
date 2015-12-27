@@ -22,3 +22,8 @@ To build with Docker, use:
 
    docker build -t buildbot .
    docker run -v $(pwd):/buildbot buildbot games/supertux
+
+To build with Docker under a 32bit architecture, use:
+
+   docker build -f Dockerfile-32 -t buildbot32 .
+   docker run -v $(pwd):/buildbot buildbot32 games/supertux
