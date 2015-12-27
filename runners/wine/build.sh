@@ -14,6 +14,17 @@ arch=$(uname -m)
 version="1.8"
 repo_url="git://source.winehq.org/git/wine.git"
 
+params=$(getopt -n $0 -o v:sn --long version:,staging,noupload -- "$@")
+eval set -- $params
+while true ; do
+    case "$1" in
+        -v|--version) version=$2; shift 2 ;;
+        -s|--staging) STAGING=1; shift ;;
+        -n|--noupload) NOUPLOAD=1; shift ;;
+        *) shift; break ;;
+    esac
+done
+
 sudo apt-get install -y flex bison libfreetype6-dev \
                         libpulse-dev libattr1-dev libtxc-dxtn-dev \
                         libva-dev libva-drm1 autoconf \
