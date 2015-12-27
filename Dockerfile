@@ -10,6 +10,9 @@ COPY ./Dockerfile-entrypoint.sh /
 ENTRYPOINT ["/Dockerfile-entrypoint.sh"]
 RUN chmod +x /Dockerfile-entrypoint.sh
 
+# Default value for wine-staging build
+ENV STAGING 0
+
 # Set up the application directory
 VOLUME ["/buildbot"]
 WORKDIR /buildbot
