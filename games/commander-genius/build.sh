@@ -8,7 +8,7 @@ source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
 root_dir=$(pwd)
-version=1.9
+version=1.9.0-beta
 arch=$(uname -m)
 source_dir=${root_dir}/commander-genius-src
 
@@ -21,3 +21,9 @@ cd $source_dir
 cmake -DUSE_SDL2=yes
 make -j$(getconf _NPROCESSORS_ONLN)
 
+cp src/CGeniusExe ..
+cd ..
+
+tar czf commander-genius-${version}-${arch}.tar.gz CGeniusExe
+rm CGeniusExe
+rm -rf $source_dir
