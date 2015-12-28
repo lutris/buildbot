@@ -44,6 +44,7 @@ libncursesw5                      libncursesw.so.5
 libnih1                           libnih.so.1
 libnih-dbus1                      libnih-dbus.so.1
 libreadline6                      libhistory.so.6 libreadline.so.6
+libphysfs1                        libphysfs.so.1
 libsdl2-image-2.0-0               libSDL2_image-2.0.so.0
 libsdl2-mixer-2.0-0               libSDL2_mixer-2.0.so.0
 libsdl-net1.2                     libSDL_net-1.2.so.0
