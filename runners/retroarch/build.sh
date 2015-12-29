@@ -22,7 +22,7 @@ deps="libglu1-mesa-dev freeglut3-dev mesa-common-dev libsdl1.2-dev libsdl-image1
 install_deps $deps
 
 cd $source_dir
-git checkout ${version}
+#git checkout ${version}
 ./configure
 make
 
@@ -40,6 +40,10 @@ mv master.zip retroarch-assets.zip
 wget https://github.com/libretro/libretro-database/archive/master.zip
 mv master.zip libretro-database.zip
 
+# Download the autoconf files
+wget https://github.com/libretro/retroarch-joypad-autoconfig/archive/master.zip
+mv master.zip libretro-autoconf.zip
+
 # Download the Cores
 cores=( 2048 bluemsx desmume dinothawr dosbox emux_gb emux_nes emux_sms fceumm fuse gambatte genesis_plus_gx gpsp gw handy mednafen_gba mednafen_lynx mednafen_snes mednafen_supergrafx mednafen_vb mednafen_wswan mgba mupen64plus nestopia nxengine pcsx_rearmed picodrive prboom quicknes snes9x_next stella vba_next vbam yabause )
 for i in "${cores[@]}"
@@ -51,6 +55,11 @@ done
 unzip -o '*.zip'
 rm *.zip
 
+# Rename any of the directories
+mv retroarch-assets-master assets
+mv libretro-database-master database
+mv retroarch-joypad-autoconfig-master autoconf
+
 # Set up the resources and scripts
 cp ${root_dir}/resources/* ${bin_dir}
 chmod +x retroarch.sh
@@ -58,7 +67,8 @@ cd ${root_dir}
 
 # Compress it all together
 dest_file="${root_dir}/${runner_name}-${version}-${arch}.tar.gz"
-tar -zcvf ${dest_file} ${bin_dir}
+rm $dest_file
+tar -zcvf ${dest_file} ${runner_name}
 
 #runner_upload ${runner_name} ${version} ${arch} ${dest_file}
-rm -rf ${source_dir} ${bin_dir}
+#rm -rf ${source_dir} ${bin_dir}
