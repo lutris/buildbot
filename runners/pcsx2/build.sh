@@ -15,7 +15,9 @@ bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
 version="1.4.0"
 
-deps="wx3.0-headers:i386 libaio-dev:i386"
+deps="wx3.0-headers libaio-dev libasound2-dev libbz2-dev libgl1-mesa-dev \
+    libglu1-mesa-dev libgtk2.0-dev libpng12-dev libpng++-dev libpulse-dev libsdl2-dev \
+    libsoundtouch-dev libwxbase3.0-dev libwxgtk3.0-dev libx11-dev portaudio19-dev zlib1g-dev"
 install_deps $deps
 
 clone https://github.com/PCSX2/pcsx2.git $source_dir
