@@ -30,12 +30,13 @@ cmake \
     -DCMAKE_BUILD_TYPE=Release \
     ${source_dir} 2>&1 | tee -a $log_file
 make -j$(getconf _NPROCESSORS_ONLN)
+make install
 
-cd ..
-mkdir -p ${bin_dir}
-#
-#dest_file="${runner_name}-${version}-${arch}.tar.gz"
-#tar czf ${dest_file} ${runner_name}
-#rm -rf ${build_dir} ${source_dir} ${bin_dir}
-#
-#runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+rm -rf ${bin_dir}
+mv ${source_dir}/bin ${bin_dir}
+
+dest_file="${runner_name}-${version}-${arch}.tar.gz"
+tar czf ${dest_file} ${runner_name}
+rm -rf ${build_dir} ${source_dir} ${bin_dir}
+
+runner_upload ${runner_name} ${version} ${arch} ${dest_file}
