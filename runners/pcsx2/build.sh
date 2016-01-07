@@ -12,6 +12,7 @@ root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
+log_file="${root_dir}/${runner_name}.log"
 arch=$(uname -m)
 version="1.4.0"
 
@@ -25,7 +26,9 @@ cd $source_dir
 
 mkdir -p $build_dir
 cd $build_dir
-cmake ${source_dir}
+cmake \
+    -DCMAKE_BUILD_TYPE=Release \
+    ${source_dir} 2>&1 | tee -a $log_file
 make -j$(getconf _NPROCESSORS_ONLN)
 
 cd ..
