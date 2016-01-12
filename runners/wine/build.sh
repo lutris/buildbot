@@ -89,7 +89,7 @@ fi
 if [ "$WOW64" ]; then
     cd ${root_dir}
     # Extract the 64bit build of Wine received from the buildbot64 container
-    wine64build_archive="${filename_opts}${version}-x86_64.tar.gz"
+    wine64build_archive="${filename_opts}${version}-x86_64-build.tar.gz"
     if [ ! -f $wine64build_archive ]; then
         echo "Missing wine64 build file $wine64build_archive"
         exit 2
