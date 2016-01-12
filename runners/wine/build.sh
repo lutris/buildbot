@@ -15,13 +15,14 @@ arch=$(uname -m)
 version="1.8"
 repo_url="git://source.winehq.org/git/wine.git"
 
-params=$(getopt -n $0 -o v:sn --long version:,staging,noupload -- "$@")
+params=$(getopt -n $0 -o v:sn6 --long version:,staging,noupload,64bit -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
         -v|--version) version=$2; shift 2 ;;
         -s|--staging) STAGING=1; shift ;;
         -n|--noupload) NOUPLOAD=1; shift ;;
+        -6|--64bit) WOW64=1; shift;;
         *) shift; break ;;
     esac
 done
@@ -66,18 +67,52 @@ if [ "$arch" = "x86_64" ]; then
     configure_opts="$configure_opts --enable-win64"
 fi
 
+# Build Wine, for the WOW64 version, this will be the regular build of 32bit
+# wine
 dest_dir="${filename_opts}${version}-${arch}"
+prefix=${root_dir}/${dest_dir}
 mkdir -p $build_dir
 cd $build_dir
-$source_dir/configure ${configure_opts} --prefix=${root_dir}/${dest_dir}
+$source_dir/configure ${configure_opts} --prefix=$prefix
 make -j 8
+
 if [ "$arch" = "x86_64" ]; then
+    # Build the 64bit version of wine, send it to the 32bit container then exit
     cd ${root_dir}
     dest_file="${dest_dir}-build.tar.gz"
-    tar czf ${dest_file} ${build_dir}
+    mv wine wine64
+    tar czf ${dest_file} wine64
     scp ${dest_file} ${buildbot32host}:${root_dir}
     exit
 fi
+
+if [ "$WOW64" ]; then
+    cd ${root_dir}
+    # Extract the 64bit build of Wine received from the buildbot64 container
+    wine64build_archive="${filename_opts}${version}-x86_64.tar.gz"
+    if [ ! -f $wine64build_archive ]; then
+        echo "Missing wine64 build file $wine64build_archive"
+        exit 2
+    fi
+    tar xzf $wine64build_archive
+
+    # Rename the 32bit build of wine
+    mv wine wine32
+
+    # Build the combined Wine32 + Wine64
+    mkdir -p $build_dir
+    cd $build_dir
+    ${source_dir}/configure \
+        ${configure_opts} \
+        --with-wine64=../wine64 \
+        --with-wine-tools=../wine32 \
+        --prefix=$prefix
+    make -j 8
+
+    # Change arch name
+    arch="x86_64"
+fi
+
 make install
 
 cd ${root_dir}
@@ -92,4 +127,4 @@ if [ ! $NOUPLOAD ]; then
     runner_upload ${runner_name} ${filename_opts}${version} ${arch} ${dest_file}
 fi
 
-rm -rf ${build_dir} ${source_dir}
+#rm -rf ${build_dir} ${source_dir}
