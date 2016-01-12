@@ -6,6 +6,7 @@ source ${lib_path}path.sh
 source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
+buildbot32host="buildbot32"
 runner_name=$(get_runner)
 root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
@@ -50,13 +51,19 @@ clone ${repo_url} ${source_dir}
 echo "Checking out wine ${version}"
 git checkout wine-${version}
 
+configure_opts=""
+
 if [ $STAGING ]; then
     echo "Adding Wine Staging patches"
     wget https://github.com/wine-compholio/wine-staging/archive/v${version}.tar.gz
     tar xvzf v${version}.tar.gz --strip-components 1
     ./patches/patchinstall.sh DESTDIR="$(pwd)" --all
-    configure_opts="--with-xattr"
+    configure_opts="$configure_opts --with-xattr"
     filename_opts="staging-"
+fi
+
+if [ "$arch" = "x86_64" ]; then
+    configure_opts="$configure_opts --enable-win64"
 fi
 
 dest_dir="${filename_opts}${version}-${arch}"
@@ -64,6 +71,13 @@ mkdir -p $build_dir
 cd $build_dir
 $source_dir/configure ${configure_opts} --prefix=${root_dir}/${dest_dir}
 make -j 8
+if [ "$arch" = "x86_64" ]; then
+    cd ${root_dir}
+    dest_file="${dest_dir}-build.tar.gz"
+    tar czf ${dest_file} ${build_dir}
+    scp ${dest_file} ${buildbot32host}:${root_dir}
+    exit
+fi
 make install
 
 cd ${root_dir}
@@ -73,8 +87,9 @@ rm -rf ${dest_dir}/include
 
 dest_file="wine-${filename_opts}${version}-${arch}.tar.gz"
 tar czf ${dest_file} ${dest_dir}
-rm -rf ${build_dir} ${source_dir}
 
 if [ ! $NOUPLOAD ]; then
     runner_upload ${runner_name} ${filename_opts}${version} ${arch} ${dest_file}
 fi
+
+rm -rf ${build_dir} ${source_dir}
