@@ -1,6 +1,10 @@
 #!/bin/bash
 
 set -e
+
+root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd ${root_dir}
+
 lib_path="../../lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
@@ -9,7 +13,6 @@ source ${lib_path}upload_handler.sh
 buildbot32host="buildbot32"
 buildbot64host="buildbot64"
 runner_name=$(get_runner)
-root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
@@ -101,7 +104,7 @@ else
         if [ $STAGING ]; then
             opts="--staging"
         fi
-        ssh ${buildbot32} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
+        ssh ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
         echo "Wine32 build completed, now re-run the script"
         exit
     fi
