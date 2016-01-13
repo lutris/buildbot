@@ -90,10 +90,6 @@ BuildWine() {
     make -j$(getconf _NPROCESSORS_ONLN)
 }
 
-InstallDependencies
-DownloadWine
-DownloadWineStaging
-
 # Build Wine, for the WOW64 version, this will be the regular build of 32bit wine
 if [ "$WOW64" ]; then
     # Change arch name
@@ -107,6 +103,9 @@ if [ -f ${wine32_archive} ]; then
     tar xzf $wine32_archive
     cd $build_dir
 else
+    InstallDependencies
+    DownloadWine
+    DownloadWineStaging
     BuildWine
 
     if [ "$(uname -m)" = "x86_64" ]; then
@@ -149,6 +148,7 @@ else
 
         # Build the combined Wine32 + Wine64
         BuildWine combo
+        make install
 
         cd ${root_dir}
         # Package and send the build to the 64bit container
