@@ -96,6 +96,13 @@ else
         scp ${dest_file} ${buildbot32host}:${root_dir}
         mv wine64 wine
         rm ${dest_file}
+        echo "Building 32bit wine"
+        opts=""
+        if [ $STAGING ]; then
+            opts="--staging"
+        fi
+        ssh ${buildbot32} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
+        echo "Wine32 build completed, now re-run the script"
         exit
     fi
 
