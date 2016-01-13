@@ -141,7 +141,10 @@ else
         # Package and send the build to the 64bit container
         tar czf ${wine32_archive} ${bin_dir}
         scp ${wine32_archive} ${buildbot64host}:${root_dir}
-        rm ${wine32_archive}
+        if [ ! $KEEP ]; then
+            rm -rf ${wine32_archive} wine32 wine64
+        fi
+        exit
     fi
 fi
 
