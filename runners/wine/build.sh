@@ -67,6 +67,7 @@ DownloadWine() {
 DownloadWineStaging() {
     if [ $STAGING ]; then
         echo "Adding Wine Staging patches"
+        cd ${source_dir}
         wget https://github.com/wine-compholio/wine-staging/archive/v${version}.tar.gz
         tar xvzf v${version}.tar.gz --strip-components 1
         ./patches/patchinstall.sh DESTDIR="$(pwd)" --all
