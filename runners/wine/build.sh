@@ -7,6 +7,7 @@ source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
 buildbot32host="buildbot32"
+buildbot64host="buildbot64"
 runner_name=$(get_runner)
 root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
@@ -48,7 +49,6 @@ sudo apt-get install -y flex bison libfreetype6-dev \
                         unixodbc-dev x11proto-xinerama-dev
 
 clone ${repo_url} ${source_dir}
-
 echo "Checking out wine ${version}"
 git checkout wine-${version}
 
@@ -67,61 +67,74 @@ if [ "$arch" = "x86_64" ]; then
     configure_opts="$configure_opts --enable-win64"
 fi
 
-# Build Wine, for the WOW64 version, this will be the regular build of 32bit
-# wine
-dest_dir="${filename_opts}${version}-${arch}"
-prefix=${root_dir}/${dest_dir}
-mkdir -p $build_dir
-cd $build_dir
-$source_dir/configure ${configure_opts} --prefix=$prefix
-make -j 8
-
-if [ "$arch" = "x86_64" ]; then
-    # Build the 64bit version of wine, send it to the 32bit container then exit
-    cd ${root_dir}
-    dest_file="${dest_dir}-build.tar.gz"
-    mv wine wine64
-    tar czf ${dest_file} wine64
-    scp ${dest_file} ${buildbot32host}:${root_dir}
-    exit
-fi
-
+# Build Wine, for the WOW64 version, this will be the regular build of 32bit wine
 if [ "$WOW64" ]; then
-    cd ${root_dir}
-    # Extract the 64bit build of Wine received from the buildbot64 container
-    wine64build_archive="${filename_opts}${version}-x86_64-build.tar.gz"
-    if [ ! -f $wine64build_archive ]; then
-        echo "Missing wine64 build file $wine64build_archive"
-        exit 2
-    fi
-    tar xzf $wine64build_archive
-
-    # Rename the 32bit build of wine
-    mv wine wine32
-
-    # Build the combined Wine32 + Wine64
-    mkdir -p $build_dir
-    cd $build_dir
-    ${source_dir}/configure \
-        ${configure_opts} \
-        --with-wine64=../wine64 \
-        --with-wine-tools=../wine32 \
-        --prefix=$prefix
-    make -j 8
-
     # Change arch name
     arch="x86_64"
+fi
+bin_dir="${filename_opts}${version}-${arch}"
+wine32_archive="${bin_dir}-32bit.tar.gz"
+if [ -f ${wine32_archive} ]; then
+    # Extract the wine build received from the 32bit container
+    tar xzf $wine32_archive
+    cd $build_dir
+else
+    prefix=${root_dir}/${bin_dir}
+    mkdir -p $build_dir
+    cd $build_dir
+    $source_dir/configure ${configure_opts} --prefix=$prefix
+    make -j 8
+
+    if [ "$arch" = "x86_64" ]; then
+        # Build the 64bit version of wine, send it to the 32bit container then exit
+        cd ${root_dir}
+        dest_file="${bin_dir}-build.tar.gz"
+        mv wine wine64
+        tar czf ${dest_file} wine64
+        scp ${dest_file} ${buildbot32host}:${root_dir}
+        exit
+    fi
+
+    if [ "$WOW64" ]; then
+        cd ${root_dir}
+        # Extract the 64bit build of Wine received from the buildbot64 container
+        wine64build_archive="${filename_opts}${version}-x86_64-build.tar.gz"
+        if [ ! -f $wine64build_archive ]; then
+            echo "Missing wine64 build file $wine64build_archive"
+            exit 2
+        fi
+        tar xzf $wine64build_archive
+
+        # Rename the 32bit build of wine
+        mv wine wine32
+
+        # Build the combined Wine32 + Wine64
+        mkdir -p $build_dir
+        cd $build_dir
+        ${source_dir}/configure \
+            ${configure_opts} \
+            --with-wine64=../wine64 \
+            --with-wine-tools=../wine32 \
+            --prefix=$prefix
+        make -j 8
+        make install
+
+        # Package and send the build to the 64bit container
+        tar czf ${wine32_archive} ${bin_dir}
+        scp ${wine32_archive} ${buildbot64host}:${root_dir}
+        rm ${wine32_archive}
+    fi
 fi
 
 make install
 
 cd ${root_dir}
-find ${dest_dir}/bin -type f -exec strip {} \;
-find ${dest_dir}/lib -name "*.so" -exec strip {} \;
-rm -rf ${dest_dir}/include
+find ${bin_dir}/bin -type f -exec strip {} \;
+find ${bin_dir}/lib -name "*.so" -exec strip {} \;
+rm -rf ${bin_dir}/include
 
 dest_file="wine-${filename_opts}${version}-${arch}.tar.gz"
-tar czf ${dest_file} ${dest_dir}
+tar czf ${dest_file} ${bin_dir}
 
 if [ ! $NOUPLOAD ]; then
     runner_upload ${runner_name} ${filename_opts}${version} ${arch} ${dest_file}
