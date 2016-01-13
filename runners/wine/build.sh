@@ -74,6 +74,7 @@ if [ "$WOW64" ]; then
 fi
 bin_dir="${filename_opts}${version}-${arch}"
 wine32_archive="${bin_dir}-32bit.tar.gz"
+cd ${root_dir}
 if [ -f ${wine32_archive} ]; then
     # Extract the wine build received from the 32bit container
     tar xzf $wine32_archive
@@ -83,7 +84,7 @@ else
     mkdir -p $build_dir
     cd $build_dir
     $source_dir/configure ${configure_opts} --prefix=$prefix
-    make -j 8
+    make -j$(getconf _NPROCESSORS_ONLN)
 
     if [ "$(uname -m)" = "x86_64" ]; then
         # Build the 64bit version of wine, send it to the 32bit container then exit
@@ -93,6 +94,7 @@ else
         tar czf ${dest_file} wine64
         scp ${dest_file} ${buildbot32host}:${root_dir}
         mv wine64 wine
+        rm ${dest_file}
         exit
     fi
 
@@ -117,9 +119,10 @@ else
             --with-wine64=../wine64 \
             --with-wine-tools=../wine32 \
             --prefix=$prefix
-        make -j 8
+        make -j$(getconf _NPROCESSORS_ONLN)
         make install
 
+        cd ${root_dir}
         # Package and send the build to the 64bit container
         tar czf ${wine32_archive} ${bin_dir}
         scp ${wine32_archive} ${buildbot64host}:${root_dir}
