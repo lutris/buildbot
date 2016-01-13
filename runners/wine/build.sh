@@ -94,7 +94,6 @@ InstallDependencies
 DownloadWine
 DownloadWineStaging
 
-
 # Build Wine, for the WOW64 version, this will be the regular build of 32bit wine
 if [ "$WOW64" ]; then
     # Change arch name
@@ -131,7 +130,6 @@ else
             opts="${opts} --noupload"
         fi
         ssh -t ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
-        echo "Wine32 build completed, now re-run the script"
         ./build.sh -v ${version} ${opts}
         exit
     fi
