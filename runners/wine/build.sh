@@ -50,7 +50,7 @@ sudo apt-get install -y flex bison libfreetype6-dev \
 
 clone ${repo_url} ${source_dir}
 echo "Checking out wine ${version}"
-git checkout wine-${version}
+git checkout wine-${version} -b wine-${version}
 
 configure_opts=""
 
@@ -85,13 +85,14 @@ else
     $source_dir/configure ${configure_opts} --prefix=$prefix
     make -j 8
 
-    if [ "$arch" = "x86_64" ]; then
+    if [ "$(uname -m)" = "x86_64" ]; then
         # Build the 64bit version of wine, send it to the 32bit container then exit
         cd ${root_dir}
         dest_file="${bin_dir}-build.tar.gz"
         mv wine wine64
         tar czf ${dest_file} wine64
         scp ${dest_file} ${buildbot32host}:${root_dir}
+        mv wine64 wine
         exit
     fi
 
