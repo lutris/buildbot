@@ -32,7 +32,7 @@ while true ; do
     esac
 done
 
-sudo apt-get install -y flex bison libfreetype6-dev \
+sudo /usr/bin/apt-get install -y flex bison libfreetype6-dev \
                         libpulse-dev libattr1-dev libtxc-dxtn-dev \
                         libva-dev libva-drm1 autoconf \
                         autotools-dev debhelper desktop-file-utils \
@@ -52,9 +52,19 @@ sudo apt-get install -y flex bison libfreetype6-dev \
                         ocl-icd-opencl-dev oss4-dev prelink valgrind \
                         unixodbc-dev x11proto-xinerama-dev
 
-clone ${repo_url} ${source_dir}
-echo "Checking out wine ${version}"
-git checkout wine-${version}
+wine_archive="wine-${version}.tar.bz2"
+mkdir -p .cache
+if [ ! -f ".cache/$wine_archive"]; then
+    echo "Downloading Wine ${version}"
+    wget http://dl.winehq.org/wine/source/${version:0:3}/${wine_archive} -O .cache/${wine_archive}
+else
+    echo "Wine ${version} already cached"
+fi
+tar xjf .cache/wine-${version}.tar.bz2
+if [ -d ${source_dir} ]; then
+    rm -rf ${source_dir}
+fi
+mv wine-${version} ${source_dir}
 
 configure_opts=""
 
@@ -104,7 +114,7 @@ else
         if [ $STAGING ]; then
             opts="--staging"
         fi
-        ssh ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
+        ssh -t ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
         echo "Wine32 build completed, now re-run the script"
         exit
     fi
