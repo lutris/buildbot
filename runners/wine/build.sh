@@ -32,25 +32,19 @@ while true ; do
     esac
 done
 
-sudo /usr/bin/apt-get install -y flex bison libfreetype6-dev \
-                        libpulse-dev libattr1-dev libtxc-dxtn-dev \
-                        libva-dev libva-drm1 autoconf \
-                        autotools-dev debhelper desktop-file-utils \
-                        docbook-to-man docbook-utils docbook-xsl fontforge \
-                        gettext libasound2-dev libcapi20-dev libcups2-dev \
-                        libdbus-1-dev libfontconfig1-dev libfreetype6-dev \
-                        libgif-dev libgl1-mesa-dev libglu1-mesa-dev \
-                        libgnutls-dev libgphoto2-dev libgsm1-dev \
-                        libgstreamer-plugins-base0.10-dev libgstreamer0.10-dev \
-                        libjpeg-dev liblcms2-dev libldap2-dev libmpg123-dev \
-                        libncurses5-dev libopenal-dev libosmesa6-dev \
-                        libpcap0.8-dev libpng12-dev libpulse-dev libsane-dev \
-                        libtiff5-dev libv4l-dev libx11-dev libxcomposite-dev \
-                        libxcursor-dev libxext-dev libxi-dev libxinerama-dev \
-                        libxml2-dev libxrandr-dev libxrender-dev libxslt1-dev \
-                        libxt-dev libxxf86vm-dev linux-kernel-headers \
-                        ocl-icd-opencl-dev oss4-dev prelink valgrind \
-                        unixodbc-dev x11proto-xinerama-dev
+install_deps flex bison libfreetype6-dev libpulse-dev libattr1-dev libtxc-dxtn-dev \
+             libva-dev libva-drm1 autoconf autotools-dev debhelper desktop-file-utils \
+             docbook-to-man docbook-utils docbook-xsl fontforge gettext libasound2-dev \
+             libcapi20-dev libcups2-dev libdbus-1-dev libfontconfig1-dev \
+             libfreetype6-dev libgif-dev libgl1-mesa-dev libglu1-mesa-dev libgnutls-dev \
+             libgphoto2-dev libgsm1-dev libgstreamer-plugins-base0.10-dev \
+             libgstreamer0.10-dev libjpeg-dev liblcms2-dev libldap2-dev libmpg123-dev \
+             libncurses5-dev libopenal-dev libosmesa6-dev libpcap0.8-dev libpng12-dev \
+             libpulse-dev libsane-dev libtiff5-dev libv4l-dev libx11-dev \
+             libxcomposite-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev \
+             libxml2-dev libxrandr-dev libxrender-dev libxslt1-dev libxt-dev \
+             libxxf86vm-dev linux-kernel-headers ocl-icd-opencl-dev oss4-dev prelink \
+             valgrind unixodbc-dev x11proto-xinerama-dev
 
 wine_archive="wine-${version}.tar.bz2"
 mkdir -p .cache
