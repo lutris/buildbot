@@ -123,8 +123,15 @@ else
         if [ $STAGING ]; then
             opts="--staging"
         fi
+        if [ $KEEP ]; then
+            opts="${opts} --keep"
+        fi
+        if [ $NOUPLOAD ]; then
+            opts="${opts} --noupload"
+        fi
         ssh -t ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
         echo "Wine32 build completed, now re-run the script"
+        ./build.sh -v ${version} ${opts}
         exit
     fi
 
