@@ -135,6 +135,9 @@ make install
 cd ${root_dir}
 find ${bin_dir}/bin -type f -exec strip {} \;
 find ${bin_dir}/lib -name "*.so" -exec strip {} \;
+if [ -d ${bin_dir}/lib64 ]; then
+    find ${bin_dir}/lib64 -name "*.so" -exec strip {} \;
+fi
 rm -rf ${bin_dir}/include
 
 dest_file="wine-${filename_opts}${version}-${arch}.tar.gz"
