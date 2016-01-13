@@ -50,7 +50,7 @@ sudo apt-get install -y flex bison libfreetype6-dev \
 
 clone ${repo_url} ${source_dir}
 echo "Checking out wine ${version}"
-git checkout wine-${version} -b wine-${version}
+git checkout wine-${version}
 
 configure_opts=""
 
