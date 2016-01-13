@@ -51,7 +51,7 @@ InstallDependencies() {
 DownloadWine() {
     wine_archive="wine-${version}.tar.bz2"
     mkdir -p .cache
-    if [ ! -f ".cache/$wine_archive"]; then
+    if [ ! -f ".cache/$wine_archive" ]; then
         echo "Downloading Wine ${version}"
         wget http://dl.winehq.org/wine/source/${version:0:3}/${wine_archive} -O .cache/${wine_archive}
     else
