@@ -142,7 +142,7 @@ else
         tar czf ${wine32_archive} ${bin_dir}
         scp ${wine32_archive} ${buildbot64host}:${root_dir}
         if [ ! $KEEP ]; then
-            rm -rf ${wine32_archive} wine32 wine64
+            rm -rf ${wine32_archive} ${wine64build_archive} wine32 wine64 ${bin_dir}
         fi
         exit
     fi
