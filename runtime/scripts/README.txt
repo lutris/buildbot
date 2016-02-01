@@ -1,7 +1,7 @@
 run.sh
 ------
 
-Usage: check-program.sh executable [args...]
+Usage: run.sh executable [args...]
 
 This is a script to run a program in the runtime.
 
@@ -9,7 +9,7 @@ This is a script to run a program in the runtime.
 check-program.sh
 ----------------
 
-Usage: check-program.sh executable [executable...]
+Usage: check-program.sh executable [executable2...]
 
 This is a script to check to see if an executable or shared library has all
 of its runtime dependencies met by the runtime.
