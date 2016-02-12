@@ -73,7 +73,6 @@ DownloadWineStaging() {
         tar xvzf v${version}.tar.gz --strip-components 1
         ./patches/patchinstall.sh DESTDIR="$(pwd)" --all
         configure_opts="$configure_opts --with-xattr"
-        filename_opts="staging-"
     fi
 }
 
@@ -95,6 +94,10 @@ BuildWine() {
 if [ "$WOW64" ]; then
     # Change arch name
     arch="x86_64"
+fi
+
+if [ "$STAGING" ]; then
+    filename_opts="staging-"
 fi
 bin_dir="${filename_opts}${version}-${arch}"
 wine32_archive="${bin_dir}-32bit.tar.gz"
