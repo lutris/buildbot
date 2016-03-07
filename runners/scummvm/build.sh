@@ -15,7 +15,7 @@ arch="$(uname -m)"
 version="1.8.0"
 
 src_dir="scummvm-${version}"
-src_archive="${src_dir}.tar.gx"
+src_archive="${src_dir}.tar.xz"
 src_url="http://www.scummvm.org/frs/scummvm/${version}/${src_archive}"
 wget $src_url -O $src_archive
 tar xJf $src_archive
