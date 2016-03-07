@@ -12,7 +12,7 @@ root_dir="$(pwd)"
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
 arch="$(uname -m)"
-version="1.7.0"
+version="1.8.0"
 
 src_dir="scummvm-${version}"
 src_archive="${src_dir}.tar.gz"
