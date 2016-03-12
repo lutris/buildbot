@@ -9,14 +9,14 @@ source ${lib_path}upload_handler.sh
 
 root_dir=$(pwd)
 package_name=zdoom
-version=2.8pre-1887-g1070bd9
+version=2.8.1
 arch=$(uname -m)
 source_dir=${root_dir}/${package_name}-src
 build_dir=${root_dir}/${package_name}-build
 
 clone https://github.com/rheit/zdoom.git ${source_dir}
 cd $source_dir
-git checkout 1070bd9beb9e17de359486fbed201dd330b29a6f
+git checkout $version
 
 mkdir -p $build_dir
 cd $build_dir
