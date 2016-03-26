@@ -3,6 +3,7 @@ libaudio2                         libaudio.so.2
 libatk1.0-0                       libatk-1.0.so.0
 libavcodec54                      libavcodec.so.54
 libavformat54                     libavformat.so.54
+libavutil52                       libavutil.so.52
 libenet2a                         libenet.so.2
 libboost-filesystem1.54.0         libboost_filesystem.so.1.54.0
 libboost-iostreams1.54.0          libboost_iostreams.so.1.54.0
