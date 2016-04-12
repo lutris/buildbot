@@ -27,4 +27,4 @@ mv libEntitiesMPD.so $bin_dir/Debug/libEntitiesD.so
 mv libGameMPD.so $bin_dir/Debug/libGameD.so
 
 cd $root_dir
-tar cJf ${package_name}-${arch}.tar.bz2 ${package_name}
+tar cjf ${package_name}-${arch}.tar.bz2 ${package_name}
