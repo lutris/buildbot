@@ -26,5 +26,5 @@ mv ecc ssam libShadersD.so $bin_dir
 mv libEntitiesMPD.so $bin_dir/Debug/libEntitiesD.so
 mv libGameMPD.so $bin_dir/Debug/libGameD.so
 
-cd root_dir
+cd $root_dir
 tar cJf ${package_name}-${arch}.tar.bz2 ${package_name}
