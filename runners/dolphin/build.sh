@@ -31,7 +31,7 @@ mkdir -p ${build_dir}
 
 cd ${build_dir}
 
-cmake -DLINUX_LOCAL_DEV ${source_dir}
+cmake -DLINUX_LOCAL_DEV=1 ${source_dir}
 
 make -j 8
 version=$(grep SCM_DESC_STR Source/Core/Common/scmrev.h | cut -f 3 -d " " | tr -d "\"")
