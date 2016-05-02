@@ -4,7 +4,7 @@ set -e
 
 source ../../lib/util.sh
 
-version="0.37.0"
+version="0.39.0"
 root_dir=$(pwd)
 source_dir="${root_dir}/openmw-src"
 build_dir="${root_dir}/openmw-build"
