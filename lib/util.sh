@@ -8,7 +8,7 @@ function clone {
         git pull
     else
         echo "Cloning sources"
-        git clone ${repo_url} ${source_dir}
+        git clone --depth=1 ${repo_url} ${source_dir}
         cd $source_dir
     fi
 }
