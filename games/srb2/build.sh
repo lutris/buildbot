@@ -15,7 +15,7 @@ source_dir="${root_dir}/${pkg_name}-src"
 data_dir="${root_dir}/${pkg_name}-data"
 build_dir="${root_dir}/${pkg_name}"
 
-deps="libsdl2-mixer-dev"
+deps="libsdl2-mixer-dev p7zip-full"
 install_deps $deps
 
 clone https://github.com/STJr/SRB2.git $source_dir
