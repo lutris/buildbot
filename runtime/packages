@@ -31,6 +31,7 @@ libfribidi0                       libfribidi.so.0
 libfuse2                          libfuse.so.2
 libicu52                          libicui18n.so.52 libicuuc.so.52 libicudata.so.52
 libirrlicht1.8                    libIrrlicht.so.1.8
+libjansson4                       libjansson.so.4
 libjbig0                          libjbig.so.0
 libjson-c2                        libjson-c.so.2
 libleveldb1                       libleveldb.so.1
