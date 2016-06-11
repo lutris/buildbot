@@ -25,12 +25,13 @@ BuildProject() {
 }
 
 PackageProject() {
-    cd $source_dir
     rm -rf $bin_dir
     mkdir $bin_dir
-    cp -a "Need For Speed II SE/*" $bin_dir
+
+    cd "${source_dir}/Need For Speed II SE"
+    cp -a * $bin_dir
     cd $root_dir
-    tar czf ${pkg_name}-${version}.tar.gz $bin_dir
+    tar czf ${pkg_name}-${version}.tar.gz ${pkg_name}
 
 }
 
