@@ -18,13 +18,19 @@ GetSources() {
 InstallBuildDependencies() {
     install_deps yasm
 }
- 
+
 BuildProject() {
     cd $source_dir
     ./compile_nfs
 }
 
 PackageProject() {
+    cd $source_dir
+    rm -rf $bin_dir
+    mkdir $bin_dir
+    cp -a "Need For Speed II SE/*" $bin_dir
+    cd $root_dir
+    tar czf ${pkg_name}-${version}.tar.gz $bin_dir
 
 }
 
