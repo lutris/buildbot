@@ -19,7 +19,6 @@ source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-version="4.0"
 repo_url="https://github.com/dolphin-emu/dolphin"
 
 deps="cmake libwxbase3.0-dev libwxgtk3.0-dev libgtk2.0-dev libxext-dev libreadline-dev libgl1-mesa-dev libevdev-dev libudev-dev"
