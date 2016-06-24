@@ -59,6 +59,8 @@ UploadPackage() {
     if [ ! $version ]; then
         GetVersion
     fi
+    cd $root_dir
+    dest_file="${runner_name}-${version}-${arch}.tar.gz"
     runner_upload ${runner_name} ${version} ${arch} ${dest_file}
 }
 
