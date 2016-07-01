@@ -1,0 +1,67 @@
+{
+    "buttons": {
+        "A": {
+            "action": "button(Keys.KEY_S)", 
+            "name": "B"
+        }, 
+        "B": {
+            "action": "button(Keys.KEY_A)", 
+            "name": "A"
+        }, 
+        "BACK": {
+            "action": "button(Keys.KEY_N)", 
+            "name": "Select"
+        }, 
+        "C": {
+            "action": "button(Keys.KEY_B)", 
+            "doubleclick": {}, 
+            "hold": {
+                "action": "menu('Default.menu')"
+            }, 
+            "name": "Home"
+        }, 
+        "LB": {
+            "action": "button(Keys.KEY_Q)", 
+            "name": "L"
+        }, 
+        "RB": {
+            "action": "button(Keys.KEY_W)", 
+            "name": "R"
+        }, 
+        "RPAD": {
+            "action": "button(Keys.BTN_LEFT)"
+        }, 
+        "START": {
+            "action": "button(Keys.KEY_M)", 
+            "name": "Start"
+        }, 
+        "X": {
+            "action": "button(Keys.KEY_X)", 
+            "name": "Y"
+        }, 
+        "Y": {
+            "action": "button(Keys.KEY_Z)", 
+            "name": "X"
+        }
+    }, 
+    "gyro": {}, 
+    "menus": {}, 
+    "pad_left": {
+        "action": "dpad(button(Keys.KEY_I), button(Keys.KEY_K), button(Keys.KEY_J), button(Keys.KEY_L))"
+    }, 
+    "pad_right": {
+        "action": "trackball(1.0)", 
+        "feedback": ["RIGHT", 256]
+    }, 
+    "stick": {
+        "action": "dpad(button(Keys.KEY_UP), button(Keys.KEY_DOWN), button(Keys.KEY_LEFT), button(Keys.KEY_RIGHT))"
+    }, 
+    "trigger_left": {
+        "action": "button(Keys.BTN_RIGHT)"
+    }, 
+    "trigger_right": {
+        "action": "button(Keys.BTN_LEFT)", 
+        "name": "Tap"
+    }, 
+    "version": 1
+}
