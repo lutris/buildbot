@@ -8,7 +8,6 @@ source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
 version="$(date "+%Y%m%d")"
-archive="${runner_name}-${version}.tar.gz"
 arch=$(uname -m)
 
 root_dir=$(pwd)
