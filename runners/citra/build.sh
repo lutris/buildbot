@@ -16,6 +16,9 @@ source_dir=$(pwd)/${runner_name}-src
 build_dir=$(pwd)/${runner_name}-build
 bin_dir=$(pwd)/${runner_name}
 
+deps="libsdl2-dev qtbase5-dev libqt5opengl5-dev"
+install_deps $deps
+
 clone https://github.com/citra-emu/citra ${source_dir} recurse
 
 mkdir -p $build_dir
