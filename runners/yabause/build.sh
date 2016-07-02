@@ -15,7 +15,7 @@ source_dir=$(pwd)/${runner_name}-src
 build_dir=$(pwd)/${runner_name}-build
 bin_dir=$(pwd)/${runner_name}
 
-deps="freeglut3 freeglut3-dev libgtkglext1-dev libmini18n-dev libmini18n1 libpangox-1.0-dev"
+deps="freeglut3 freeglut3-dev libgtkglext1-dev libmini18n-dev libmini18n1 libpangox-1.0-dev qtmultimedia5-dev"
 install_deps $deps
 
 
@@ -33,7 +33,7 @@ DownloadGit() {
 BuildProject() {
     mkdir -p $build_dir
     cd $build_dir
-    cmake ${source_dir} -DCMAKE_BUILD_TYPE=Release
+    cmake ${source_dir}/yabause -DCMAKE_BUILD_TYPE=Release
     make -j$(getconf _NPROCESSORS_ONLN)
 }
 
