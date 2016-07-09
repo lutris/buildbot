@@ -22,3 +22,7 @@ To build with Docker, use:
 
    docker build -t buildbot .
    docker run -v $(pwd):/buildbot buildbot games/supertux
+
+To install packages without having to enter a root password add with visudo:
+
+    ubuntu   ALL=NOPASSWD: /usr/bin/apt-get 

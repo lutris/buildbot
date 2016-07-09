@@ -21,6 +21,7 @@ clone $repo_url $source_dir
 mkdir -p ${build_dir}
 
 cd $source_dir
+git checkout stable
 
 version=$(cat ChangeLog | head -n 1 | cut -d " " -f 2)
 version=${version//:}

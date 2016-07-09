@@ -1,5 +1,9 @@
 liballegro4.4                     liballeg.so.4.4
 libaudio2                         libaudio.so.2
+libatk1.0-0                       libatk-1.0.so.0
+libavcodec54                      libavcodec.so.54
+libavformat54                     libavformat.so.54
+libavutil52                       libavutil.so.52
 libenet2a                         libenet.so.2
 libboost-filesystem1.54.0         libboost_filesystem.so.1.54.0
 libboost-iostreams1.54.0          libboost_iostreams.so.1.54.0
@@ -27,6 +31,7 @@ libfribidi0                       libfribidi.so.0
 libfuse2                          libfuse.so.2
 libicu52                          libicui18n.so.52 libicuuc.so.52 libicudata.so.52
 libirrlicht1.8                    libIrrlicht.so.1.8
+libjansson4                       libjansson.so.4
 libjbig0                          libjbig.so.0
 libjson-c2                        libjson-c.so.2
 libleveldb1                       libleveldb.so.1
@@ -51,6 +56,9 @@ libsdl-net1.2                     libSDL_net-1.2.so.0
 libsdl-sound1.2                   libSDL_sound-1.0.so.1
 libsdl-ttf2.0-0                   libSDL_ttf-2.0.so.0
 libsnappy1                        libsnappy.so.1
+libsoundtouch0                    libSoundTouch.so.0
+libstdc++5                        libstdc++.so.5
+libtdb1                           libtdb.so.1
 libthai0                          libthai.so.0
 libtiff5                          libtiff.so.5
 libtinfo5                         libtinfo.so.5
@@ -59,6 +67,7 @@ libupnp6                          libixml.so.2 libthreadutil.so.6 libupnp.so.6
 libwayland-client0                libwayland-client.so.0
 libwayland-cursor0                libwayland-cursor.so.0
 libwebp5                          libwebp.so.5
+libx264-142                       libx264.so.142
 libxshmfence1                     libxshmfence.so.1
 libxml2                           libxml.so.2
 libxslt1.1                        libxslt.so.1 libexslt.so.0

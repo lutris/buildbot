@@ -19,30 +19,57 @@ source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-version="4.0"
-repo_url="https://github.com/lutris/dolphin.git"
+repo_url="https://github.com/dolphin-emu/dolphin"
 
-deps="cmake libwxbase3.0-dev libwxgtk3.0-dev libgtk2.0-dev libxext-dev libreadline-dev libgl1-mesa-dev libevdev-dev libudev-dev"
+InstallBuildDependencies() {
+    install_deps cmake libwxbase3.0-dev libwxgtk3.0-dev libgtk2.0-dev libxext-dev \
+        libreadline-dev libgl1-mesa-dev libevdev-dev libudev-dev
+}
 
-install_deps $deps
-clone $repo_url $source_dir
+GetSources() {
+    clone $repo_url $source_dir
+}
 
-mkdir -p ${build_dir}
 
-cd ${build_dir}
+BuildProject() {
+    mkdir -p ${build_dir}
+    cd ${build_dir}
+    cmake -DLINUX_LOCAL_DEV=1 ${source_dir}
+    make -j 8
+}
 
-cmake -DLINUX_LOCAL_DEV ${source_dir}
+GetVersion() {
+    cd ${build_dir}
+    version=$(grep SCM_DESC_STR Source/Core/Common/scmrev.h | cut -f 3 -d " " | tr -d "\"")
+    export version=${version%-dirty}
+}
 
-make -j 8
-version=$(grep SCM_DESC_STR Source/Core/Common/scmrev.h | cut -f 3 -d " " | tr -d "\"")
-version=${version%-dirty}
 
-rm -rf ${bin_dir}
-mkdir -p ${bin_dir}
-mv Binaries/* ${bin_dir}
-cp -a ${source_dir}/Data/Sys ${bin_dir}
+PackageProject() {
+    rm -rf ${bin_dir}
+    mkdir -p ${bin_dir}
+    mv Binaries/* ${bin_dir}
+    cp -a ${source_dir}/Data/Sys ${bin_dir}
+    cd ${root_dir}
+    dest_file="${runner_name}-${version}-${arch}.tar.gz"
+    tar czf ${dest_file} ${runner_name}
+}
 
-cd ..
-dest_file="${runner_name}-${version}-${arch}.tar.gz"
-tar czf ${dest_file} ${runner_name}
-runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+UploadPackage() {
+    if [ ! $version ]; then
+        GetVersion
+    fi
+    cd $root_dir
+    dest_file="${runner_name}-${version}-${arch}.tar.gz"
+    runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+}
+
+if [ $1 ]; then
+    $1
+else
+    InstallBuildDependencies
+    GetSources
+    BuildProject
+    GetVersion
+    PackageProject
+fi
