@@ -38,7 +38,7 @@ InstallDependencies() {
                 libva-dev libva-drm1 autoconf autotools-dev debhelper desktop-file-utils \
                 docbook-to-man docbook-utils docbook-xsl fontforge gettext libasound2-dev \
                 libcapi20-dev libcups2-dev libdbus-1-dev libfontconfig1-dev \
-                libfreetype6-dev libgif-dev libgl1-mesa-dev libglu1-mesa-dev libgnutls-dev \
+                libfreetype6-dev libgif-dev libgl1-mesa-dev libglu1-mesa-dev libgnutls28-dev \
                 libgphoto2-dev libgsm1-dev libgstreamer-plugins-base0.10-dev \
                 libgstreamer0.10-dev libjpeg-dev liblcms2-dev libldap2-dev libmpg123-dev \
                 libncurses5-dev libopenal-dev libosmesa6-dev libpcap0.8-dev libpng12-dev \
