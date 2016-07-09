@@ -7,9 +7,8 @@ source ${lib_path}path.sh
 source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
-runner_name=$(get_runner)
 root_dir=$(pwd)
-package_name=zdoom
+package_name=$(get_runner)
 version=2.8.1
 arch=$(uname -m)
 source_dir=${root_dir}/${package_name}-src
@@ -27,7 +26,7 @@ make -j$(getconf _NPROCESSORS_ONLN)
 mv zdoom zdoom.pk3 ${root_dir}
 cd ${root_dir}
 
-dest_file="${runner_name}-${version}-${arch}.tar.gz"
+dest_file="${package_name}-${version}-${arch}.tar.gz"
 tar czf ${dest_file} zdoom zdoom.pk3
 rm -rf zdoom zdoom.pk3 $source_dir $build_dir
-runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+runner_upload ${package_name} ${version} ${arch} ${dest_file}
