@@ -28,6 +28,13 @@ PackageProject() {
     mkdir -p $bin_dir
     mv ${build_dir}/lib/libunshield* $bin_dir
     mv ${build_dir}/src/unshield* $bin_dir
+    cd ${bin_dir}
+    mv unshield unshield.bin
+    cat << 'EOF' > unshield
+#!/bin/bash
+CWD="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LD_PRELOAD=$CWD/libunshield.so.1.3 $CWD/unshield.bin "$@"
+EOF
     cd $root_dir
     tar czf ${pkg_name}-${version}-${arch}.tar.gz ${pkg_name}
 }
