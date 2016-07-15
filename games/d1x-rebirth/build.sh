@@ -20,7 +20,7 @@ GetSources() {
 }
 
 InstallBuildDependencies() {
-    install_deps scons libphysfs-dev
+    install_deps scons libphysfs-dev libsdl-mixer1.2-dev
 }
 
 BuildProject() {
