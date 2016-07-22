@@ -81,27 +81,36 @@ BuildWine() {
     prefix=${root_dir}/${bin_dir}
     mkdir -p $build_dir
     cd $build_dir
+
+    # Do not use $arch here since it migth have been changed for the WOW64
+    # build on the 32bit container
     if [ "$(uname -m)" = "x86_64" ]; then
         configure_opts="$configure_opts --enable-win64"
     fi
+
+    # Third step to stitch together Wine64 and Wine32 build for the WOW64 build
     if [ "$1" = "combo" ]; then
         configure_opts="$configure_opts --with-wine64=../wine64 --with-wine-tools=../wine32"
     fi
+
     $source_dir/configure ${configure_opts} --prefix=$prefix
     make -j$(getconf _NPROCESSORS_ONLN)
 }
 
 # Build Wine, for the WOW64 version, this will be the regular build of 32bit wine
 if [ "$WOW64" ]; then
-    # Change arch name
+    # Change arch name, this is used in the final file name and we want the
+    # x86_64 part even on the 32bit container for WOW64.
     arch="x86_64"
 fi
 
 if [ "$STAGING" ]; then
     filename_opts="staging-"
 fi
+
 bin_dir="${filename_opts}${version}-${arch}"
 wine32_archive="${bin_dir}-32bit.tar.gz"
+
 cd ${root_dir}
 if [ -f ${wine32_archive} ]; then
     # Extract the wine build received from the 32bit container
