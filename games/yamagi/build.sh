@@ -9,7 +9,8 @@ source ${lib_path}upload_handler.sh
 
 root_dir=$(pwd)
 package_name=yamagi
-version=5.33
+version=5.34
+tag=QUAKE2_5_34
 arch=$(uname -m)
 game=yquake2
 
@@ -24,7 +25,7 @@ while true ; do
 done
 
 source_dir=${root_dir}/${package_name}-${game}-src
-clone https://github.com/yquake2/${game}.git ${source_dir}
+clone https://github.com/yquake2/${game}.git ${source_dir} "" ${tag}
 
 cd $source_dir
 make -j$(getconf _NPROCESSORS_ONLN)
