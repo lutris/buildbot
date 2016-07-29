@@ -25,7 +25,8 @@ while true ; do
 done
 
 source_dir=${root_dir}/${package_name}-${game}-src
-clone https://github.com/yquake2/${game}.git ${source_dir} "" ${tag}
+clone https://github.com/yquake2/${game}.git ${source_dir}
+git checkout ${tag}
 
 cd $source_dir
 make -j$(getconf _NPROCESSORS_ONLN)
