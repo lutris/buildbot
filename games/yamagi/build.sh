@@ -26,7 +26,9 @@ done
 
 source_dir=${root_dir}/${package_name}-${game}-src
 clone https://github.com/yquake2/${game}.git ${source_dir}
-git checkout ${tag}
+if [ "$game" = "yquake2" ]; then
+    git checkout ${tag}
+fi
 
 cd $source_dir
 make -j$(getconf _NPROCESSORS_ONLN)
