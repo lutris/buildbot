@@ -25,6 +25,7 @@ make
 
 mkdir -p ${build_dir}
 mv reicast.elf nosym-reicast.elf ${build_dir}
+cp -a mappings ${build_dir}
 
 cd ${root_dir}
 dest_file=${runner_name}-${version}-${arch}.tar.gz
