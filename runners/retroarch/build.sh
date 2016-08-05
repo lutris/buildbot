@@ -46,6 +46,7 @@ BuildRetroarch() {
     cp retroarch $bin_dir
     cp tools/cg2glsl.py ${bin_dir}/retroarch-cg2glsl
     cp -a media/assets ${bin_dir}
+    cp -a ../dist/info ${bin_dir}
     rm -rf ${bin_dir}/assets/.git
 }
 
