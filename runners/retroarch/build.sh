@@ -7,6 +7,27 @@ source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
+version="1.3.6"
+root_dir="$(pwd)"
+source_dir="${root_dir}/libretro-super"
+bin_dir="${root_dir}/retroarch"
+cores_dir="${bin_dir}/cores"
+cpus=$(getconf _NPROCESSORS_ONLN)
+
+params=$(getopt -n $0 -o d --long dependencies -- "$@")
+eval set -- $params
+while true ; do
+    case "$1" in
+        -d|--dependencies) INSTALL_DEPS=1; shift ;;
+        *) shift; break ;;
+    esac
+done
+
+core="$1"
+
+clone git://github.com/libretro/libretro-super.git $source_dir
+
+mkdir -p ${bin_dir}
 
 InstallDeps() {
     deps="build-essential libxkbcommon-dev zlib1g-dev libfreetype6-dev \
@@ -14,18 +35,6 @@ InstallDeps() {
         libsdl2-dev libsdl-image1.2-dev libxml2-dev"
     install_deps $deps
 }
-
-root_dir="$(pwd)"
-source_dir="${root_dir}/libretro-super"
-bin_dir="${root_dir}/retroarch"
-cores_dir="${bin_dir}/cores"
-cpus=$(getconf _NPROCESSORS_ONLN)
-
-core="$1"
-
-clone git://github.com/libretro/libretro-super.git $source_dir
-
-mkdir -p ${bin_dir}
 
 BuildRetroarch() {
     cd ${source_dir}
@@ -46,6 +55,9 @@ BuildLibretroCore() {
     ./libretro-install.sh ${cores_dir}
 }
 
+if [ $INSTALL_DEPS ]; then
+    InstallDeps
+fi
 
 if [ $1 ]; then
     BuildLibretroCore $1
