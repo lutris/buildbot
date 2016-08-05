@@ -11,7 +11,7 @@ version="1.3.6"
 root_dir="$(pwd)"
 source_dir="${root_dir}/libretro-super"
 bin_dir="${root_dir}/retroarch"
-cores_dir="${bin_dir}/cores"
+cores_dir="${root_dir}/cores"
 cpus=$(getconf _NPROCESSORS_ONLN)
 
 params=$(getopt -n $0 -o d --long dependencies -- "$@")
