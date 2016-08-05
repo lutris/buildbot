@@ -13,6 +13,7 @@ source_dir="${root_dir}/libretro-super"
 bin_dir="${root_dir}/retroarch"
 cores_dir="${root_dir}/cores"
 cpus=$(getconf _NPROCESSORS_ONLN)
+arch=$(uname -m)
 
 params=$(getopt -n $0 -o d --long dependencies -- "$@")
 eval set -- $params
@@ -56,12 +57,29 @@ BuildLibretroCore() {
     ./libretro-install.sh ${cores_dir}
 }
 
+PackageRetroarch() {
+    cd $root_dir
+    archive="${runner_name}-${version}-${arch}.tar.gz"
+    tar czf $archive retroarch
+}
+
+PackageCore() {
+    core=$1
+    cd ${cores_dir}
+    archive="libretro-${core}-${arch}.tar.gz"
+    core_file="${core}_libretro.so"
+    tar czf ../${archive} ${core_file}
+    rm $core_file
+}
+
 if [ $INSTALL_DEPS ]; then
     InstallDeps
 fi
 
 if [ $1 ]; then
     BuildLibretroCore $1
+    PackageCore $1
 else
     BuildRetroarch
+    PackageRetroarch
 fi
