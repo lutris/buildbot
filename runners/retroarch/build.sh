@@ -19,18 +19,20 @@ root_dir="$(pwd)"
 source_dir="${root_dir}/libretro-super"
 bin_dir="${root_dir}/retroarch"
 cores_dir="${bin_dir}/cores"
+cpus=$(getconf _NPROCESSORS_ONLN)
 
 core="$1"
 
 clone git://github.com/libretro/libretro-super.git $source_dir
 
-mkdir -p ${cores_dir}
+mkdir -p ${bin_dir}
 
 BuildRetroarch() {
     cd ${source_dir}
     SHALLOW_CLONE=1 ./libretro-fetch.sh retroarch
-    ./libretro-super.sh retroarch
     cd ${source_dir}/retroarch
+    ./configure
+    make -j$cpus
     cp retroarch $bin_dir
     cp tools/cg2glsl.py ${bin_dir}/retroarch-cg2glsl
     cp -a media/assets ${bin_dir}
