@@ -6,29 +6,66 @@ source ${lib_path}path.sh
 source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
-runner_name=$(get_runner)
+params=$(getopt -n $0 -o gd --long glide,dependencies -- "$@")
+eval set -- $params
+while true ; do
+    case "$1" in
+        -g|--glide) GLIDE=1; shift ;;
+        -d|--dependencies) INSTALL_DEPS=1; shift ;;
+        *) shift; break ;;
+    esac
+done
+
+if [ $GLIDE ]; then
+    filename_opts="-glide"
+fi
+
+runner_name="$(get_runner)${filename_opts}"
 root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
-build_dir="${root_dir}/${runner_name}"
+build_dir="${root_dir}/${runner_name}${filename_opts}"
 arch=$(uname -m)
 
-deps="subversion"
 
-install_deps $deps
-svn checkout svn://svn.code.sf.net/p/dosbox/code-0/dosbox/trunk ${source_dir}
+InstallDeps() {
+    deps="subversion"
+    install_deps $deps
+    if [ $GLIDE ]; then
+        cd $root_dir
+        clone https://github.com/voyageur/openglide openglide
+        cd openglide
+        ./bootstrap
+        ./configure --prefix=/usr
+        make
+        sudo make install
+    fi
+}
 
-mkdir -p ${build_dir}
+BuildDosbox() {
+    svn checkout svn://svn.code.sf.net/p/dosbox/code-0/dosbox/trunk ${source_dir}
+    mkdir -p "${build_dir}"
+    cd $source_dir
+    ./autogen.sh
+    if [ $GLIDE ]; then
+        git apply ../dosbox_glide.sh
+    fi
+    ./configure --prefix="${build_dir}"
+    make
+    make install
+}
 
-cd $source_dir
-./autogen.sh
-./configure --prefix=${build_dir}
-make
-make install
+PackageDosbox() {
+    revision=$(svn info | grep "^Revision" | cut -d" " -f 2)
+    version="svn${revision}"
+    cd ${root_dir}
+    dest_file="${runner_name}-${version}-${arch}.tar.gz"
+    tar czf ${dest_file} ${runner_name}
+    runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+}
 
-revision=$(svn info | grep "^Revision" | cut -d" " -f 2)
-version="svn${revision}"
+if [ $INSTALL_DEPS ]; then
+    InstallDeps
+fi
 
-cd ..
-dest_file="${runner_name}-${version}-${arch}.tar.gz"
-tar czf ${dest_file} ${runner_name}
-runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+BuildDosbox
+PackageDosbox
