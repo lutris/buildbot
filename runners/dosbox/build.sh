@@ -23,7 +23,7 @@ fi
 runner_name="$(get_runner)${filename_opts}"
 root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
-build_dir="${root_dir}/${runner_name}${filename_opts}"
+build_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
 
 
