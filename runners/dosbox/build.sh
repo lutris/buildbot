@@ -47,7 +47,7 @@ BuildDosbox() {
     cd $source_dir
     ./autogen.sh
     if [ $GLIDE ]; then
-        git apply ../dosbox_glide.sh
+        git apply ../dosbox_glide.diff
     fi
     ./configure --prefix="${build_dir}"
     make
