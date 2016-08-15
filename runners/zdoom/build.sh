@@ -26,8 +26,10 @@ make -j$(getconf _NPROCESSORS_ONLN)
 
 mkdir -p ${bin_dir}
 mv zdoom zdoom.pk3 ${bin_dir}
-cd ${root_dir}
+cd ${bin_dir}
+strip zdoom
 
+cd ${root_dir}
 dest_file="${package_name}-${version}-${arch}.tar.gz"
 tar czf ${dest_file} ${package_name}
 rm -rf $bin_dir $source_dir $build_dir
