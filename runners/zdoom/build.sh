@@ -13,6 +13,7 @@ version=2.8.1
 arch=$(uname -m)
 source_dir=${root_dir}/${package_name}-src
 build_dir=${root_dir}/${package_name}-build
+bin_dir=${root_dir}/${package_name}
 
 clone https://github.com/rheit/zdoom.git ${source_dir}
 cd $source_dir
@@ -23,10 +24,11 @@ cd $build_dir
 cmake $source_dir
 make -j$(getconf _NPROCESSORS_ONLN)
 
-mv zdoom zdoom.pk3 ${root_dir}
+mkdir -p ${bin_dir}
+mv zdoom zdoom.pk3 ${bin_dir}
 cd ${root_dir}
 
 dest_file="${package_name}-${version}-${arch}.tar.gz"
-tar czf ${dest_file} zdoom zdoom.pk3
-rm -rf zdoom zdoom.pk3 $source_dir $build_dir
+tar czf ${dest_file} ${package_name}
+rm -rf $bin_dir $source_dir $build_dir
 runner_upload ${package_name} ${version} ${arch} ${dest_file}
