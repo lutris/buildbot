@@ -33,7 +33,7 @@ InstallDeps() {
     if [ $GLIDE ]; then
         cd $root_dir
         clone https://github.com/voyageur/openglide openglide
-        cd openglide
+        cd ${root_dir}/openglide
         ./bootstrap
         ./configure --prefix=/usr
         make
@@ -47,7 +47,7 @@ BuildDosbox() {
     cd $source_dir
     ./autogen.sh
     if [ $GLIDE ]; then
-        git apply ../dosbox_glide.diff
+        patch -p0 < ../dosbox_glide.diff
     fi
     ./configure --prefix="${build_dir}"
     make
@@ -60,7 +60,7 @@ PackageDosbox() {
     cd ${root_dir}
     dest_file="${runner_name}-${version}-${arch}.tar.gz"
     tar czf ${dest_file} ${runner_name}
-    runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+    runner_upload dosbox ${version}${filename_opts} ${arch} ${dest_file}
 }
 
 if [ $INSTALL_DEPS ]; then

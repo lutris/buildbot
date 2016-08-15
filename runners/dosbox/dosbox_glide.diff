@@ -48,8 +48,8 @@ TODO:
  create mode 100644 src/hardware/glide.cpp
 
 diff --git a/configure.ac b/configure.ac
---- a/configure.ac
-+++ b/configure.ac
+--- configure.ac
++++ configure.ac
 @@ -450,7 +450,7 @@ int main(int argc,char * argv[]) {
  dnl Some target detection and actions for them
  case "$host" in
@@ -62,7 +62,7 @@ diff --git a/configure.ac b/configure.ac
 diff --git a/include/glide.h b/include/glide.h
 new file mode 100644
 --- /dev/null
-+++ b/include/glide.h
++++ include/glide.h
 @@ -0,0 +1,331 @@
 +/*
 + *  Copyright (C) 2002-2007  The DOSBox Team
@@ -398,7 +398,7 @@ new file mode 100644
 diff --git a/include/glidedef.h b/include/glidedef.h
 new file mode 100644
 --- /dev/null
-+++ b/include/glidedef.h
++++ include/glidedef.h
 @@ -0,0 +1,179 @@
 +/*
 + *  Copyright (C) 2002-2007  The DOSBox Team
@@ -580,8 +580,8 @@ new file mode 100644
 +
 +#endif // GLIDEDEF_H
 diff --git a/include/mem.h b/include/mem.h
---- a/include/mem.h
-+++ b/include/mem.h
+--- include/mem.h
++++ include/mem.h
 @@ -152,6 +152,8 @@ static INLINE Bit32u phys_readd(PhysPt addr){
  
  void MEM_BlockWrite(PhysPt pt,void const * const data,Bitu size);
@@ -592,8 +592,8 @@ diff --git a/include/mem.h b/include/mem.h
  void MEM_StrCopy(PhysPt pt,char * data,Bitu size);
  
 diff --git a/src/dosbox.cpp b/src/dosbox.cpp
---- a/src/dosbox.cpp
-+++ b/src/dosbox.cpp
+--- src/dosbox.cpp
++++ src/dosbox.cpp
 @@ -81,6 +81,7 @@ void PCI_Init(Section*);
  
  void KEYBOARD_Init(Section*);	//TODO This should setup INT 16 too but ok ;)
@@ -621,8 +621,8 @@ diff --git a/src/dosbox.cpp b/src/dosbox.cpp
  	secprop=control->AddSection_prop("dos",&DOS_Init,false);//done
  	secprop->AddInitFunction(&XMS_Init,true);//done
 diff --git a/src/gui/sdlmain.cpp b/src/gui/sdlmain.cpp
---- a/src/gui/sdlmain.cpp
-+++ b/src/gui/sdlmain.cpp
+--- src/gui/sdlmain.cpp
++++ src/gui/sdlmain.cpp
 @@ -49,6 +49,7 @@
  #include "cpu.h"
  #include "cross.h"
@@ -672,8 +672,8 @@ diff --git a/src/gui/sdlmain.cpp b/src/gui/sdlmain.cpp
  
  	/* Parse configuration files */
 diff --git a/src/hardware/Makefile.am b/src/hardware/Makefile.am
---- a/src/hardware/Makefile.am
-+++ b/src/hardware/Makefile.am
+--- src/hardware/Makefile.am
++++ src/hardware/Makefile.am
 @@ -10,6 +10,6 @@ libhardware_a_SOURCES = adlib.cpp dma.cpp gameblaster.cpp hardware.cpp iohandler
                          memory.cpp mixer.cpp pcspeaker.cpp pci_bus.cpp pic.cpp sblaster.cpp tandy_sound.cpp timer.cpp \
  			vga.cpp vga_attr.cpp vga_crtc.cpp vga_dac.cpp vga_draw.cpp vga_gfx.cpp vga_other.cpp \
@@ -685,7 +685,7 @@ diff --git a/src/hardware/Makefile.am b/src/hardware/Makefile.am
 diff --git a/src/hardware/glide.cpp b/src/hardware/glide.cpp
 new file mode 100644
 --- /dev/null
-+++ b/src/hardware/glide.cpp
++++ src/hardware/glide.cpp
 @@ -0,0 +1,1962 @@
 +/*
 + *  Copyright (C) 2002-2013  The DOSBox Team
@@ -2650,8 +2650,8 @@ new file mode 100644
 +    }	/* switch */
 +}	/* process_msg() */
 diff --git a/src/hardware/memory.cpp b/src/hardware/memory.cpp
---- a/src/hardware/memory.cpp
-+++ b/src/hardware/memory.cpp
+--- src/hardware/memory.cpp
++++ src/hardware/memory.cpp
 @@ -23,6 +23,7 @@
  #include "setup.h"
  #include "paging.h"
