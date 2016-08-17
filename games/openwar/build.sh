@@ -23,7 +23,7 @@ InstallBuildDependencies() {
 
 BuildProject() {
     cd $source_dir
-    go get
+    go build openwar.go
 }
 
 PackageProject() {
