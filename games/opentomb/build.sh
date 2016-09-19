@@ -14,10 +14,7 @@ install_deps liblua5.3-dev \
     libopenal-dev libogg-dev libvorbis-dev libsndfile1-dev libsdl2-dev \
     libsdl2-image-dev
 
-# git clone --recursive https://github.com/opentomb/OpenTomb.git $source_dir
-git clone --recursive https://github.com/stohrendorf/OpenTomb.git $source_dir
-#mkdir -p $build_dir
-#cd $build_dir
+git clone --recursive https://github.com/opentomb/OpenTomb.git $source_dir
 
 cd $source_dir
 cmake .
