@@ -21,9 +21,9 @@ install_deps $deps
 
 release=$(curl http://mamedev.org/release.html | grep -E "href.*s.zip" | cut -d"\"" -f 2)
 version=$(curl http://mamedev.org/release.html | grep -E -o "release is version [\.0-9]+" | grep -E -o 0.[0-9]+)
-archive=$(echo ${release} | cut -d"/" -f 2)
+archive=$(echo ${release} | cut -d"/" -f 9)
 
-wget "http://mamedev.org/${release}" -O ${archive}
+wget "${release}" -O ${archive}
 unzip -o $archive
 
 mkdir -p ${source_dir}
