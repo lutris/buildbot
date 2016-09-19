@@ -29,7 +29,7 @@ unzip -o $archive
 mkdir -p ${source_dir}
 mv mame.zip ${source_dir}
 cd ${source_dir}
-unzip -o mame.zip
+unzip -o mame.zip || true
 rm mame.zip
 
 unset FULLNAME
