@@ -35,11 +35,13 @@ rm mame.zip
 unset FULLNAME
 
 if [ "$RUNNER" = "mess" ]; then
+    echo "Building MESS"
     NO_OPENGL=0 make -j 8 SUBTARGET=mess
     if [ "$arch" = "x86_64" ]; then
         mv mess64 mess
     fi
 else
+    echo "Building MAME"
     NO_OPENGL=0 make -j 8
     if [ "$arch" = "x86_64" ]; then
         mv mame64 mame
