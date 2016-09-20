@@ -72,6 +72,7 @@ PackageCore() {
     core_file="${core}_libretro.so"
     tar czf ../${archive} ${core_file}
     rm $core_file
+    cd $root_dir
     runner_upload ${runner_name} ${core} ${arch} $archive
 }
 
