@@ -17,7 +17,7 @@ build_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
 
 install_deps curl wget unzip debhelper libexpat1-dev libflac-dev libfontconfig1-dev \
-     libjpeg8-dev libportmidi-dev libqt5-dev libsdl2-ttf-dev libsdl2-dev \
+     libjpeg8-dev libportmidi-dev libqtbase5-dev libsdl2-ttf-dev libsdl2-dev \
      libxinerama-dev subversion python-dev zlib1g-dev gcc-5
 
 release=$(curl http://mamedev.org/release.html | grep -E "href.*s.zip" | cut -d"\"" -f 2)
