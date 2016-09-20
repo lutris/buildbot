@@ -7,7 +7,7 @@ source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
-version="1.3.6"
+retroarch_version="1.3.6"
 root_dir="$(pwd)"
 source_dir="${root_dir}/libretro-super"
 bin_dir="${root_dir}/retroarch"
@@ -60,8 +60,9 @@ BuildLibretroCore() {
 
 PackageRetroarch() {
     cd $root_dir
-    archive="${runner_name}-${version}-${arch}.tar.gz"
+    archive="retroarch-${retroarch_version}-${arch}.tar.gz"
     tar czf $archive retroarch
+    runner_upload ${runner_name} "retroarch-${retroarch_version}" ${arch} ${archive}
 }
 
 PackageCore() {
