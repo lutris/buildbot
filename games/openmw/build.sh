@@ -11,7 +11,7 @@ build_dir="${root_dir}/openmw-build"
 bin_dir="${root_dir}/openmw"
 
 InstallBuildDependencies() {
-    install_deps libopenal-dev libopenscenegraph-dev \
+    install_deps libopenal-dev \
         libsdl2-dev libqt4-dev libboost-filesystem-dev libboost-thread-dev \
         libboost-program-options-dev libboost-system-dev libav-tools \
         libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavresample-dev \
@@ -25,6 +25,21 @@ GetSources() {
     if [ $1 ]; then
         git checkout -b openmw-$1
     fi
+}
+
+BuildOpenSceneGraph() {
+    cd $root_dir
+    osg_version="3.4.0"
+    osg_dir="OpenSceneGraph-${osg_version}"
+    osg_archive="${osg_dir}.zip"
+    wget http://trac.openscenegraph.org/downloads/developer_releases/${osg_archive}
+    unzip $osg_archive
+    cd $osg_dir
+    mkdir build
+    cd build
+    cmake ../src
+    make
+    sudo make install
 }
 
 BuildProject() {
@@ -52,6 +67,7 @@ if [ $1 ]; then
     $1
 else
     InstallBuildDependencies
+    BuildOpenSceneGraph
     GetSources $version
     BuildProject
     PackageProject
