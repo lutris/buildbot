@@ -8,6 +8,7 @@ source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
 arch=$(uname -m)
+root_dir=$(pwd)
 
 deps="debhelper build-essential pkg-config libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev"
 install_deps $deps
@@ -84,4 +85,6 @@ version=$(ags/ags | grep version | head -n 1 | cut -d' ' -f 3)
 ags_archive=ags-${version}-${arch}.tar.gz
 tar czf $ags_archive ags
 chown 1000:1000 $ags_archive
+mv $ags_archive $root_dir
+cd $root_dir
 runner_upload ${runner_name} ${version} ${arch} ${ags_archive}
