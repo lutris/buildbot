@@ -65,26 +65,21 @@ done
 cat << 'EOF'
 #!/bin/sh
 SCRIPTPATH="$(dirname "$(readlink -f $0)")"
-if test "x$@" = "x-h" -o "x$@" = "x--help"
-then
-    echo "Usage:" "$(basename "$(readlink -f $0)")" "[<ags options>]"
-    echo ""
-fi
 if test $(uname -m) = x86_64
 then
+    export LD_LIBRARY_PATH=$SCRIPTPATH/data/lib64:$LD_LIBRARY_PATH
     ALLEGRO_MODULES="$SCRIPTPATH/data/lib64" "$SCRIPTPATH/ags" "$@"
 else
+    export LD_LIBRARY_PATH=$SCRIPTPATH/data/lib32:$LD_LIBRARY_PATH
     ALLEGRO_MODULES="$SCRIPTPATH/data/lib32" "$SCRIPTPATH/ags" "$@"
 fi
 EOF
 ) > ags/ags.sh
-
+chmod +x ags/ags.sh
 strip ags/ags
-chown -R 1000:1000 ags
 version=$(ags/ags | grep version | head -n 1 | cut -d' ' -f 3)
 ags_archive=ags-${version}-${arch}.tar.gz
 tar czf $ags_archive ags
-chown 1000:1000 $ags_archive
 mv $ags_archive $root_dir
 cd $root_dir
 runner_upload ${runner_name} ${version} ${arch} ${ags_archive}
