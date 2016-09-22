@@ -80,7 +80,7 @@ EOF
 
 strip ags/ags
 chown -R 1000:1000 ags
-version=$(ags/ags | grep version | cut -d' ' -f 3)
+version=$(ags/ags | grep version | head -n 1 | cut -d' ' -f 3)
 ags_archive=ags-${version}-${arch}.tar.gz
 tar czf $ags_archive ags
 chown 1000:1000 $ags_archive
