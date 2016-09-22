@@ -64,7 +64,7 @@ PackageProject() {
     mkdir ${bin_dir}/data
     mkdir ${bin_dir}/lib
     cp /usr/lib/x86_64-linux-gnu/libosg* ${bin_dir}/lib
-    cp /usr/lib/x86_64-linux-gnu/osgPlugins-3.4.0/* ${bin_dir}/lib
+    cp -a /usr/lib/x86_64-linux-gnu/osgPlugins-3.4.0/* ${bin_dir}/lib
     tar cvzf openmw-${version}.tar.gz openmw
 }
 
