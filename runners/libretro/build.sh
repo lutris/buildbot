@@ -43,6 +43,7 @@ BuildRetroarch() {
     cd ${source_dir}/retroarch
     ./configure
     make -j$cpus
+    strip retroarch
     cp retroarch $bin_dir
     cp tools/cg2glsl.py ${bin_dir}/retroarch-cg2glsl
     cp -a media/assets ${bin_dir}
