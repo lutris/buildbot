@@ -11,12 +11,14 @@ build_dir="${root_dir}/openmw-build"
 bin_dir="${root_dir}/openmw"
 
 InstallBuildDependencies() {
+    sudo add-apt-repository ppa:openmw/openmw
+    sudo apt update
     install_deps libopenal-dev \
         libsdl2-dev libqt4-dev libboost-filesystem-dev libboost-thread-dev \
         libboost-program-options-dev libboost-system-dev libav-tools \
         libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavresample-dev \
         libbullet-dev libmygui-dev libunshield-dev libtinyxml-dev cmake build-essential \
-        libqt4-opengl-dev libswresample-dev
+        libqt4-opengl-dev libswresample-dev libopenscenegraph-3.4-dev
 }
 
 GetSources() {
@@ -67,7 +69,6 @@ if [ $1 ]; then
     $1
 else
     InstallBuildDependencies
-    BuildOpenSceneGraph
     GetSources $version
     BuildProject
     PackageProject
