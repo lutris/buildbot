@@ -16,7 +16,7 @@ InstallBuildDependencies() {
         libboost-program-options-dev libboost-system-dev libav-tools \
         libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavresample-dev \
         libbullet-dev libmygui-dev libunshield-dev libtinyxml-dev cmake build-essential \
-        libqt4-opengl-dev
+        libqt4-opengl-dev libswresample-dev
 }
 
 GetSources() {
