@@ -32,11 +32,11 @@ BuildOpenSceneGraph() {
     osg_version="3.4.0"
     osg_dir="OpenSceneGraph-${osg_version}"
     osg_archive="${osg_dir}.zip"
-    wget http://trac.openscenegraph.org/downloads/developer_releases/${osg_archive}
-    unzip $osg_archive
-    cd $osg_dir
-    mkdir build
-    cd build
+
+    mkdir osg
+    git clone https://github.com/openscenegraph/OpenSceneGraph/tree/OpenSceneGraph-3.4.0 osg/src
+    mkdir osg/build
+    cd osg/build
     cmake ../src
     make
     sudo make install
