@@ -62,6 +62,8 @@ PackageProject() {
     cd ${root_dir}
     cp openmw.cfg ${bin_dir}
     mkdir ${bin_dir}/data
+    mkdir ${bin_dir}/lib
+    cp /usr/lib/x86_64-linux-gnu/libosg* ${bin_dir}/lib
     tar cvzf openmw-${version}.tar.gz openmw
 }
 
