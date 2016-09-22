@@ -56,9 +56,9 @@ PackageProject() {
     rm -rf ${bin_dir}
     mkdir -p ${bin_dir}
     cd ${build_dir}
-    mv bsatool esmtool gamecontrollerdb.txt openmw-cs.cfg openmw openmw-cs \
-    openmw-essimporter openmw-iniimporter openmw-launcher openmw-wizard resources \
-    settings-default.cfg ${bin_dir}
+    cp bsatool esmtool gamecontrollerdb.txt openmw-cs.cfg openmw openmw-cs \
+      openmw-essimporter openmw-iniimporter openmw-launcher openmw-wizard resources \
+      settings-default.cfg ${bin_dir}
     cd ${root_dir}
     cp openmw.cfg ${bin_dir}
     mkdir ${bin_dir}/data
