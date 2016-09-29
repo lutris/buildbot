@@ -56,6 +56,7 @@ BuildElectron() {
     git pull
 
     npm install --only=dev
+    cd app && npm install --only=production && cd ..
 
     # build
     make cleanbuild
@@ -80,7 +81,7 @@ PackageElectron() {
         electron_arch="ia32"
     fi
 
-    tar -zcf ${dest_file} -C "$build_dir/electron-runner-linux-${electron_arch}" .
+    tar -zcf ${dest_file} -C "$build_dir/electron-${version}-${electron_arch}" .
 
     runner_upload ${runner_name} ${version} ${arch} ${dest_file}
 }
