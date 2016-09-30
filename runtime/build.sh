@@ -44,6 +44,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libncurses*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libtinfo*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libtdb.so*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libxml2.so*
     rm -rf amd64/usr/share/doc
     rm -rf amd64/usr/share/glib-2.0
     rm -rf i386/lib/i386-linux-gnu/libgcc_s.so.1
@@ -65,6 +66,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/usr/lib/i386-linux-gnu/libncurses*
     rm -rf i386/usr/lib/i386-linux-gnu/libtinfo*
     rm -rf i386/usr/lib/i386-linux-gnu/libtdb.so*
+    rm -rf i386/usr/lib/i386-linux-gnu/libxml2.so*
     rm -rf i386/usr/share/doc
     rm -rf i386/usr/share/glib-2.0
     cd ..
