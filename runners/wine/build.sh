@@ -19,7 +19,7 @@ arch=$(uname -m)
 version="1.8"
 configure_opts=""
 
-params=$(getopt -n $0 -o v:sn6k --long version:,staging,noupload,64bit,keep -- "$@")
+params=$(getopt -n $0 -o v:snd6k --long version:,staging,noupload,dependencies,64bit,keep -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
