@@ -10,4 +10,4 @@ if [ ! -d ".dotfiles" ]; then
     cd
 fi
 
-git clone git@github.com:lutris/buildbot.git
+git clone https://github.com/lutris/buildbot.git

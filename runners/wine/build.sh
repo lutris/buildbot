@@ -35,7 +35,7 @@ done
 
 InstallDependencies() {
     # libcups2-dev should maybe be installed but depends on libgnutls-dev
-    # which conflicts with libgnutls28-dev 
+    # which conflicts with libgnutls28-dev
     install_deps flex bison libfreetype6-dev libpulse-dev libattr1-dev libtxc-dxtn-dev \
                 libva-dev libva-drm1 autoconf autotools-dev debhelper desktop-file-utils \
                 docbook-to-man docbook-utils docbook-xsl fontforge gettext libasound2-dev \
