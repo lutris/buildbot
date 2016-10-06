@@ -53,10 +53,28 @@ BuildRetroarch() {
 
 BuildLibretroCore() {
     core="$1"
+    is_hw=0
     cd ${source_dir}
+    if [ "$core" = "mednafen_psx_hw" ]; then
+        core="mednafen_psx"
+        is_hw=1
+        if [ ! -d $core ]; then
+            echo "You must first build mednafen_psx"
+            exit 2
+        fi
+        cd mednafen_psx
+        sed -ri "s/(HAVE_OPENGL ?= ?)0/\11/" Makefile
+        cd ..
+    fi
     SHALLOW_CLONE=1 ./libretro-fetch.sh $core
     ./libretro-super.sh $core
     ./libretro-install.sh ${cores_dir}
+    if [ $is_hw = 1 ]; then
+        cd $core
+        git reset --hard
+        cd ..
+        core="mednafen_psx_hw"
+    fi
 }
 
 PackageRetroarch() {
