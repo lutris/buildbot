@@ -8,16 +8,16 @@ source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
 root_dir=$(pwd)
-version=0.4.0
+version=0.5.0
 arch=$(uname -m)
 source_dir=${root_dir}/supertux-${version}
 build_dir=${root_dir}/supertux-build
 bin_dir=${root_dir}/supertux
 
-deps="libphysfs-dev libcurl4-gnutls-dev libglew-dev libsdl2-image-dev libboost1.54-dev libopenal-dev libvorbis-dev"
+deps="libphysfs-dev libcurl4-gnutls-dev libglew-dev libsdl2-image-dev libboost-all-dev libopenal-dev libvorbis-dev"
 install_deps $deps
 
-clone https://github.com/SuperTux/supertux.git $source_dir
+clone https://github.com/SuperTux/supertux.git $source_dir true "v$version"
 cd $source_dir
 git submodule update --init --recursive
 
