@@ -65,7 +65,6 @@ BuildLibretroCore() {
         fi
         cd $core_dir
         sed -ri "s/(HAVE_OPENGL ?= ?)0/\11/" Makefile
-        cd ..
         make clean
         make
         cp mednafen_psx_hw_libretro.so ${cores_dir}
