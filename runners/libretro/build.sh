@@ -58,11 +58,12 @@ BuildLibretroCore() {
     if [ "$core" = "mednafen_psx_hw" ]; then
         core="mednafen_psx"
         is_hw=1
-        if [ ! -d $core ]; then
+        core_dir="libretro-$core"
+        if [ ! -d "$core_dir" ]; then
             echo "You must first build mednafen_psx"
             exit 2
         fi
-        cd mednafen_psx
+        cd $core_dir
         sed -ri "s/(HAVE_OPENGL ?= ?)0/\11/" Makefile
         cd ..
     fi
