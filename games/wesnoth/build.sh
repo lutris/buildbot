@@ -13,6 +13,7 @@ bin_dir="${root_dir}/wesnoth"
 
 InstallBuildDependencies() {
     sudo apt-get build-dep wesnoth
+    install_deps libboost-locale-dev
 }
 
 GetSources() {
