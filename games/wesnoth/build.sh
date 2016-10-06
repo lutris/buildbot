@@ -46,6 +46,7 @@ PackageProject() {
     cp -a icons $bin_dir
     cp -a images $bin_dir
     cp -a fonts $bin_dir
+    cd $root_dir
     tar czf wesnoth-${version}-${arch}-tar.gz
 }
 
