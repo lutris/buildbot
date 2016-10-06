@@ -72,7 +72,7 @@ BuildLibretroCore() {
         cd ..
     else
         SHALLOW_CLONE=1 ./libretro-fetch.sh $core
-        ./libretro-super.sh $core
+        ./libretro-build.sh $core
         ./libretro-install.sh ${cores_dir}
     fi
 }
