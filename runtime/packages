@@ -30,6 +30,7 @@ libfluidsynth1                    libfluidsynth.so.1
 libfontconfig1                    libfontconfig.so.1
 libfribidi0                       libfribidi.so.0
 libfuse2                          libfuse.so.2
+libgloox11                        libgloox.so.11
 libgomp1                          libgomp.so.1
 libicu52                          libicui18n.so.52 libicuuc.so.52 libicudata.so.52
 libirrlicht1.8                    libIrrlicht.so.1.8
