@@ -34,6 +34,16 @@ PackageProject() {
     rm -rf $bin_dir
     cd $source_dir
     cp -a binaries $bin_dir
+    cd $bin_dir
+    rm -f system/*.dll
+    rm -f system/*.pdb
+    rm -f system/*.exe
+    rm -f system/*.sys
+    rm -f system/*.bat
+    rm -f system/test
+    strip system/pyrogenesis
+    strip system/ActorEditor
+    strip system/*.so
     cd $root_dir
     tar czf 0ad-${version}-${arch}.tar.gz 0ad
 }
