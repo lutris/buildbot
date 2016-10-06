@@ -34,6 +34,7 @@ PackageProject() {
     rm -rf $bin_dir
     cd $source_dir
     cp -a binaries $bin_dir
+    cd $root_dir
     tar czf 0ad-${version}-${arch}.tar.gz 0ad
 }
 
