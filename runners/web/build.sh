@@ -83,7 +83,7 @@ PackageWeb() {
         package_arch="x86_32"
     fi
 
-    tar -zcf "$dest_file" -C "$build_dir/${runner_name}-${package_arch}" .
+    tar -zcf "$dest_file" -C "$build_dir/${runner_name}-${package_arch}" --transform "s,^./,./${runner_name}/," .
 
     runner_upload ${runner_name} ${version} ${arch} "$dest_file"
 }
