@@ -66,15 +66,15 @@ BuildLibretroCore() {
         cd $core_dir
         sed -ri "s/(HAVE_OPENGL ?= ?)0/\11/" Makefile
         cd ..
-    fi
-    SHALLOW_CLONE=1 ./libretro-fetch.sh $core
-    ./libretro-super.sh $core
-    ./libretro-install.sh ${cores_dir}
-    if [ $is_hw = 1 ]; then
-        cd $core
+        make clean
+        make
+        cp mednafen_psx_hw_libretro.so ${cores_dir}
         git reset --hard
         cd ..
-        core="mednafen_psx_hw"
+    else
+        SHALLOW_CLONE=1 ./libretro-fetch.sh $core
+        ./libretro-super.sh $core
+        ./libretro-install.sh ${cores_dir}
     fi
 }
 
