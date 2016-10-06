@@ -46,7 +46,7 @@ InstallDeps() {
     npm set progress=false
 }
 
-BuildElectron() {
+BuildWeb() {
     # fetch
     if [ ! -d "$source_dir" ]
     then
@@ -55,8 +55,9 @@ BuildElectron() {
     cd "$source_dir"
     git pull
 
+    echo "Installing node modules..."
     npm install --only=dev
-    cd app && npm install --only=production && cd ..
+    cd electron-launcher && npm install --only=production && cd ..
 
     # build
     make cleanbuild
@@ -65,30 +66,31 @@ BuildElectron() {
     cd "$root_dir"
 }
 
-PackageElectron() {
+PackageWeb() {
+
     cd "$source_dir"
 
     version=$(node -p "require('./package.json').version")
 
-    cd ${root_dir}
+    cd "$root_dir"
 
     dest_file="${runner_name}-${version}-${arch}.tar.gz"
 
     if [ "$arch" == "x86_64" ]
     then
-        electron_arch="x64"
+        package_arch="x86_64"
     else
-        electron_arch="ia32"
+        package_arch="x86_32"
     fi
 
-    tar -zcf ${dest_file} -C "$build_dir/electron-${version}-${electron_arch}" .
+    tar -zcf "$dest_file" -C "$build_dir/${runner_name}-${package_arch}" .
 
-    runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+    runner_upload ${runner_name} ${version} ${arch} "$dest_file"
 }
 
 if [ $INSTALL_DEPS ]; then
     InstallDeps
 fi
 
-BuildElectron
-PackageElectron
+BuildWeb
+PackageWeb
