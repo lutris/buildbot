@@ -21,6 +21,12 @@ InstallBuildDependencies() {
 GetSources() {
     cd $root_dir
     svn co http://svn.wildfiregames.com/public/ps/trunk/ 0ad-src
+
+    # To build a specific version use revision numbers available here:
+    # http://trac.wildfiregames.com/wiki/Changelogs
+
+    # For Alpha 20:
+    # svn co -r 17965 http://svn.wildfiregames.com/public/ps/trunk/
 }
 
 BuildProject() {
