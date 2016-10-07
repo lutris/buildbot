@@ -27,7 +27,7 @@ GetSources() {
 }
 
 BuildProject() {
-    cd ${source_dir}
+    cd ${source_dir}/vice
     ./configure --prefix=${bin_dir}
     make
     make install
