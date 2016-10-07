@@ -10,8 +10,7 @@ runner_name=$(get_runner)
 root_dir=$(pwd)
 bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-version="2.4"
-source_dir="${runner_name}-${version}"
+source_dir="${runner_name}-src"
 
 InstallBuildDependencies() {
     deps="libxxf86vm-dev libxmu-dev libxaw7-dev libreadline-dev texinfo xfonts-utils"
@@ -24,12 +23,14 @@ GetSources() {
     #wget ${src_url} -O ${src_archive}
     #tar xzf ${src_archive}
     svn checkout svn://svn.code.sf.net/p/vice-emu/code/trunk ${source_dir}
+    cd $source_dir
+    $version="r$(svn info | grep "^Revision:" | cut -d" " -f 2)"
 }
 
 BuildProject() {
     cd ${source_dir}/vice
     ./autogen.sh
-    ./configure --prefix=${bin_dir}
+    ./configure --enable-sdlui2 --prefix=${bin_dir}
     make
     make install
 }
