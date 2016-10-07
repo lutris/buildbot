@@ -24,7 +24,7 @@ GetSources() {
     #tar xzf ${src_archive}
     svn checkout svn://svn.code.sf.net/p/vice-emu/code/trunk ${source_dir}
     cd $source_dir
-    $version="r$(svn info | grep "^Revision:" | cut -d" " -f 2)"
+    version="r$(svn info | grep "^Revision:" | cut -d" " -f 2)"
 }
 
 BuildProject() {
