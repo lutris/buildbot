@@ -28,6 +28,7 @@ GetSources() {
 
 BuildProject() {
     cd ${source_dir}/vice
+    ./autogen.sh
     ./configure --prefix=${bin_dir}
     make
     make install
