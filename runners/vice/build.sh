@@ -17,12 +17,22 @@ InstallBuildDependencies() {
     install_deps $deps
 }
 
+GetStableRelease() {
+    version='2.4'
+    src_archive="${runner_name}-${version}.tar.gz"
+    src_url="http://sourceforge.net/projects/vice-emu/files/releases/${src_archive}/download"
+    wget ${src_url} -O ${src_archive}
+    tar xzf ${src_archive}
+}
+
 GetSources() {
-    #src_archive="${source_dir}.tar.gz"
-    #src_url="http://sourceforge.net/projects/vice-emu/files/releases/${src_archive}/download"
-    #wget ${src_url} -O ${src_archive}
-    #tar xzf ${src_archive}
-    svn checkout svn://svn.code.sf.net/p/vice-emu/code/trunk ${source_dir}
+
+    if [ ! -d ${source_dir} ]; then
+        svn checkout svn://svn.code.sf.net/p/vice-emu/code/trunk ${source_dir}
+    else
+        cd $source_dir
+        svn up
+    fi
     cd $source_dir
     version="r$(svn info | grep "^Revision:" | cut -d" " -f 2)"
 }
