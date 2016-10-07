@@ -14,7 +14,7 @@ version="2.4"
 source_dir="${runner_name}-${version}"
 
 InstallBuildDependencies() {
-    deps="libxxf86vm-dev libxmu-dev libxaw7-dev libreadline-dev"
+    deps="libxxf86vm-dev libxmu-dev libxaw7-dev libreadline-dev texinfo"
     install_deps $deps
 }
 
