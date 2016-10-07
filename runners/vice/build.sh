@@ -10,7 +10,7 @@ runner_name=$(get_runner)
 root_dir=$(pwd)
 bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-source_dir="${runner_name}-src"
+source_dir="${root}/${runner_name}-src"
 
 InstallBuildDependencies() {
     deps="libxxf86vm-dev libxmu-dev libxaw7-dev libreadline-dev texinfo xfonts-utils"
