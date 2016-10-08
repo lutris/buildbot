@@ -50,7 +50,7 @@ BuildWeb() {
     # fetch
     if [ ! -d "$source_dir" ]
     then
-        git clone https://github.com/daniel-j/lutris-electron-runner.git "$source_dir" || true
+        git clone https://github.com/lutris/web-runner.git "$source_dir" || true
     fi
     cd "$source_dir"
     git pull
