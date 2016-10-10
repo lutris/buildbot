@@ -28,6 +28,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/lib/x86_64-linux-gnu/libgcc_s.so.1
     rm -rf amd64/lib/x86_64-linux-gnu/libglib-2.0.so.0*
     rm -rf amd64/lib/x86_64-linux-gnu/libgpg-error.so.0*
+    rm -rf amd64/lib/x86_64-linux-gnu/libgcrypt.so.*
     rm -rf amd64/lib/x86_64-linux-gnu/libpcre.so.*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/gio
     rm -rf amd64/usr/lib/x86_64-linux-gnu/glib-2.0
@@ -52,6 +53,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/lib/i386-linux-gnu/libgcc_s.so.1
     rm -rf i386/lib/i386-linux-gnu/libglib-2.0.so.0*
     rm -rf i386/lib/i386-linux-gnu/libgpg-error.so.0*
+    rm -rf i386/lib/i386-linux-gnu/libgcrypt.so.*
     rm -rf i386/lib/i386-linux-gnu/libpcre.so*
     rm -rf i386/usr/lib/i386-linux-gnu/gio
     rm -rf i386/usr/lib/i386-linux-gnu/glib-2.0
