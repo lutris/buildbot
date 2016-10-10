@@ -44,7 +44,7 @@ def build_runtime():
     for lib_package in libs:
         print "Installing %s" % lib_package
         subprocess.Popen(
-            ['apt-get', 'install', '-y', '-q=2', lib_package]
+            ['apt-get', 'install', '-y', '--force-yes', '-q=2', lib_package]
         ).communicate()
         required_libs += libs[lib_package]
     lib_paths = find_lib_paths(required_libs)
