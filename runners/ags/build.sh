@@ -63,16 +63,17 @@ done
 
 (
 cat << 'EOF'
-#!/bin/sh
+#!/bin/bash
 SCRIPTPATH="$(dirname "$(readlink -f $0)")"
-if test $(uname -m) = x86_64
-then
-    export LD_LIBRARY_PATH=$SCRIPTPATH/data/lib64:$LD_LIBRARY_PATH
-    ALLEGRO_MODULES="$SCRIPTPATH/data/lib64" "$SCRIPTPATH/ags" "$@"
+ARCH=$(uname -m)
+if [ "$ARCH" = "x86_64" ]; then
+    lib_dir=$SCRIPTPATH/data/lib64
 else
-    export LD_LIBRARY_PATH=$SCRIPTPATH/data/lib32:$LD_LIBRARY_PATH
-    ALLEGRO_MODULES="$SCRIPTPATH/data/lib32" "$SCRIPTPATH/ags" "$@"
+    lib_dir=$SCRIPTPATH/data/lib32
 fi
+
+export LD_LIBRARY_PATH="$lib_dir:$LD_LIBRARY_PATH"
+ALLEGRO_MODULES="$lib_dir" "$SCRIPTPATH/ags" "$@"
 EOF
 ) > ags/ags.sh
 chmod +x ags/ags.sh
