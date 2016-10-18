@@ -49,7 +49,7 @@ InstallDependencies() {
                 libxml2-dev libxrandr-dev libxrender-dev libxslt1-dev libxt-dev \
                 libxxf86vm-dev linux-kernel-headers ocl-icd-opencl-dev oss4-dev prelink \
                 valgrind unixodbc-dev x11proto-xinerama-dev libgstreamer1.0-dev \
-                libgstreamer-plugins-base1.0-dev
+                libgstreamer-plugins-base1.0-dev gawk
 }
 
 DownloadWine() {
