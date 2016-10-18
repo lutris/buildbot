@@ -65,6 +65,7 @@ libsdl-sound1.2                   libSDL_sound-1.0.so.1
 libsdl-ttf2.0-0                   libSDL_ttf-2.0.so.0
 libsnappy1                        libsnappy.so.1
 libsoundtouch0                    libSoundTouch.so.0
+libsoxr0                          libsoxr.so.0
 libstdc++5                        libstdc++.so.5
 libtdb1                           libtdb.so.1
 libthai0                          libthai.so.0
