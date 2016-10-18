@@ -76,16 +76,21 @@ PackageWeb() {
 
     dest_file="${runner_name}-${version}-${arch}.tar.gz"
 
-    if [ "$arch" == "x86_64" ]
+    package_arch="$arch"
+    lutris_arch="$arch"
+
+    if [ "$arch" == "i386" ]
     then
-        package_arch="x86_64"
-    else
         package_arch="x86_32"
+    elif [ "$arch" == "armv7l" ]
+    then
+        package_arch="armv7"
+        lutris_arch="armv7"
     fi
 
     tar -zcf "$dest_file" -C "$build_dir/${runner_name}-${package_arch}" --transform "s,^./,./${runner_name}/," .
 
-    runner_upload ${runner_name} ${version} ${arch} "$dest_file"
+    runner_upload ${runner_name} ${version} ${lutris_arch} "$dest_file"
 }
 
 if [ $INSTALL_DEPS ]; then
