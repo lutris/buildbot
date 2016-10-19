@@ -6,20 +6,23 @@ source ${lib_path}path.sh
 source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
-params=$(getopt -n $0 -o gd --long dependencies -- "$@")
-eval set -- $params
-while true ; do
-    case "$1" in
-        -d|--dependencies) INSTALL_DEPS=1; shift ;;
-        *) shift; break ;;
-    esac
-done
-
 runner_name="$(get_runner)"
 root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-src/build"
 arch=$(uname -m)
+
+params=$(getopt -n $0 -o gd --long armv7l --long i686 --long x86_64 -- "$@")
+eval set -- $params
+while true ; do
+    case "$1" in
+        #-d|--dependencies) INSTALL_DEPS=1; shift ;;
+        --armv7l) arch="armv7l"; shift ;;
+        --i686) arch="i686"; shift ;;
+        --x86_64) arch="x86_64"; shift ;;
+        *) shift; break ;;
+    esac
+done
 
 export N_PREFIX=$root_dir/n # $root_dir shouldn't be needed, but an absolute path seems to be required by n
 export PATH=$PATH:$N_PREFIX/.repo/bin:$N_PREFIX/bin
@@ -77,25 +80,21 @@ PackageWeb() {
     dest_file="${runner_name}-${version}-${arch}.tar.gz"
 
     package_arch="$arch"
-    lutris_arch="$arch"
 
-    if [ "$arch" == "i386" ]
+    if [ "$arch" == "i386" ] || [ "$arch" == "i686" ]
     then
         package_arch="x86_32"
     elif [ "$arch" == "armv7l" ]
     then
         package_arch="armv7"
-        lutris_arch="armv7"
     fi
 
     tar -zcf "$dest_file" -C "$build_dir/${runner_name}-${package_arch}" --transform "s,^./,./${runner_name}/," .
 
-    runner_upload ${runner_name} ${version} ${lutris_arch} "$dest_file"
+    runner_upload ${runner_name} ${version} ${arch} "$dest_file"
 }
 
-if [ $INSTALL_DEPS ]; then
-    InstallDeps
-fi
 
+InstallDeps
 BuildWeb
 PackageWeb
