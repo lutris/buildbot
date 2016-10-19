@@ -7,8 +7,8 @@ runner_upload() {
     if [[ "$architecture" == "i686" ]]; then
         architecture="i386"
     fi
-    if [[ "$architecture" == "i686" ]]; then
-        architecture="i386"
+    if [[ "$architecture" == "armv7l" ]]; then
+        architecture="armv7"
     fi
 
     filename=$4
