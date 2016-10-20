@@ -85,6 +85,7 @@ if [ "$STEAM" = '1' ]; then
 fi
 
 # Lutris runtime
+rm -rf ${runtime_dir}
 mkdir -p ${runtime_dir}
 sudo python2 lutrisrt.py
 sudo chown $(id -u):$(id -g) runtime -R
