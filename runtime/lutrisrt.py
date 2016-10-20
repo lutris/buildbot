@@ -49,6 +49,7 @@ def build_runtime():
         required_libs += libs[lib_package]
     lib_paths = find_lib_paths(required_libs)
     for lib in lib_paths:
+        print "Copying ", lib
         shutil.copy(lib, RUNTIME_DIR)
 
 
