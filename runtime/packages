@@ -30,7 +30,6 @@ libfluidsynth1                    libfluidsynth.so.1
 libfontconfig1                    libfontconfig.so.1
 libfribidi0                       libfribidi.so.0
 libfuse2                          libfuse.so.2
-libgcrypt11                       libgcrypt.so.11
 libgloox11                        libgloox.so.11
 libgif4                           libgif.so.4
 libgomp1                          libgomp.so.1
