@@ -27,7 +27,6 @@ BuildProject() {
     make 7z
     rm -rf $bin_dir
     mv ./bin $bin_dir
-    cd $bin
 }
 
 PackageProject() {
