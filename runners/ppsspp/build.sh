@@ -13,7 +13,7 @@ source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-version="1.1.1"
+version="1.3.0"
 
 deps=""
 
