@@ -15,7 +15,8 @@ bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
 version="1.3.0"
 
-deps=""
+deps="cmake libsdl2-dev"
+install_deps $deps
 
 clone https://github.com/hrydgard/ppsspp.git $source_dir
 cd $source_dir
