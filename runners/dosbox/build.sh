@@ -28,7 +28,7 @@ arch=$(uname -m)
 
 
 InstallDeps() {
-    deps="subversion"
+    deps="subversion libsdl-sound1.2-dev libsdl1.2-dev libpng-dev libsdl-net1.2-dev libasound2-dev autotools-dev"
     install_deps $deps
     if [ $GLIDE ]; then
         cd $root_dir
