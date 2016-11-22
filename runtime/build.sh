@@ -37,6 +37,7 @@ if [ "$STEAM" = '1' ]; then
     # rm -rf amd64/usr/lib/x86_64-linux-gnu/libX11.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libatk-1.0.so.0*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libcairo.so.2*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libpango*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libfontconfig.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgio-2.0.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgmodule-2.0.so*
@@ -62,6 +63,7 @@ if [ "$STEAM" = '1' ]; then
     # rm -rf i386/usr/lib/i386-linux-gnu/libX11.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libatk-1.0.so.0*
     rm -rf i386/usr/lib/i386-linux-gnu/libcairo.so.2*
+    rm -rf i386/usr/lib/i386-linux-gnu/libpango*
     rm -rf i386/usr/lib/i386-linux-gnu/libfontconfig.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libgio-2.0.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libgmodule-2.0.so*
