@@ -13,7 +13,7 @@ arch=$(uname -m)
 source_dir="${root_dir}/${runner_name}-src"
 
 InstallBuildDependencies() {
-    deps="libxxf86vm-dev libxmu-dev libxaw7-dev libreadline-dev texinfo xfonts-utils"
+    deps="libxxf86vm-dev libxmu-dev libxaw7-dev libreadline-dev texinfo xfonts-utils automake"
     install_deps $deps
 }
 
