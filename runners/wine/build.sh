@@ -53,7 +53,7 @@ InstallDependencies() {
                 krb5-multidev libacl1-dev libatk-bridge2.0-0 libatk-bridge2.0-dev \
                 libatk1.0-dev libatspi2.0-0 libaudiofile-dev libaudiofile1 \
                 libcairo-gobject2 libcairo-script-interpreter2 libcairo2-dev \
-                libcloog-ppl1 libcolord1 libcups2-dev libdconf1 libesd0 libesd0-dev \
+                libcloog-ppl1 libcups2-dev libdconf1 libesd0 libesd0-dev \
                 libgcc-4.7-dev libgdk-pixbuf2.0-0 libgdk-pixbuf2.0-common \
                 libgdk-pixbuf2.0-dev libgnutls-dev libgssrpc4 libgtk-3-0 \
                 libgtk-3-common libgtk-3-dev libharfbuzz-dev libharfbuzz-gobject0 \
@@ -64,9 +64,9 @@ InstallDependencies() {
 
     release=$(lsb_release -rs)
     if [ "$release" = "16.04" ]; then
-        install_deps libtxc-dxtn-s2tc-dev linux-libc-dev libkdb5-8 libppl13v5
+        install_deps libtxc-dxtn-s2tc-dev linux-libc-dev libkdb5-8 libppl13v5 libcolord2
     else
-        install_deps libtxc-dxtn-dev linux-kernel-headers libkdb5-7 libppl13
+        install_deps libtxc-dxtn-dev linux-kernel-headers libkdb5-7 libppl13 libcolord1
     fi
 }
 
