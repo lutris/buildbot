@@ -13,8 +13,16 @@ version=1.0.3.1401
 arch=$(uname -m)
 source_dir=${root_dir}/${package_name}-src
 
-deps="libsdl2-dev libopenal-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev"
-install_deps $deps
+InstallDependencies() {
+    if [ "$(lsb_release -is)" = "Solus" ]; then
+        sudo eopkg install cmake make g++ binutils ffmpeg-devel sdl2-devel openal-soft-devel libglu-devel
+    else
+        deps="libsdl2-dev libopenal-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev"
+        install_deps $deps
+    fi
+}
+
+InstallDependencies
 
 clone https://github.com/RobertBeckebans/RBDOOM-3-BFG.git ${source_dir}
 
