@@ -1,0 +1,776 @@
+diff --git a/dlls/bcrypt/bcrypt.spec b/dlls/bcrypt/bcrypt.spec
+index e299fe0..cd9ae3e 100644
+--- a/dlls/bcrypt/bcrypt.spec
++++ b/dlls/bcrypt/bcrypt.spec
+@@ -5,15 +5,15 @@
+ @ stub BCryptConfigureContextFunction
+ @ stub BCryptCreateContext
+ @ stdcall BCryptCreateHash(ptr ptr ptr long ptr long long)
+-@ stub BCryptDecrypt
++@ stdcall BCryptDecrypt(ptr ptr long ptr ptr long ptr long ptr long)
+ @ stub BCryptDeleteContext
+ @ stub BCryptDeriveKey
+ @ stdcall BCryptDestroyHash(ptr)
+-@ stub BCryptDestroyKey
++@ stdcall BCryptDestroyKey(ptr)
+ @ stub BCryptDestroySecret
+-@ stub BCryptDuplicateHash
++@ stdcall BCryptDuplicateHash(ptr ptr ptr long long)
+ @ stub BCryptDuplicateKey
+-@ stub BCryptEncrypt
++@ stdcall BCryptEncrypt(ptr ptr long ptr ptr long ptr long ptr long)
+ @ stdcall BCryptEnumAlgorithms(long ptr ptr long)
+ @ stub BCryptEnumContextFunctionProviders
+ @ stub BCryptEnumContextFunctions
+@@ -26,7 +26,7 @@
+ @ stub BCryptFreeBuffer
+ @ stdcall BCryptGenRandom(ptr ptr long long)
+ @ stub BCryptGenerateKeyPair
+-@ stub BCryptGenerateSymmetricKey
++@ stdcall BCryptGenerateSymmetricKey(ptr ptr ptr long ptr long long)
+ @ stdcall BCryptGetFipsAlgorithmMode(ptr)
+ @ stdcall BCryptGetProperty(ptr wstr ptr long ptr long)
+ @ stdcall BCryptHash(ptr ptr long ptr long ptr long)
+diff --git a/dlls/bcrypt/bcrypt_main.c b/dlls/bcrypt/bcrypt_main.c
+index 6023c94..715c416 100644
+--- a/dlls/bcrypt/bcrypt_main.c
++++ b/dlls/bcrypt/bcrypt_main.c
+@@ -47,6 +47,8 @@ static HINSTANCE instance;
+ #if defined(HAVE_GNUTLS_HASH) && !defined(HAVE_COMMONCRYPTO_COMMONDIGEST_H)
+ WINE_DECLARE_DEBUG_CHANNEL(winediag);
+ 
++#define MAX_DUPLICATES 1024
++
+ static void *libgnutls_handle;
+ #define MAKE_FUNCPTR(f) static typeof(f) * p##f
+ MAKE_FUNCPTR(gnutls_global_deinit);
+@@ -59,6 +61,13 @@ MAKE_FUNCPTR(gnutls_hash_init);
+ MAKE_FUNCPTR(gnutls_hmac);
+ MAKE_FUNCPTR(gnutls_hmac_deinit);
+ MAKE_FUNCPTR(gnutls_hmac_init);
++// DOOM FUNCTIONS START
++MAKE_FUNCPTR(gnutls_cipher_deinit);
++MAKE_FUNCPTR(gnutls_cipher_init);
++MAKE_FUNCPTR(gnutls_cipher_encrypt2);
++MAKE_FUNCPTR(gnutls_cipher_decrypt2);
++MAKE_FUNCPTR(gnutls_cipher_set_iv);
++// DOOM FUNCTIONS END
+ MAKE_FUNCPTR(gnutls_perror);
+ #undef MAKE_FUNCPTR
+ 
+@@ -94,6 +103,13 @@ static BOOL gnutls_initialize(void)
+     LOAD_FUNCPTR(gnutls_hmac);
+     LOAD_FUNCPTR(gnutls_hmac_deinit);
+     LOAD_FUNCPTR(gnutls_hmac_init);
++// DOOM FUNCTIONS START
++    LOAD_FUNCPTR(gnutls_cipher_deinit);
++    LOAD_FUNCPTR(gnutls_cipher_init);
++    LOAD_FUNCPTR(gnutls_cipher_encrypt2);
++    LOAD_FUNCPTR(gnutls_cipher_decrypt2);
++    LOAD_FUNCPTR(gnutls_cipher_set_iv);
++// DOOM FUNCTIONS END
+     LOAD_FUNCPTR(gnutls_perror)
+ #undef LOAD_FUNCPTR
+ 
+@@ -138,6 +154,8 @@ NTSTATUS WINAPI BCryptEnumAlgorithms(ULONG dwAlgOperations, ULONG *pAlgCount,
+ 
+ #define MAGIC_ALG  (('A' << 24) | ('L' << 16) | ('G' << 8) | '0')
+ #define MAGIC_HASH (('H' << 24) | ('A' << 16) | ('S' << 8) | 'H')
++#define MAGIC_KEY  (('K' << 24) | ('E' << 16) | ('Y' << 8) | '0')
++
+ struct object
+ {
+     ULONG magic;
+@@ -150,7 +168,9 @@ enum alg_id
+     ALG_ID_SHA1,
+     ALG_ID_SHA256,
+     ALG_ID_SHA384,
+-    ALG_ID_SHA512
++    ALG_ID_SHA512,
++
++    ALG_ID_AES
+ };
+ 
+ static const struct {
+@@ -229,12 +249,13 @@ NTSTATUS WINAPI BCryptOpenAlgorithmProvider( BCRYPT_ALG_HANDLE *handle, LPCWSTR
+         return STATUS_NOT_IMPLEMENTED;
+     }
+ 
+-    if (!strcmpW( id, BCRYPT_SHA1_ALGORITHM )) alg_id = ALG_ID_SHA1;
+-    else if (!strcmpW( id, BCRYPT_MD5_ALGORITHM )) alg_id = ALG_ID_MD5;
+-    else if (!strcmpW( id, BCRYPT_RNG_ALGORITHM )) alg_id = ALG_ID_RNG;
++    if      (!strcmpW( id, BCRYPT_SHA1_ALGORITHM   )) alg_id = ALG_ID_SHA1;
++    else if (!strcmpW( id, BCRYPT_MD5_ALGORITHM    )) alg_id = ALG_ID_MD5;
++    else if (!strcmpW( id, BCRYPT_RNG_ALGORITHM    )) alg_id = ALG_ID_RNG;
+     else if (!strcmpW( id, BCRYPT_SHA256_ALGORITHM )) alg_id = ALG_ID_SHA256;
+     else if (!strcmpW( id, BCRYPT_SHA384_ALGORITHM )) alg_id = ALG_ID_SHA384;
+     else if (!strcmpW( id, BCRYPT_SHA512_ALGORITHM )) alg_id = ALG_ID_SHA512;
++    else if (!strcmpW( id, BCRYPT_AES_ALGORITHM    )) alg_id = ALG_ID_AES;
+     else
+     {
+         FIXME( "algorithm %s not supported\n", debugstr_w(id) );
+@@ -434,11 +455,15 @@ static NTSTATUS hmac_finish( struct hash *hash, UCHAR *output, ULONG size )
+     return STATUS_SUCCESS;
+ }
+ #elif defined(HAVE_GNUTLS_HASH)
++
+ struct hash
+ {
+     struct object    hdr;
+     enum alg_id      alg_id;
+     BOOL hmac;
++
++    struct hash *duplicate;
++
+     union
+     {
+         gnutls_hash_hd_t hash_handle;
+@@ -446,6 +471,15 @@ struct hash
+     } u;
+ };
+ 
++struct key
++{
++    struct object    hdr;
++    enum alg_id      alg_id;
++
++    gnutls_datum_t     key_storage;
++    gnutls_cipher_hd_t cypher_handle;
++};
++
+ static NTSTATUS hash_init( struct hash *hash )
+ {
+     gnutls_digest_algorithm_t alg;
+@@ -541,6 +575,318 @@ static NTSTATUS hmac_finish( struct hash *hash, UCHAR *output, ULONG size )
+     pgnutls_hmac_deinit( hash->u.hmac_handle, output );
+     return STATUS_SUCCESS;
+ }
++
++// DOOM FUNCTIONS START
++
++static NTSTATUS hashmac_destroy_single( struct hash *hashmac )
++{
++    // TRACE( "%p\n", hashmac );
++
++    if (!hashmac) {
++        // TRACE( "HANDLE IS NULL\n" );
++        return STATUS_SUCCESS;
++    }
++
++    HeapFree( GetProcessHeap(), 0, hashmac );
++
++    // TRACE( "hash destroy OK\n" );
++    return STATUS_SUCCESS;
++}
++
++static NTSTATUS hashmac_finish_single( struct hash *hashmac, UCHAR *output, ULONG size )
++{
++    // TRACE( "%p\n", hashmac );
++
++    if (!hashmac) {
++        // TRACE( "HANDLE IS NULL\n" );
++        return STATUS_SUCCESS;
++    }
++
++    if (hashmac->hmac)
++    {
++        // TRACE( "Hash is HMAC\n" );
++        hmac_finish(hashmac, output, size);
++    }
++    else
++    {
++        // TRACE( "Hash is NOT HMAC\n" );
++        hash_finish(hashmac, output, size);
++    }
++
++    // TRACE( "hash finish OK\n" );
++    return STATUS_SUCCESS;
++}
++
++static NTSTATUS hashmac_update_single( struct hash *hashmac, UCHAR *input, ULONG size )
++{
++    // TRACE( "%p\n", hashmac);
++
++    if (!hashmac) {
++        // TRACE( "HANDLE IS NULL\n" );
++        return STATUS_SUCCESS;
++    }
++
++    if (hashmac->hmac)
++    {
++        // TRACE( "Hash is HMAC\n" );
++        return hmac_update(hashmac, input, size);
++    }
++    else
++    {
++        // TRACE( "Hash is NOT HMAC\n" );
++        return hash_update(hashmac, input, size);
++    }
++}
++
++static NTSTATUS hashmac_init_single( struct hash **p_hashmac, struct algorithm *alg, UCHAR *secret, ULONG secret_size )
++{
++    struct hash *hashmac;
++    NTSTATUS status;
++
++    // TRACE( "%p\n", p_hashmac );
++
++    hashmac = HeapAlloc( GetProcessHeap(), 0, sizeof(*hashmac) );
++    if (!hashmac) {
++        return STATUS_NO_MEMORY;
++    }
++
++    hashmac->duplicate = NULL;
++
++    hashmac->hdr.magic = MAGIC_HASH;
++    hashmac->alg_id    = alg->id;
++    hashmac->hmac      = alg->hmac;
++
++    if (hashmac->hmac)
++    {
++        // TRACE( "Hash is HMAC\n" );
++        status = hmac_init( hashmac, secret, secret_size );
++    }
++    else
++    {
++        // TRACE( "Hash is NOT HMAC\n" );
++        status = hash_init( hashmac );
++    }
++
++    if (status != STATUS_SUCCESS)
++    {
++        // TRACE( "hash init ERR\n" );
++        HeapFree( GetProcessHeap(), 0, hashmac );
++        return status;
++    }
++
++    *p_hashmac = hashmac;
++    // TRACE( "hash init OK\n" );
++    return STATUS_SUCCESS;
++}
++
++static NTSTATUS hashmac_destroy_duplicated( struct hash *root )
++{
++    struct hash *child;
++
++    // TRACE( "%p\n", root );
++
++    while (root) {
++        child = root->duplicate;
++
++        hashmac_destroy_single(root);
++
++        root = child;
++    }
++
++    // TRACE( "hashes destroy OK\n" );
++    return STATUS_SUCCESS;
++}
++
++static NTSTATUS hashmac_finish_duplicated( struct hash *root, UCHAR *output, ULONG size )
++{
++    struct hash *child;
++    BOOL done = FALSE;
++
++    // TRACE( "%p\n", root );
++
++    while (root) {
++        child = root->duplicate;
++
++        if (done) {
++            hashmac_finish_single(root, NULL, 0);
++        } else {
++            hashmac_finish_single(root, output, size);
++            done = TRUE;
++        }
++
++        root = child;
++    }
++
++    // TRACE( "hashes finish OK\n" );
++    return STATUS_SUCCESS;
++}
++
++static NTSTATUS hashmac_update_duplicated( struct hash *root, UCHAR *input, ULONG size )
++{
++    struct hash *child;
++    NTSTATUS status;
++
++    // TRACE( "%p\n", root );
++
++    while (root) {
++        child = root->duplicate;
++
++        status = hashmac_update_single(root, input, size);
++
++        if (status != STATUS_SUCCESS) {
++            ERR( "hashes update ERR\n" );
++            // clean tree leftovers
++            // hashmac_finish_duplicated(root->duplicate, NULL, 0);
++            // hashmac_destroy_duplicated(root->duplicate);
++            return status;
++        }
++
++        root = child;
++    }
++
++    // TRACE( "hashes update OK\n" );
++    return STATUS_SUCCESS;
++}
++
++static NTSTATUS hashmac_init_duplicated( struct hash **p_hashmac, struct algorithm *alg, UCHAR *secret, ULONG secret_size )
++{
++    struct hash *root;
++    struct hash *hash;
++    NTSTATUS status;
++
++    status = hashmac_init_single(&root, alg, secret, secret_size);
++    if (status != STATUS_SUCCESS) {
++        ERR( "hashes init ERR: unabled to create ROOT\n" );
++        return status;
++    }
++
++    hash = root;
++
++    int i;
++    for (i = 0; i < MAX_DUPLICATES; i++) {
++
++        status = hashmac_init_single(&hash->duplicate, alg, secret, secret_size);
++
++        if (status != STATUS_SUCCESS) {
++            ERR( "hashes init ERR: unable to create TREE\n" );
++            hashmac_finish_duplicated(root, NULL, 0);
++            hashmac_destroy_duplicated(root);
++
++            return status;
++        }
++
++        hash = hash->duplicate;
++    }
++
++    *p_hashmac = root;
++
++    // TRACE( "hashes init OK\n" );
++    return STATUS_SUCCESS;
++}
++
++static NTSTATUS hashmac_get_last_duplicate( struct hash *root, struct hash **duplicate_out )
++{
++    struct hash **phash;
++    ULONG count = 0;
++
++    if (!root) {
++        return STATUS_INVALID_HANDLE;
++    }
++
++    if (!root->duplicate) {
++        ERR( "cannot create duplicate: no duplicates left for hash\n" );
++        return STATUS_NO_MEMORY;
++    }
++
++    phash = &root;
++
++    while ((*phash)->duplicate && (*phash)->duplicate->duplicate) {
++        phash = &(*phash)->duplicate;
++        count++;
++    }
++
++    *duplicate_out = (*phash)->duplicate;
++    (*phash)->duplicate = NULL;
++
++    FIXME( "duplicates left for hash %p: %u\n", root, count );
++
++    return STATUS_SUCCESS;
++}
++
++static NTSTATUS key_init( struct key *key, UCHAR *secret, ULONG size )
++{
++    gnutls_cipher_algorithm_t alg;
++
++    if (!libgnutls_handle) return STATUS_INTERNAL_ERROR;
++
++    switch (key->alg_id)
++    {
++    case ALG_ID_AES:
++        switch (size)
++        {
++        case 128 / 8:
++            FIXME( "128 bit key provided\n" );
++            alg = GNUTLS_CIPHER_AES_128_CBC;
++            break;
++        case 192 / 8:
++            FIXME( "192 bit key provided\n" );
++            alg = GNUTLS_CIPHER_AES_192_CBC;
++            break;
++        case 256 / 8:
++            FIXME( "256 bit key provided\n" );
++            alg = GNUTLS_CIPHER_AES_256_CBC;
++            break;
++        default:
++            ERR( "unhandled key size %u\n", size );
++            return STATUS_NOT_IMPLEMENTED;
++        }
++
++        break;
++
++    default:
++        ERR( "unhandled id %u\n", key->alg_id );
++        return STATUS_NOT_IMPLEMENTED;
++    }
++
++    key->key_storage.data = secret;
++    key->key_storage.size = size;
++
++    // if (pgnutls_cipher_init( &key->cypher_handle, alg, &key->key_storage, NULL)) return STATUS_INTERNAL_ERROR;
++    if (pgnutls_cipher_init( &key->cypher_handle, alg, &key->key_storage, NULL)) {
++        ERR("gnutls failed to init cipher");
++        return STATUS_INTERNAL_ERROR;
++    }
++    return STATUS_SUCCESS;
++}
++
++static NTSTATUS key_finish( struct key *key )
++{
++    pgnutls_cipher_deinit ( key->cypher_handle );
++    return STATUS_SUCCESS;
++}
++
++static NTSTATUS key_encrypt( struct key *key, UCHAR *input, ULONG input_size, UCHAR *iv, ULONG iv_size, UCHAR *output, ULONG output_size )
++{
++    if (iv) {
++        pgnutls_cipher_set_iv(key->cypher_handle, iv, iv_size);
++    }
++
++    if (pgnutls_cipher_encrypt2(key->cypher_handle, input, input_size, output, output_size)) return STATUS_INTERNAL_ERROR;
++    return STATUS_SUCCESS;
++}
++
++static NTSTATUS key_decrypt( struct key *key, UCHAR *input, ULONG input_size, UCHAR *iv, ULONG iv_size, UCHAR *output, ULONG output_size )
++{
++    if (iv) {
++        pgnutls_cipher_set_iv(key->cypher_handle, iv, iv_size);
++    }
++
++    if (pgnutls_cipher_decrypt2(key->cypher_handle, input, input_size, output, output_size)) return STATUS_INTERNAL_ERROR;
++    return STATUS_SUCCESS;
++}
++
++// DOOM FUNCTIONS END
++
+ #else
+ struct hash
+ {
+@@ -592,6 +938,13 @@ static NTSTATUS hmac_finish( struct hash *hash, UCHAR *output, ULONG size )
+ #define OBJECT_LENGTH_SHA384    382
+ #define OBJECT_LENGTH_SHA512    382
+ 
++// windows object length is 622, but we're doing memory management inside the lib
++// so we can provide 4 byte size here so DOOM will consume less memory
++#define OBJECT_LENGTH_AES       4
++
++// 128 bit key size default
++#define BLOCK_LENGTH_AES        16
++
+ static NTSTATUS generic_alg_property( enum alg_id id, const WCHAR *prop, UCHAR *buf, ULONG size, ULONG *ret_size )
+ {
+     if (!strcmpW( prop, BCRYPT_HASH_LENGTH ))
+@@ -678,6 +1031,20 @@ static NTSTATUS get_alg_property( enum alg_id id, const WCHAR *prop, UCHAR *buf,
+         FIXME( "unsupported sha512 algorithm property %s\n", debugstr_w(prop) );
+         return STATUS_NOT_IMPLEMENTED;
+ 
++    case ALG_ID_AES:
++        if (!strcmpW( prop, BCRYPT_BLOCK_LENGTH ))
++        {
++            value = BLOCK_LENGTH_AES;
++            break;
++        }
++        if (!strcmpW( prop, BCRYPT_OBJECT_LENGTH ))
++        {
++            value = OBJECT_LENGTH_AES;
++            break;
++        }
++        FIXME( "unsupported aes algorithm property %s\n", debugstr_w(prop) );
++        return STATUS_NOT_IMPLEMENTED;
++
+     default:
+         FIXME( "unsupported algorithm %u\n", id );
+         return STATUS_NOT_IMPLEMENTED;
+@@ -731,15 +1098,15 @@ NTSTATUS WINAPI BCryptGetProperty( BCRYPT_HANDLE handle, LPCWSTR prop, UCHAR *bu
+     }
+ }
+ 
+-NTSTATUS WINAPI BCryptCreateHash( BCRYPT_ALG_HANDLE algorithm, BCRYPT_HASH_HANDLE *handle, UCHAR *object, ULONG objectlen,
+-                                  UCHAR *secret, ULONG secretlen, ULONG flags )
++static NTSTATUS Impl_BCryptCreateHash(BOOL with_duplicates, BCRYPT_ALG_HANDLE algorithm, BCRYPT_HASH_HANDLE *handle, UCHAR *object, ULONG objectlen,
++                                  UCHAR *secret, ULONG secret_size, ULONG flags )
+ {
+     struct algorithm *alg = algorithm;
+     struct hash *hash;
+     NTSTATUS status;
+ 
+     TRACE( "%p, %p, %p, %u, %p, %u, %08x - stub\n", algorithm, handle, object, objectlen,
+-           secret, secretlen, flags );
++           secret, secret_size, flags );
+     if (flags)
+     {
+         FIXME( "unimplemented flags %08x\n", flags );
+@@ -749,30 +1116,30 @@ NTSTATUS WINAPI BCryptCreateHash( BCRYPT_ALG_HANDLE algorithm, BCRYPT_HASH_HANDL
+     if (!alg || alg->hdr.magic != MAGIC_ALG) return STATUS_INVALID_HANDLE;
+     if (object) FIXME( "ignoring object buffer\n" );
+ 
+-    if (!(hash = HeapAlloc( GetProcessHeap(), 0, sizeof(*hash) ))) return STATUS_NO_MEMORY;
+-    hash->hdr.magic = MAGIC_HASH;
+-    hash->alg_id    = alg->id;
+-    hash->hmac      = alg->hmac;
+-
+-    if (hash->hmac)
+-    {
+-        status = hmac_init( hash, secret, secretlen );
+-    }
+-    else
+-    {
+-        status = hash_init( hash );
++    if (with_duplicates) {
++        status = hashmac_init_duplicated(&hash, alg, secret, secret_size);
++    } else {
++        status = hashmac_init_single(&hash, alg, secret, secret_size);
+     }
+ 
+-    if (status != STATUS_SUCCESS)
+-    {
+-        HeapFree( GetProcessHeap(), 0, hash );
++    if (status != STATUS_SUCCESS) {
+         return status;
+     }
+ 
+     *handle = hash;
++
++    TRACE( "hash create OK: %p\n", hash);
+     return STATUS_SUCCESS;
+ }
+ 
++NTSTATUS WINAPI BCryptCreateHash( BCRYPT_ALG_HANDLE algorithm, BCRYPT_HASH_HANDLE *handle, UCHAR *object, ULONG objectlen,
++                                       UCHAR *secret, ULONG secret_size, ULONG flags )
++{
++    // Create duplicates by default
++    BOOL with_duplicates = TRUE;
++    return Impl_BCryptCreateHash( with_duplicates, algorithm, handle, object, objectlen, secret, secret_size, flags );
++}
++
+ NTSTATUS WINAPI BCryptDestroyHash( BCRYPT_HASH_HANDLE handle )
+ {
+     struct hash *hash = handle;
+@@ -780,10 +1147,163 @@ NTSTATUS WINAPI BCryptDestroyHash( BCRYPT_HASH_HANDLE handle )
+     TRACE( "%p\n", handle );
+ 
+     if (!hash || hash->hdr.magic != MAGIC_HASH) return STATUS_INVALID_HANDLE;
+-    HeapFree( GetProcessHeap(), 0, hash );
++
++    // hashmac_destroy_single(hash);
++    hashmac_destroy_duplicated(hash);
++
++    // TRACE( "hash destroy OK\n" );
++    return STATUS_SUCCESS;
++}
++
++NTSTATUS WINAPI BCryptDuplicateHash( BCRYPT_HASH_HANDLE handle, BCRYPT_HASH_HANDLE *hash_handle_out, UCHAR *object, ULONG object_size, ULONG flags)
++{
++    struct hash *hash = handle;
++    struct hash *duplicate;
++    NTSTATUS status;
++
++    TRACE( "%p %p %p %u %08x\n",
++        handle,
++        hash_handle_out,
++        object,
++        object_size,
++        flags
++    );
++
++    if (flags) {
++        FIXME( "unimplemented flags %08x\n", flags );
++    }
++
++    if (object) FIXME( "ignoring object buffer\n" );
++
++    if (!hash || hash->hdr.magic != MAGIC_HASH) return STATUS_INVALID_HANDLE;
++
++    status = hashmac_get_last_duplicate(hash, &duplicate);
++
++    if (status != STATUS_SUCCESS) {
++        return status;
++    }
++
++    *hash_handle_out = duplicate;
++
++    // TRACE( "hash duplicate OK\n" );
+     return STATUS_SUCCESS;
+ }
+ 
++NTSTATUS WINAPI BCryptGenerateSymmetricKey(BCRYPT_ALG_HANDLE algorithm, BCRYPT_KEY_HANDLE *key_handle_out, UCHAR *key_object, ULONG key_object_size, UCHAR *secret, ULONG secret_size, ULONG flags)
++{
++    struct key *key;
++    struct algorithm *alg = algorithm;
++    NTSTATUS status;
++
++    TRACE("%p %p %p %u %p %u %08x\n",
++        algorithm,
++        key_handle_out,
++        key_object,
++        key_object_size,
++        secret,
++        secret_size,
++        flags
++    );
++
++    if (key_object) FIXME( "ignoring object buffer\n" );
++
++    // if (!alg || alg->hdr.magic != MAGIC_ALG) return STATUS_INVALID_HANDLE;
++    if (!alg || alg->hdr.magic != MAGIC_ALG) {
++        FIXME("invalid alg handle");
++        return STATUS_INVALID_HANDLE;
++    }
++
++    if (!(key = HeapAlloc( GetProcessHeap(), 0, sizeof(*key) ))) return STATUS_NO_MEMORY;
++
++    key->hdr.magic = MAGIC_KEY;
++    key->alg_id = alg->id;
++
++    status = key_init(key, secret, secret_size);
++
++    if (status != STATUS_SUCCESS) {
++        ERR("key initiazation failed");
++        HeapFree( GetProcessHeap(), 0, key );
++        return status;
++    }
++
++    *key_handle_out = key;
++    return STATUS_SUCCESS;
++}
++
++NTSTATUS WINAPI BCryptDestroyKey(BCRYPT_KEY_HANDLE handle)
++{
++    struct key *key = handle;
++
++    TRACE( "%p\n", handle );
++
++    // if (!key || key->hdr.magic != MAGIC_KEY) return STATUS_INVALID_HANDLE;
++    if (!key || key->hdr.magic != MAGIC_KEY) {
++        ERR("invalid key handle");
++        return STATUS_INVALID_HANDLE;
++    }
++
++    key_finish(key);
++
++    HeapFree( GetProcessHeap(), 0, key );
++    return STATUS_SUCCESS;
++}
++
++NTSTATUS WINAPI BCryptEncrypt(BCRYPT_KEY_HANDLE handle, UCHAR *pbInput, ULONG cbInput, void *pPaddingInfo, UCHAR *pbIV, ULONG cbIV, UCHAR *pbOutput, ULONG cbOutput, ULONG *pcbResult, ULONG flags)
++{
++    struct key *key = handle;
++
++    TRACE( "%p %p %u %p %p %u %p %u %p %08x\n",
++        handle,
++        pbInput,
++        cbInput,
++        pPaddingInfo,
++        pbIV,
++        cbIV,
++        pbOutput,
++        cbOutput,
++        pcbResult,
++        flags
++    );
++
++    // if (!key || key->hdr.magic != MAGIC_KEY) return STATUS_INVALID_HANDLE;
++    if (!key || key->hdr.magic != MAGIC_KEY) {
++        ERR("invalid key handle");
++        return STATUS_INVALID_HANDLE;
++    }
++
++    *pcbResult = cbOutput;
++
++    return key_encrypt(key, pbInput, cbInput, pbIV, cbIV, pbOutput, cbOutput );
++}
++
++NTSTATUS WINAPI BCryptDecrypt(BCRYPT_KEY_HANDLE handle, UCHAR *pbInput, ULONG cbInput, void *pPaddingInfo, UCHAR *pbIV, ULONG cbIV, UCHAR *pbOutput, ULONG cbOutput, ULONG *pcbResult, ULONG flags)
++{
++    struct key *key = handle;
++
++    TRACE( "%p %p %u %p %p %u %p %u %p %08x\n",
++        handle,
++        pbInput,
++        cbInput,
++        pPaddingInfo,
++        pbIV,
++        cbIV,
++        pbOutput,
++        cbOutput,
++        pcbResult,
++        flags
++    );
++
++    // if (!key || key->hdr.magic != MAGIC_KEY) return STATUS_INVALID_HANDLE;
++    if (!key || key->hdr.magic != MAGIC_KEY) {
++        ERR("invalid key handle");
++        return STATUS_INVALID_HANDLE;
++    }
++
++    *pcbResult = cbOutput;
++
++    return key_decrypt(key, pbInput, cbInput, pbIV, cbIV, pbOutput, cbOutput );
++}
++
+ NTSTATUS WINAPI BCryptHashData( BCRYPT_HASH_HANDLE handle, UCHAR *input, ULONG size, ULONG flags )
+ {
+     struct hash *hash = handle;
+@@ -793,14 +1313,8 @@ NTSTATUS WINAPI BCryptHashData( BCRYPT_HASH_HANDLE handle, UCHAR *input, ULONG s
+     if (!hash || hash->hdr.magic != MAGIC_HASH) return STATUS_INVALID_HANDLE;
+     if (!input) return STATUS_SUCCESS;
+ 
+-    if (hash->hmac)
+-    {
+-        return hmac_update( hash, input, size );
+-    }
+-    else
+-    {
+-        return hash_update( hash, input, size );
+-    }
++    // return hashmac_update_single(hash, input, size);
++    return hashmac_update_duplicated(hash, input, size);
+ }
+ 
+ NTSTATUS WINAPI BCryptFinishHash( BCRYPT_HASH_HANDLE handle, UCHAR *output, ULONG size, ULONG flags )
+@@ -812,14 +1326,8 @@ NTSTATUS WINAPI BCryptFinishHash( BCRYPT_HASH_HANDLE handle, UCHAR *output, ULON
+     if (!hash || hash->hdr.magic != MAGIC_HASH) return STATUS_INVALID_HANDLE;
+     if (!output) return STATUS_INVALID_PARAMETER;
+ 
+-    if (hash->hmac)
+-    {
+-        return hmac_finish( hash, output, size );
+-    }
+-    else
+-    {
+-        return hash_finish( hash, output, size );
+-    }
++    // return hashmac_finish_single(hash, output, size);
++    return hashmac_finish_duplicated(hash, output, size);
+ }
+ 
+ NTSTATUS WINAPI BCryptHash( BCRYPT_ALG_HANDLE algorithm, UCHAR *secret, ULONG secretlen,
+@@ -828,10 +1336,13 @@ NTSTATUS WINAPI BCryptHash( BCRYPT_ALG_HANDLE algorithm, UCHAR *secret, ULONG se
+     NTSTATUS status;
+     BCRYPT_HASH_HANDLE handle;
+ 
++    // Single run, duplicates are useless in this case
++    BOOL with_duplicates = FALSE;
++
+     TRACE( "%p, %p, %u, %p, %u, %p, %u\n", algorithm, secret, secretlen,
+            input, inputlen, output, outputlen );
+ 
+-    status = BCryptCreateHash( algorithm, &handle, NULL, 0, secret, secretlen, 0);
++    status = Impl_BCryptCreateHash( with_duplicates, algorithm, &handle, NULL, 0, secret, secretlen, 0 );
+     if (status != STATUS_SUCCESS)
+     {
+         return status;
