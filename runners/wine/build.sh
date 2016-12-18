@@ -33,6 +33,20 @@ while true ; do
     esac
 done
 
+if [ "$STAGING" ]; then
+    filename_opts="staging-"
+fi
+
+# Build Wine, for the WOW64 version, this will be the regular build of 32bit wine
+if [ "$WOW64" ]; then
+    # Change arch name, this is used in the final file name and we want the
+    # x86_64 part even on the 32bit container for WOW64.
+    arch="x86_64"
+fi
+
+bin_dir="${filename_opts}${version}-${arch}"
+wine32_archive="${bin_dir}-32bit.tar.gz"
+
 InstallDependencies() {
     install_deps flex bison libfreetype6-dev libpulse-dev libattr1-dev  \
                 libva-dev libva-drm1 autoconf autotools-dev debhelper desktop-file-utils \
@@ -116,20 +130,6 @@ BuildWine() {
     $source_dir/configure ${configure_opts} --prefix=$prefix
     make -j$(getconf _NPROCESSORS_ONLN)
 }
-
-# Build Wine, for the WOW64 version, this will be the regular build of 32bit wine
-if [ "$WOW64" ]; then
-    # Change arch name, this is used in the final file name and we want the
-    # x86_64 part even on the 32bit container for WOW64.
-    arch="x86_64"
-fi
-
-if [ "$STAGING" ]; then
-    filename_opts="staging-"
-fi
-
-bin_dir="${filename_opts}${version}-${arch}"
-wine32_archive="${bin_dir}-32bit.tar.gz"
 
 cd ${root_dir}
 if [ -f ${wine32_archive} ]; then
