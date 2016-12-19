@@ -19,11 +19,12 @@ arch=$(uname -m)
 version="1.8"
 configure_opts="--with-x --with-gstreamer"
 
-params=$(getopt -n $0 -o v:snd6k --long version:,staging,noupload,dependencies,64bit,keep -- "$@")
+params=$(getopt -n $0 -o v:p:snd6k --long version:,patch:,staging,noupload,dependencies,64bit,keep -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
         -v|--version) version=$2; shift 2 ;;
+        -p|--patch) patch=$2; shift 2 ;;
         -s|--staging) STAGING=1; shift ;;
         -n|--noupload) NOUPLOAD=1; shift ;;
         -d|--dependencies) INSTALL_DEPS=1; shift ;;
@@ -92,6 +93,18 @@ DownloadWineStaging() {
     fi
 }
 
+ApplyPatch() {
+    patch_path=$(realpath $patch)
+    if [ ! -f $patch_path ]; then
+        echo "Couldn't find patch $patch_path"
+        exit 2
+    fi
+    echo "Applying patch $patch_path"
+    cd $source_dir
+    patch -p1 < $patch_path
+}
+
+
 BuildWine() {
     prefix=${root_dir}/${bin_dir}
     mkdir -p $build_dir
@@ -144,6 +157,9 @@ Send64BitBuildAndBuild32bit() {
     if [ $NOUPLOAD ]; then
         opts="${opts} --noupload"
     fi
+    if [ $patch ]; then
+        opts="${opts} --patch $patch"
+    fi
     ssh -t ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
     ./build.sh -v ${version} ${opts}
 }
@@ -184,6 +200,9 @@ Build() {
         fi
         DownloadWine
         DownloadWineStaging
+        if [ "$patch" ]; then
+            ApplyPatch
+        fi
         BuildWine
 
         if [ "$(uname -m)" = "x86_64" ]; then
