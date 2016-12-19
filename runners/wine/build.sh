@@ -19,10 +19,11 @@ arch=$(uname -m)
 version="1.8"
 configure_opts="--with-x --with-gstreamer"
 
-params=$(getopt -n $0 -o v:p:snd6k --long version:,patch:,staging,noupload,dependencies,64bit,keep -- "$@")
+params=$(getopt -n $0 -o a:v:p:snd6k --long as:,version:,patch:,staging,noupload,dependencies,64bit,keep -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
+        -a|--as) build_name=$2; shift 2 ;;
         -v|--version) version=$2; shift 2 ;;
         -p|--patch) patch=$2; shift 2 ;;
         -s|--staging) STAGING=1; shift ;;
@@ -34,7 +35,9 @@ while true ; do
     esac
 done
 
-if [ "$STAGING" ]; then
+if [ "$build_name" ]; then
+    filename_opts="${build_name}-"
+elif [ "$STAGING" ]; then
     filename_opts="staging-"
 fi
 
