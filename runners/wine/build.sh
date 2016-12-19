@@ -63,7 +63,7 @@ InstallDependencies() {
         ocl-icd-opencl-dev oss4-dev prelink sharutils unixodbc-dev valgrind
     release=$(lsb_release -rs)
     if [ "$release" = "16.04" ]; then
-        install_deps libtxc-dxtn-s2tc-dev linux-libc-dev libkdb5-8 libppl13v5 libcolord2
+        install_deps libtxc-dxtn-s2tc-dev linux-libc-dev libkdb5-8 libppl13v5 libcolord2 libvulkan-dev
     else
         install_deps libtxc-dxtn-dev linux-kernel-headers libkdb5-7 libppl13 libcolord1
     fi
