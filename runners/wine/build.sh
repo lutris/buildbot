@@ -48,34 +48,16 @@ bin_dir="${filename_opts}${version}-${arch}"
 wine32_archive="${bin_dir}-32bit.tar.gz"
 
 InstallDependencies() {
-    install_deps flex bison libfreetype6-dev libpulse-dev libattr1-dev  \
-                libva-dev libva-drm1 autoconf autotools-dev debhelper desktop-file-utils \
-                docbook-to-man docbook-utils docbook-xsl fontforge gettext libasound2-dev \
-                libcapi20-dev libdbus-1-dev libfontconfig1-dev \
-                libfreetype6-dev libgif-dev libgl1-mesa-dev libglu1-mesa-dev \
-                libgphoto2-dev libgsm1-dev libgstreamer-plugins-base0.10-dev \
-                libgstreamer0.10-dev libjpeg-dev liblcms2-dev libldap2-dev libmpg123-dev \
-                libncurses5-dev libopenal-dev libosmesa6-dev libpcap0.8-dev libpng12-dev \
-                libpulse-dev libsane-dev libtiff5-dev libv4l-dev libx11-dev \
-                libxcomposite-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev \
-                libxml2-dev libxrandr-dev libxrender-dev libxslt1-dev libxt-dev \
-                libxxf86vm-dev ocl-icd-opencl-dev oss4-dev prelink \
-                valgrind unixodbc-dev x11proto-xinerama-dev libgstreamer1.0-dev \
-                libgstreamer-plugins-base1.0-dev gawk comerr-dev cpp-4.7 \
-                dconf-gsettings-backend dconf-service esound-common gcc-4.7 gcc-4.7-base \
-                gir1.2-atk-1.0 gir1.2-gdkpixbuf-2.0 gir1.2-gtk-3.0 gir1.2-pango-1.0 \
-                krb5-multidev libacl1-dev libatk-bridge2.0-0 libatk-bridge2.0-dev \
-                libatk1.0-dev libatspi2.0-0 libaudiofile-dev libaudiofile1 \
-                libcairo-gobject2 libcairo-script-interpreter2 libcairo2-dev \
-                libcloog-ppl1 libcups2-dev libdconf1 libesd0 libesd0-dev \
-                libgcc-4.7-dev libgdk-pixbuf2.0-0 libgdk-pixbuf2.0-common \
-                libgdk-pixbuf2.0-dev libgnutls-dev libgssrpc4 libgtk-3-0 \
-                libgtk-3-common libgtk-3-dev libharfbuzz-dev libharfbuzz-gobject0 \
-                libharfbuzz-icu0 libjasper1 libkadm5clnt-mit9 libkadm5srv-mit9 \
-                libkrb5-dev liblzo2-2 libpango1.0-dev libpcap-dev \
-                libpixman-1-dev libppl-c4 libssl-dev libudev-dev \
-                libwayland-dev libxcb-shm0-dev libxft-dev libxkbcommon-dev sharutils
-
+    install_deps autoconf bison debhelper desktop-file-utils docbook-to-man \
+        docbook-utils docbook-xsl flex fontforge gawk gcc-4.7 gettext libacl1-dev \
+        libasound2-dev libcapi20-dev libcloog-ppl1 libcups2-dev libdbus-1-dev \
+        libesd0-dev libgif-dev libglu1-mesa-dev libgnutls-dev libgphoto2-dev \
+        libgsm1-dev libgstreamer-plugins-base0.10-dev libgstreamer-plugins-base1.0-dev \
+        libgstreamer0.10-dev libgtk-3-dev libjasper1 libkadm5clnt-mit9 libkadm5srv-mit9 \
+        libkrb5-dev liblcms2-dev libldap2-dev libmpg123-dev libncurses5-dev \
+        libopenal-dev libosmesa6-dev libpcap-dev libpng12-dev libpulse-dev libsane-dev \
+        libssl-dev libtiff5-dev libudev-dev libv4l-dev libva-dev libxslt1-dev libxt-dev \
+        ocl-icd-opencl-dev oss4-dev prelink sharutils unixodbc-dev valgrind
     release=$(lsb_release -rs)
     if [ "$release" = "16.04" ]; then
         install_deps libtxc-dxtn-s2tc-dev linux-libc-dev libkdb5-8 libppl13v5 libcolord2
