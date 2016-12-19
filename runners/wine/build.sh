@@ -163,6 +163,9 @@ Send64BitBuildAndBuild32bit() {
     if [ $patch ]; then
         opts="${opts} --patch $patch"
     fi
+    if [ $build_name ]; then
+        opts="${opts} --as $build_name"
+    fi
     ssh -t ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
     ./build.sh -v ${version} ${opts}
 }
