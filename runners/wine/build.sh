@@ -146,7 +146,6 @@ Send64BitBuildAndBuild32bit() {
     fi
     ssh -t ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
     ./build.sh -v ${version} ${opts}
-    exit
 }
 
 Combine64and32bitBuilds() {
@@ -173,11 +172,11 @@ Combine64and32bitBuilds() {
     if [ ! $KEEP ]; then
         rm -rf ${wine32_archive} ${wine64build_archive} wine32 wine64 ${bin_dir}
     fi
-    exit
 }
 
 Build() {
     if [ -f ${wine32_archive} ]; then
+        # The 64bit container has received the 32bit build
         BuildFinalWow64Build
     else
         if [ "$INSTALL_DEPS" = "1" ]; then
@@ -188,12 +187,19 @@ Build() {
         BuildWine
 
         if [ "$(uname -m)" = "x86_64" ]; then
+            # Send the build to the 32bit container
             Send64BitBuildAndBuild32bit
+            exit
         fi
 
         if [ "$WOW64" ]; then
+            # On a 32bit container, build wine then send it back to the 64bit
+            # container
             Combine64and32bitBuilds
+            exit
         fi
+
+        echo "Running make install"
         make install
     fi
 }
