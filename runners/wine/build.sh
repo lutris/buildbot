@@ -37,7 +37,6 @@ if [ "$STAGING" ]; then
     filename_opts="staging-"
 fi
 
-# Build Wine, for the WOW64 version, this will be the regular build of 32bit wine
 if [ "$WOW64" ]; then
     # Change arch name, this is used in the final file name and we want the
     # x86_64 part even on the 32bit container for WOW64.
@@ -113,12 +112,73 @@ BuildWine() {
     make -j$(getconf _NPROCESSORS_ONLN)
 }
 
-Build() {
+BuildFinalWow64Build() {
     cd ${root_dir}
+    # Extract the wine build received from the 32bit container
+    tar xzf $wine32_archive
+    cd $build_dir
+    make install
+}
+
+Send64BitBuildAndBuild32bit() {
+    # Build the 64bit version of wine, send it to the 32bit container then exit
+    cd ${root_dir}
+
+    # Package the 64bit build (in a wine64 folder)
+    echo "Sending the 64bit build to the 32bit container"
+    dest_file="${bin_dir}-build.tar.gz"
+    mv wine wine64
+    tar czf ${dest_file} wine64
+    scp ${dest_file} ${buildbot32host}:${root_dir}
+    mv wine64 wine
+    rm ${dest_file}
+
+    echo "Building 32bit wine"
+    opts=""
+    if [ $STAGING ]; then
+        opts="--staging"
+    fi
+    if [ $KEEP ]; then
+        opts="${opts} --keep"
+    fi
+    if [ $NOUPLOAD ]; then
+        opts="${opts} --noupload"
+    fi
+    ssh -t ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
+    ./build.sh -v ${version} ${opts}
+    exit
+}
+
+Combine64and32bitBuilds() {
+    cd ${root_dir}
+    # Extract the 64bit build of Wine received from the buildbot64 container
+    wine64build_archive="${filename_opts}${version}-x86_64-build.tar.gz"
+    if [ ! -f $wine64build_archive ]; then
+        echo "Missing wine64 build file $wine64build_archive"
+        exit 2
+    fi
+    tar xzf $wine64build_archive
+
+    # Rename the 32bit build of wine
+    mv wine wine32
+
+    # Build the combined Wine32 + Wine64
+    BuildWine combo
+    make install
+
+    cd ${root_dir}
+    # Package and send the build to the 64bit container
+    tar czf ${wine32_archive} ${bin_dir}
+    scp ${wine32_archive} ${buildbot64host}:${root_dir}
+    if [ ! $KEEP ]; then
+        rm -rf ${wine32_archive} ${wine64build_archive} wine32 wine64 ${bin_dir}
+    fi
+    exit
+}
+
+Build() {
     if [ -f ${wine32_archive} ]; then
-        # Extract the wine build received from the 32bit container
-        tar xzf $wine32_archive
-        cd $build_dir
+        BuildFinalWow64Build
     else
         if [ "$INSTALL_DEPS" = "1" ]; then
             InstallDependencies
@@ -128,59 +188,14 @@ Build() {
         BuildWine
 
         if [ "$(uname -m)" = "x86_64" ]; then
-            # Build the 64bit version of wine, send it to the 32bit container then exit
-            cd ${root_dir}
-            dest_file="${bin_dir}-build.tar.gz"
-            mv wine wine64
-            tar czf ${dest_file} wine64
-            scp ${dest_file} ${buildbot32host}:${root_dir}
-            mv wine64 wine
-            rm ${dest_file}
-            echo "Building 32bit wine"
-            opts=""
-            if [ $STAGING ]; then
-                opts="--staging"
-            fi
-            if [ $KEEP ]; then
-                opts="${opts} --keep"
-            fi
-            if [ $NOUPLOAD ]; then
-                opts="${opts} --noupload"
-            fi
-            ssh -t ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
-            ./build.sh -v ${version} ${opts}
-            exit
+            Send64BitBuildAndBuild32bit
         fi
 
         if [ "$WOW64" ]; then
-            cd ${root_dir}
-            # Extract the 64bit build of Wine received from the buildbot64 container
-            wine64build_archive="${filename_opts}${version}-x86_64-build.tar.gz"
-            if [ ! -f $wine64build_archive ]; then
-                echo "Missing wine64 build file $wine64build_archive"
-                exit 2
-            fi
-            tar xzf $wine64build_archive
-
-            # Rename the 32bit build of wine
-            mv wine wine32
-
-            # Build the combined Wine32 + Wine64
-            BuildWine combo
-            make install
-
-            cd ${root_dir}
-            # Package and send the build to the 64bit container
-            tar czf ${wine32_archive} ${bin_dir}
-            scp ${wine32_archive} ${buildbot64host}:${root_dir}
-            if [ ! $KEEP ]; then
-                rm -rf ${wine32_archive} ${wine64build_archive} wine32 wine64 ${bin_dir}
-            fi
-            exit
+            Combine64and32bitBuilds
         fi
+        make install
     fi
-
-    make install
 }
 
 Package() {
@@ -212,7 +227,13 @@ Clean() {
     fi
 }
 
-Build
-Package
-UploadRunner
-Clean
+cd ${root_dir}
+
+if [ $1 ]; then
+    $1
+else
+    Build
+    Package
+    UploadRunner
+    Clean
+fi
