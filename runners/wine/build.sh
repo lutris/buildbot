@@ -97,6 +97,7 @@ DownloadWineStaging() {
 }
 
 ApplyPatch() {
+    cd ${root_dir}
     patch_path=$(realpath $patch)
     if [ ! -f $patch_path ]; then
         echo "Couldn't find patch $patch_path"
