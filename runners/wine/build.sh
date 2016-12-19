@@ -227,8 +227,6 @@ Clean() {
     fi
 }
 
-cd ${root_dir}
-
 if [ $1 ]; then
     $1
 else
