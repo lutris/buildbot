@@ -12,16 +12,24 @@ source_dir="${root_dir}/${pkg_name}-src"
 bin_dir="${root_dir}/${pkg_name}"
 
 GetSources() {
+    cd $root_dir
     hg clone https://strycore@bitbucket.org/gopostal/postal-1-open-source $source_dir
+    cp -a steamworks $source_dir
 }
 
 InstallBuildDependencies() {
+    cd $root_dir
     install_deps mercurial
+    mkdir steamworks
+    cd steamworks
+    wget https://partner.steamgames.com/downloads/steamworks_sdk_138a.zip
+    unzip steamworks_sdk_138a.zip
+    rm steamworks_sdk_138a.zip
 }
 
 BuildProject() {
     cd $source_dir
-    make
+    make target=linux_x86
 }
 
 PackageProject() {
