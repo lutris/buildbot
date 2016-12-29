@@ -27,12 +27,12 @@ InstallBuildDependencies() {
     rm steamworks_sdk_138a.zip
 }
 
-BuildProject() {
+Build() {
     cd $source_dir
     make target=linux_x86
 }
 
-PackageProject() {
+Package() {
     cd $root_dir
     rm -rf $bin_dir
     mkdir $bin_dir
@@ -43,6 +43,7 @@ PackageProject() {
 CleanUp() {
     rm -rf $source_dir
     rm -rf $bin_dir
+    rm -rf $root_dir/steamworks
 }
 
 if [ $1 ]; then
@@ -50,7 +51,7 @@ if [ $1 ]; then
 else
     InstallBuildDependencies
     GetSources
-    BuildProject
-    PackageProject
+    Build
+    Package
     # CleanUp
 fi
