@@ -12,11 +12,11 @@ source_dir="${root_dir}/${pkg_name}-src"
 bin_dir="${root_dir}/${pkg_name}"
 
 GetSources() {
-    hg clone ssh://hg@bitbucket.org/gopostal/postal-1-open-source $source_dir
+    hg clone https://strycore@bitbucket.org/gopostal/postal-1-open-source $source_dir
 }
 
 InstallBuildDependencies() {
-    install_deps make
+    install_deps mercurial
 }
 
 BuildProject() {
@@ -40,7 +40,7 @@ CleanUp() {
 if [ $1 ]; then
     $1
 else
-    # InstallBuildDependencies
+    InstallBuildDependencies
     GetSources
     BuildProject
     PackageProject
