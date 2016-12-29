@@ -4,7 +4,7 @@ set -e
 
 source ../../lib/util.sh
 
-version="0.0.1"
+version="1.0"
 arch="$(uname -m)"
 root_dir=$(pwd)
 pkg_name="postal"
@@ -34,9 +34,9 @@ Build() {
 
 Package() {
     cd $root_dir
-    rm -rf $bin_dir
-    mkdir $bin_dir
-    cp $source_dir/ $bin_dir
+    mkdir -p $bin_dir
+    cp $source_dir/bin/postal1-bin $bin_dir
+    cp $source_dir/steamworks/sdk/redistributable_bin/linux32/libsteam_api.so $bin_dir
     tar czf ${pkg_name}-${version}-${arch}.tar.gz ${pkg_name}
 }
 
@@ -53,5 +53,5 @@ else
     GetSources
     Build
     Package
-    # CleanUp
+    CleanUp
 fi
