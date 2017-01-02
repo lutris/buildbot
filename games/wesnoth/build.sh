@@ -47,7 +47,7 @@ Package() {
     cp -a images $bin_dir
     cp -a fonts $bin_dir
     cd $root_dir
-    tar czf wesnoth-${version}-${arch}-tar.gz wesnoth
+    tar czf wesnoth-${version}-${arch}.tar.gz wesnoth
 }
 
 Clean() {
