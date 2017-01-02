@@ -4,7 +4,7 @@ set -e
 
 source ../../lib/util.sh
 
-version="1.12.6"
+version="1.13.6"
 arch="$(uname -m)"
 root_dir=$(pwd)
 source_dir="${root_dir}/wesnoth-src"
@@ -20,14 +20,14 @@ GetSources() {
     cd $root_dir
     dest="wesnoth-${version}.tar.bz2"
     if [ ! -f "$dest" ]; then
-        wget https://sourceforge.net/projects/wesnoth/files/wesnoth-1.12/wesnoth-${version}/${dest}/download -O $dest
+        wget https://sourceforge.net/projects/wesnoth/files/wesnoth-1.13/wesnoth-${version}/${dest}/download -O $dest
     fi
     tar xvjf $dest
     rm -rf $source_dir
     mv wesnoth-${version} ${source_dir}
 }
 
-BuildProject() {
+Build() {
     cd $root_dir
     mkdir -p $build_dir
     cd $build_dir
@@ -35,7 +35,7 @@ BuildProject() {
     make
 }
 
-PackageProject() {
+Package() {
     cd $build_dir
     mkdir -p $bin_dir
     cp wesnoth wesnothd $bin_dir
@@ -50,7 +50,7 @@ PackageProject() {
     tar czf wesnoth-${version}-${arch}-tar.gz wesnoth
 }
 
-Cleanup() {
+Clean() {
     cd $root_dir
     rm -rf $source_dir
     rm -rf $build_dir
@@ -62,7 +62,7 @@ if [ $1 ]; then
 else
     InstallBuildDependencies
     GetSources $version
-    BuildProject
-    PackageProject
-    # Cleanup
+    Build
+    Package
+    Clean
 fi
