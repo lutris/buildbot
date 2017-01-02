@@ -20,7 +20,7 @@ GetSources() {
     cd $root_dir
     dest="wesnoth-${version}.tar.bz2"
     if [ ! -f "$dest" ]; then
-        wget https://sourceforge.net/projects/wesnoth/files/wesnoth-1.13/wesnoth-${version}/${dest}/download -O $dest
+        wget https://sourceforge.net/projects/wesnoth/files/wesnoth/wesnoth-${version}/${dest}/download -O $dest
     fi
     tar xvjf $dest
     rm -rf $source_dir
