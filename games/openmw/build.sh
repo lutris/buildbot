@@ -65,8 +65,20 @@ PackageProject() {
     mkdir ${bin_dir}/lib
     cp /usr/lib/x86_64-linux-gnu/libosg* ${bin_dir}/lib
     cp -a /usr/lib/x86_64-linux-gnu/osgPlugins-3.4.0/* ${bin_dir}/lib
+    cp /usr/lib/x86_64-linux-gnu/libboost_program_options.so.1.58.0 ${bin_dir}/lib
+    cp /usr/lib/x86_64-linux-gnu/libboost_system.so.1.58.0 ${bin_dir}/lib
+    cp /usr/lib/x86_64-linux-gnu/libboost_filesystem.so.1.58.0 ${bin_dir}/lib
+    cp /usr/lib/x86_64-linux-gnu/libpangoft2-1.0.so.0 ${bin_dir}/lib
+    cp /usr/lib/x86_64-linux-gnu/libgnutls.so.30 ${bin_dir}/lib
     tar cvzf openmw-${version}.tar.gz openmw
 }
+
+Clean() {
+    rm -rf $source_dir
+    rm -rf $build_dir
+    rm -rf $bin_dir
+}
+
 
 if [ $1 ]; then
     $1
