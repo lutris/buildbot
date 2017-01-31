@@ -7,5 +7,5 @@ cd $SOURCEDIR
 mkdir build; cd $_
 cmake ../
 #sudo apt-get install -y libglade2-dev ### FIXME needs actual dependancies
-NUMCPUS=$(cat /proc/cpuinfo | grep processor | wc -l)
+NUMCPUS=$(($(cat /proc/cpuinfo | grep processor | wc -l) + 1))
 make -j $NUMCPUS
