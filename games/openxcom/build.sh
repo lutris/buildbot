@@ -4,7 +4,7 @@ set -e
 
 source ../../lib/util.sh
 
-version="0.96.4"
+version="20170130"
 arch="$(uname -m)"
 root_dir=$(pwd)
 pkg_name="openxcom"
