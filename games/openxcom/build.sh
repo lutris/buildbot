@@ -17,7 +17,7 @@ GetSources() {
 }
 
 InstallBuildDependencies() {
-    install_deps libglade2-dev libsdl-gfx1.2-dev libyaml-cpp-dev
+    install_deps libsdl-gfx1.2-dev libyaml-cpp-dev
 }
 
 Build() {
@@ -44,5 +44,5 @@ else
     GetSources
     Build
     Package
-    # CleanUp
+    CleanUp
 fi
