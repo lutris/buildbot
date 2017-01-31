@@ -10,7 +10,6 @@ root_dir=$(pwd)
 pkg_name="openxcom"
 
 source_dir="${root_dir}/${pkg_name}-src"
-build_dir="${root_dir}/${pkg_name}-build"
 bin_dir="${root_dir}/${pkg_name}"
 
 GetSources() {
@@ -22,9 +21,10 @@ InstallBuildDependencies() {
 }
 
 Build() {
-    mkdir -p $build_dir
-    cmake -DCMAKE_INSTALL_PREFIX="${bin_dir}" $source_dir
+    cd $source_dir
+    cmake -DCMAKE_INSTALL_PREFIX="${bin_dir}" .
     make -j$(getconf _NPROCESSORS_ONLN)
+    make install
 }
 
 Package() {
