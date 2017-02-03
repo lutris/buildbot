@@ -78,7 +78,7 @@ DownloadWine() {
     else
         echo "Wine ${version} already cached"
     fi
-    tar xjf .cache/wine-${version}.tar.bz2
+    tar xf .cache/$wine_archive
     if [ -d ${source_dir} ]; then
         rm -rf ${source_dir}
     fi
