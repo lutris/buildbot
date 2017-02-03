@@ -70,11 +70,19 @@ InstallDependencies() {
 }
 
 DownloadWine() {
-    wine_archive="wine-${version}.tar.bz2"
+    IFS="." read major minor patch <<< "$version"
+    if [[ $major -gt 1 && $minor -gt 0 ]]; then
+        version_base="$major.x"
+        wine_archive="wine-${version}.tar.xz"
+    else
+        version_base=${version:0:3}
+        wine_archive="wine-${version}.tar.bz2"
+    fi
+
     mkdir -p .cache
     if [ ! -f ".cache/$wine_archive" ]; then
         echo "Downloading Wine ${version}"
-        wget http://dl.winehq.org/wine/source/${version:0:3}/${wine_archive} -O .cache/${wine_archive}
+        wget http://dl.winehq.org/wine/source/$version_base/${wine_archive} -O .cache/${wine_archive}
     else
         echo "Wine ${version} already cached"
     fi
