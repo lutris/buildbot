@@ -9,7 +9,7 @@ source ${lib_path}upload_handler.sh
 
 root_dir=$(pwd)
 package='solarus'
-version=1.5.0
+version=1.5.1
 arch=$(uname -m)
 source_dir=${root_dir}/${package}-src
 build_dir=${root_dir}/${package}-build
@@ -32,7 +32,7 @@ BuildSolarus() {
     make
 }
 
-BuildZsdx(){ 
+BuildZsdx(){
     cd ${root_dir}
     clone https://github.com/christopho/zsdx.git ${zsdx_src_dir}
     cd ${zsdx_src_dir}
@@ -46,7 +46,7 @@ PackageZsdx() {
     cd ${zsdx_dir}
     mv ${zsdx_src_dir}/data ${zsdx_dir}
     mv ${build_dir}/libsolarus.so ${zsdx_dir}
-    mv ${build_dir}/solarus_run ${zsdx_dir}
+    mv ${build_dir}/solarus-run ${zsdx_dir}
 }
 
 InstallDeps
