@@ -27,8 +27,8 @@ while true ; do
 done
 
 InstallDependencies() {
-    install_deps build-essential zlib1g-dev libsdl1.2-dev libsdl2-dev libjpeg-dev \
-        nasm tar libbz2-dev libgtk-3-dev cmake git libfluidsynth-dev libgme-dev \
+    install_deps zlib1g-dev libsdl1.2-dev libsdl2-dev libjpeg-dev \
+        nasm libbz2-dev libgtk-3-dev cmake libfluidsynth-dev libgme-dev \
         libopenal-dev libmpg123-dev libsndfile1-dev timidity libwildmidi-dev \
         libgl1-mesa-dev libglew-dev
 }
