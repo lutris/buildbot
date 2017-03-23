@@ -28,6 +28,7 @@ GetSources() {
 }
 
 Build() {
+    cd $root_dir
     mkdir -p $build_dir
     cd $build_dir
     cmake \
@@ -38,14 +39,16 @@ Build() {
 }
 
 Package() {
+    cd $root_dir
     rm -rf ${bin_dir}
     mv ${source_dir}/bin ${bin_dir}
     dest_file="${runner_name}-${version}-${arch}.tar.gz"
     tar czf ${dest_file} ${runner_name}
-    rm -rf ${build_dir} ${source_dir} ${bin_dir}
 }
 
 Upload() {
+    cd $root_dir
+    dest_file="${runner_name}-${version}-${arch}.tar.gz"
     runner_upload ${runner_name} ${version} ${arch} ${dest_file}
 }
 
