@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import subprocess
 import shutil
@@ -33,7 +34,7 @@ def find_lib_paths(required_libs):
     lib_paths = []
     for parts in get_ldconfig_libs():
         if parts[0] in required_libs:
-            print "Found ", parts[0]
+            print("Found ", parts[0])
             lib_paths.append(parts[-1])
     return lib_paths
 
@@ -42,14 +43,14 @@ def build_runtime():
     required_libs = []
     libs = get_libs()
     for lib_package in libs:
-        print "Installing %s" % lib_package
+        print("Installing {}".format(lib_package))
         subprocess.Popen(
             ['apt-get', 'install', '-y', '--force-yes', '-q=2', lib_package]
         ).communicate()
         required_libs += libs[lib_package]
     lib_paths = find_lib_paths(required_libs)
     for lib in lib_paths:
-        print "Copying ", lib
+        print("Copying", lib)
         shutil.copy(lib, RUNTIME_DIR)
 
 
