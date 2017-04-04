@@ -96,7 +96,7 @@ rm -rf ${runtime_dir}
 mkdir -p ${runtime_dir}
 sudo python2 lutrisrt.py
 sudo chown $(id -u):$(id -g) runtime -R
-cp -a runtime/* ${runtime_dir}
+mv runtime/* ${runtime_dir}
 
 # Copy Lutris runtime extra libs
 cp -a extra/${runtime_dir}/* ${runtime_dir}
