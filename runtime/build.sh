@@ -25,6 +25,7 @@ if [ "$STEAM" = '1' ]; then
     mv runtime steam
     cd steam
     rm -rf runtime
+    rm -rf amd64/installed/
     rm -rf amd64/lib/x86_64-linux-gnu/libgcc_s.so.1
     rm -rf amd64/lib/x86_64-linux-gnu/libglib-2.0.so.0*
     rm -rf amd64/lib/x86_64-linux-gnu/libgpg-error.so.0*
@@ -38,6 +39,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libatk-1.0.so.0*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libcairo.so.2*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libpango*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/pango*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libfontconfig.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgio-2.0.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgmodule-2.0.so*
@@ -51,6 +53,8 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libxml2.so*
     rm -rf amd64/usr/share/doc
     rm -rf amd64/usr/share/glib-2.0
+
+    rm -rf i386/installed/
     rm -rf i386/lib/i386-linux-gnu/libgcc_s.so.1
     rm -rf i386/lib/i386-linux-gnu/libglib-2.0.so.0*
     rm -rf i386/lib/i386-linux-gnu/libgpg-error.so.0*
@@ -64,6 +68,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/usr/lib/i386-linux-gnu/libatk-1.0.so.0*
     rm -rf i386/usr/lib/i386-linux-gnu/libcairo.so.2*
     rm -rf i386/usr/lib/i386-linux-gnu/libpango*
+    rm -rf i386/usr/lib/i386-linux-gnu/pango*
     rm -rf i386/usr/lib/i386-linux-gnu/libfontconfig.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libgio-2.0.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libgmodule-2.0.so*
