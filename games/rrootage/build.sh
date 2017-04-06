@@ -13,8 +13,7 @@ bin_dir="${root_dir}/${pkg_name}"
 
 
 InstallBuildDependencies() {
-    # install_deps 
-    echo "TODO"
+    install_deps freeglut3-dev
 }
 
 GetSources() {
