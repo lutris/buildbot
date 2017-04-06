@@ -13,7 +13,7 @@ bin_dir="${root_dir}/${pkg_name}"
 
 
 InstallBuildDependencies() {
-    install_deps freeglut3-dev
+    install_deps freeglut3-dev libbulletml-dev
 }
 
 GetSources() {
