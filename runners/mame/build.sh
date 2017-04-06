@@ -37,8 +37,7 @@ if [ "$arch" = "x86_64" ]; then
 fi
 
 mkdir -p ${build_dir}
-mv ${runner_name} ${build_dir}
-mv castool chdman floptool imgtool jedutil ldresample ldverify mame64 nltool nlwav pngcmp regrep romcmp split src2html srcclean unidasm $build_dir
+mv castool chdman floptool imgtool jedutil ldresample ldverify mame nltool nlwav pngcmp regrep romcmp split src2html srcclean unidasm $build_dir
 strip ${build_dir}/*
 
 cd ${root_dir}
