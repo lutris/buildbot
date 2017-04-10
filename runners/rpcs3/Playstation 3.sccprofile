@@ -1,0 +1,102 @@
+{
+    "_": "", 
+    "buttons": {
+        "A": {
+            "action": "button(Keys.KEY_X)", 
+            "name": "Cross"
+        }, 
+        "B": {
+            "action": "button(Keys.KEY_C)", 
+            "name": "Circle"
+        }, 
+        "BACK": {
+            "action": "button(Keys.KEY_SPACE)", 
+            "name": "Select"
+        }, 
+        "C": {
+            "action": "menu('Default.menu')", 
+            "doubleclick": {}, 
+            "hold": {
+                "action": "menu('Default.menu')"
+            }
+        }, 
+        "LB": {
+            "action": "button(Keys.KEY_Q)", 
+            "name": "L1"
+        }, 
+        "RB": {
+            "action": "button(Keys.KEY_E)", 
+            "name": "R1"
+        }, 
+        "RPAD": {
+            "action": "button(Keys.KEY_G)", 
+            "name": "R3"
+        }, 
+        "START": {
+            "action": "button(Keys.KEY_ENTER)", 
+            "name": "Start"
+        }, 
+        "STICK": {
+            "action": "button(Keys.KEY_F)", 
+            "name": "L3"
+        }, 
+        "X": {
+            "action": "button(Keys.KEY_Z)", 
+            "name": "Square"
+        }, 
+        "Y": {
+            "action": "button(Keys.KEY_V)", 
+            "name": "Triangle"
+        }
+    }, 
+    "gyro": {}, 
+    "is_template": false, 
+    "menus": {}, 
+    "pad_left": {
+        "dpad": [{
+            "action": "button(Keys.KEY_UP)"
+        }, {
+            "action": "button(Keys.KEY_DOWN)"
+        }, {
+            "action": "button(Keys.KEY_LEFT)"
+        }, {
+            "action": "button(Keys.KEY_RIGHT)"
+        }], 
+        "name": "D-Pad"
+    }, 
+    "pad_right": {
+        "dpad": [{
+            "action": "button(Keys.KEY_PAGEUP)"
+        }, {
+            "action": "button(Keys.KEY_PAGEDOWN)"
+        }, {
+            "action": "button(Keys.KEY_HOME)"
+        }, {
+            "action": "button(Keys.KEY_END)"
+        }], 
+        "name": "Right Analog"
+    }, 
+    "stick": {
+        "dpad": [{
+            "action": "button(Keys.KEY_W)"
+        }, {
+            "action": "button(Keys.KEY_S)"
+        }, {
+            "action": "button(Keys.KEY_A)"
+        }, {
+            "action": "button(Keys.KEY_D)"
+        }], 
+        "name": "Left Analog"
+    }, 
+    "trigger_left": {
+        "action": "button(Keys.KEY_R)", 
+        "levels": [254, 255], 
+        "name": "L2"
+    }, 
+    "trigger_right": {
+        "action": "button(Keys.KEY_T)", 
+        "levels": [254, 255], 
+        "name": "R2"
+    }, 
+    "version": 1.2
+}
