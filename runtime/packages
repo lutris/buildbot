@@ -1,7 +1,6 @@
 libaio1                           libaio.so.1
 liballegro4.4                     liballeg.so.4.4
 libaudio2                         libaudio.so.2
-libatk1.0-0                       libatk-1.0.so.0
 libavcodec54                      libavcodec.so.54
 libavformat54                     libavformat.so.54
 libavutil52                       libavutil.so.52
