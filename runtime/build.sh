@@ -46,6 +46,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgobject-2.0.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgthread-2.0.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgomp.so.1*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libselinux*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libstdc++.so.6*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libsqlite3*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libncurses*
@@ -76,6 +77,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/usr/lib/i386-linux-gnu/libgobject-2.0.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libgthread-2.0.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libgomp.so.1*
+    rm -rf i386/usr/lib/i386-linux-gnu/libselinux*
     rm -rf i386/usr/lib/i386-linux-gnu/libstdc++.so.6*
     rm -rf i386/usr/lib/i386-linux-gnu/libsqlite3*
     rm -rf i386/usr/lib/i386-linux-gnu/libncurses*
