@@ -31,6 +31,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/lib/x86_64-linux-gnu/libgpg-error.so.0*
     rm -rf amd64/lib/x86_64-linux-gnu/libgcrypt.so.*
     rm -rf amd64/lib/x86_64-linux-gnu/libpcre.so.*
+    rm -rf amd64/lib/x86_64-linux-gnu/libselinux*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/gio
     rm -rf amd64/usr/lib/x86_64-linux-gnu/glib-2.0
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libSDL-1.2.so.0*
@@ -46,7 +47,6 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgobject-2.0.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgthread-2.0.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgomp.so.1*
-    rm -rf amd64/usr/lib/x86_64-linux-gnu/libselinux*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libstdc++.so.6*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libsqlite3*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libncurses*
@@ -62,6 +62,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/lib/i386-linux-gnu/libgpg-error.so.0*
     rm -rf i386/lib/i386-linux-gnu/libgcrypt.so.*
     rm -rf i386/lib/i386-linux-gnu/libpcre.so*
+    rm -rf i386/lib/i386-linux-gnu/libselinux*
     rm -rf i386/usr/lib/i386-linux-gnu/gio
     rm -rf i386/usr/lib/i386-linux-gnu/glib-2.0
     rm -rf i386/usr/lib/i386-linux-gnu/libSDL-1.2.so.0*
@@ -77,7 +78,6 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/usr/lib/i386-linux-gnu/libgobject-2.0.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libgthread-2.0.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libgomp.so.1*
-    rm -rf i386/usr/lib/i386-linux-gnu/libselinux*
     rm -rf i386/usr/lib/i386-linux-gnu/libstdc++.so.6*
     rm -rf i386/usr/lib/i386-linux-gnu/libsqlite3*
     rm -rf i386/usr/lib/i386-linux-gnu/libncurses*
