@@ -1,6 +1,6 @@
 --- a/dlls/wined3d/glsl_shader.c	
 +++ a/dlls/wined3d/glsl_shader.c	
-@@ -4099,6 +4099,9 @@ static void shader_glsl_scalar_op(const struct wined3d_shader_instruction *ins)
+@@ -3437,6 +3437,9 @@ static void shader_glsl_scalar_op(const struct wined3d_shader_instruction *ins)
  
      if (dst_size > 1 && shader_version < WINED3D_SHADER_VERSION(4, 0))
          shader_addline(buffer, "vec%u(%s%s%s));\n", dst_size, prefix, src0_param.param_str, suffix);
