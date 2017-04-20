@@ -70,7 +70,7 @@ InstallDependencies() {
 }
 
 DownloadWine() {
-    IFS="." read major minor patch <<< "$version"
+    IFS="." read major minor patch_num <<< "$version"
     if [[ $major -gt 1 && $minor -gt 0 ]]; then
         version_base="$major.x"
         wine_archive="wine-${version}.tar.xz"
