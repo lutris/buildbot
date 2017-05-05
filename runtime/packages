@@ -1,10 +1,10 @@
 libaio1                           libaio.so.1
 liballegro4.4                     liballeg.so.4.4
 libaudio2                         libaudio.so.2
-libavcodec54                      libavcodec.so.54
-libavformat54                     libavformat.so.54
-libavutil52                       libavutil.so.52
-libenet2a                         libenet.so.2
+libavcodec-ffmpeg56               libavcodec-ffmpeg.so.56
+libavformat-ffmpeg56              libavformat-ffmpeg.so.56
+libavutil-ffmpeg54                libavutil-ffmpeg.so.54
+libenet7                          libenet.so.7
 libcairo2                         libcairo.so.2
 libcdio13                         libcdio.so.13
 libcgmanager0                     libcgmanager.so.0
@@ -14,23 +14,22 @@ libfaad2                          libfaad.so.2
 libfluidsynth1                    libfluidsynth.so.1
 libfribidi0                       libfribidi.so.0
 libfuse2                          libfuse.so.2
-libgcrypt11                       libgcrypt.so.11
-libgloox11                        libgloox.so.11
-libgif4                           libgif.so.4
+libgcrypt20                       libgcrypt.so.20
+libgif7                           libgif.so.7
 libgomp1                          libgomp.so.1
-libicu52                          libicui18n.so.52 libicuuc.so.52 libicudata.so.52
+libicu55                          libicui18n.so.55 libicuuc.so.55 libicudata.so.55
 libirrlicht1.8                    libIrrlicht.so.1.8
 libjansson4                       libjansson.so.4
 libjbig0                          libjbig.so.0
 libjson-c2                        libjson-c.so.2
-libleveldb1                       libleveldb.so.1
+libleveldb1v5                     libleveldb.so.1
 liblua5.1-0                       liblua5.1.so.0
 liblua5.2-0                       liblua5.2.so.0
 libluajit-5.1-2                   libluajit-5.1.so.2
 liblzma5                          liblzma.so.5
 libmad0                           libmad.so.0
-libmikmod2                        libmikmod.so.2
-libminiupnpc8                     libminiupnpc.so.8
+libmikmod3                        libmikmod.so.3
+libminiupnpc10                    libminiupnpc.so.10
 libmodplug1                       libmodplug.so.1
 libmpeg2-4                        libmpeg2.so.0 libmpeg2convert.so.0
 libmpg123-0                       libmpg123.so.0
@@ -38,7 +37,7 @@ libncurses5                       libncurses.so.5
 libncursesw5                      libncursesw.so.5
 libnih1                           libnih.so.1
 libnih-dbus1                      libnih-dbus.so.1
-libopenjpeg2                      libopenjpeg.so.2
+libopenjpeg5                      libopenjpeg.so.5
 libreadline6                      libhistory.so.6 libreadline.so.6
 libphysfs1                        libphysfs.so.1
 libportaudio2                     libportaudio.so.2
@@ -47,8 +46,8 @@ libsdl2-mixer-2.0-0               libSDL2_mixer-2.0.so.0
 libsdl-net1.2                     libSDL_net-1.2.so.0
 libsdl-sound1.2                   libSDL_sound-1.0.so.1
 libsdl-ttf2.0-0                   libSDL_ttf-2.0.so.0
-libsnappy1                        libsnappy.so.1
-libsoundtouch0                    libSoundTouch.so.0
+libsnappy1v5                      libsnappy.so.1
+libsoundtouch1                    libSoundTouch.so.1
 libsoxr0                          libsoxr.so.0
 libstdc++5                        libstdc++.so.5
 libtdb1                           libtdb.so.1
@@ -58,7 +57,7 @@ libtinfo5                         libtinfo.so.5
 libudev1                          libudev.so.1
 libupnp6                          libixml.so.2 libthreadutil.so.6 libupnp.so.6
 libwebp5                          libwebp.so.5
-libx264-142                       libx264.so.142
+libx264-148                       libx264.so.148
 libxinerama1                      libXinerama.so.1
 libxshmfence1                     libxshmfence.so.1
 libxml2                           libxml.so.2
