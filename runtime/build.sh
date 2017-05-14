@@ -32,6 +32,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/lib/x86_64-linux-gnu/libgcrypt.so.*
     rm -rf amd64/lib/x86_64-linux-gnu/libpcre.so.*
     rm -rf amd64/lib/x86_64-linux-gnu/libselinux*
+    rm -rf amd64/lib/x86_64-linux-gnu/libkeyutils*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libcurl.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/gio
     rm -rf amd64/usr/lib/x86_64-linux-gnu/glib-2.0
@@ -62,6 +63,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/lib/i386-linux-gnu/libgcrypt.so.*
     rm -rf i386/lib/i386-linux-gnu/libpcre.so*
     rm -rf i386/lib/i386-linux-gnu/libselinux*
+    rm -rf i386/lib/i386-linux-gnu/libkeyutils*
     rm -rf i386/usr/lib/i386-linux-gnu/libcurl.so*
     rm -rf i386/usr/lib/i386-linux-gnu/gio
     rm -rf i386/usr/lib/i386-linux-gnu/glib-2.0
