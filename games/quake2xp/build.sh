@@ -4,10 +4,7 @@ set -e
 
 source ../../lib/util.sh
 
-# Forcing revision to r815, this has a working build while the current one
-# (r898) fails to build on Linux 
-# (See: # https://sourceforge.net/p/quake2xp/bugs/30/ )
-version="815"
+version="907"
 arch="$(uname -m)"
 root_dir=$(pwd)
 pkg_name="quake2xp"
@@ -23,8 +20,6 @@ InstallBuildDependencies() {
 GetSources() {
     cd $root_dir
     svn checkout svn://svn.code.sf.net/p/quake2xp/code/trunk $source_dir
-    cd $source_dir
-    svn update -r 815
 }
 
 Build() {
