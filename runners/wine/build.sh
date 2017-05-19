@@ -24,6 +24,7 @@ eval set -- $params
 while true ; do
     case "$1" in
         -a|--as) build_name=$2; shift 2 ;;
+        -w|--with) repo_url=$2; shift 2 ;;
         -v|--version) version=$2; shift 2 ;;
         -p|--patch) patch=$2; shift 2 ;;
         -s|--staging) STAGING=1; shift ;;
@@ -70,6 +71,12 @@ InstallDependencies() {
 }
 
 DownloadWine() {
+    # If a git repo as been specified use this instead and return
+    if [[ $repo_url ]]; then
+        git clone $repo_url $source_dir
+        return
+    fi
+
     IFS="." read major minor patch_num <<< "$version"
     if [[ $major -gt 1 && $minor -gt 0 ]]; then
         version_base="$major.x"
@@ -176,6 +183,9 @@ Send64BitBuildAndBuild32bit() {
     fi
     if [ $build_name ]; then
         opts="${opts} --as $build_name"
+    fi
+    if [ $repo_url ]; then
+        opts="${opts} --with $repo_url"
     fi
     ssh -t ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
     ./build.sh -v ${version} ${opts}
