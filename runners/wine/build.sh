@@ -101,6 +101,7 @@ DownloadWine() {
 }
 
 DownloadWineStaging() {
+    local ignore_errors
     if [ $STAGING ]; then
         echo "Adding Wine Staging patches"
         cd ${source_dir}
@@ -109,14 +110,16 @@ DownloadWineStaging() {
         if [ -f $staging_archive ]; then
             tar xvzf ${staging_archive} --strip-components 1
             rm ${staging_archive}
+            ignore_errors=false
         else
             echo "Wine staging v$version not found, reverting to current git master, safety not guaranteed."
             clone https://github.com/wine-compholio/wine-staging.git ${source_dir}/wine-staging-git
             cd ${source_dir}
             mv ${source_dir}/wine-staging-git/* ${source_dir}
             rm -rf ${source_dir}/wine-staging-git
+            ignore_errors=true
         fi
-        ${source_dir}/patches/patchinstall.sh DESTDIR="$(pwd)" --all
+        ${source_dir}/patches/patchinstall.sh DESTDIR="$(pwd)" --all || $ignore_errors
         configure_opts="$configure_opts --with-xattr"
     fi
 }
