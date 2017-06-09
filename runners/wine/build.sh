@@ -106,7 +106,13 @@ DownloadWineStaging() {
         cd ${source_dir}
         staging_archive="v${version}.tar.gz"
         wget https://github.com/wine-compholio/wine-staging/archive/${staging_archive}
-        tar xvzf ${staging_archive} --strip-components 1
+        if [ -f $staging_archive ]; then
+            tar xvzf ${staging_archive} --strip-components 1
+        else
+            echo "Wine staging v$version not found, reverting to current git master, safety not guaranteed."
+            clone https://github.com/wine-compholio/wine-staging.git wine-staging-git
+            mv wine-staging-git/* .
+        fi
         ./patches/patchinstall.sh DESTDIR="$(pwd)" --all
         configure_opts="$configure_opts --with-xattr"
         rm ${staging_archive}
