@@ -1,8 +1,8 @@
 function clone {
-    repo_url=$1
-    source_dir=$2
-    recurse=$3
-    tag=$4
+    local repo_url=$1
+    local source_dir=$2
+    local recurse=$3
+    local tag=$4
 
     if [ "$recurse" ]; then
         recurse="--recursive"
