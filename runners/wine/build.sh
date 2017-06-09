@@ -105,7 +105,7 @@ DownloadWineStaging() {
         echo "Adding Wine Staging patches"
         cd ${source_dir}
         staging_archive="v${version}.tar.gz"
-        wget https://github.com/wine-compholio/wine-staging/archive/${staging_archive}
+        wget https://github.com/wine-compholio/wine-staging/archive/${staging_archive} || true
         if [ -f $staging_archive ]; then
             tar xvzf ${staging_archive} --strip-components 1
         else
