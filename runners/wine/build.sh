@@ -78,7 +78,7 @@ DownloadWine() {
     fi
 
     IFS="." read major minor patch_num <<< "$version"
-    if [[ $major -gt 1 && $minor -gt 0 ]]; then
+    if [[ $major -gt 1 ]]; then
         version_base="$major.x"
         wine_archive="wine-${version}.tar.xz"
     else
