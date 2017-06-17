@@ -16,7 +16,7 @@ bin_dir=$(pwd)/${runner_name}
 
 InstallDependencies() {
     echo "TODO"
-    # install_deps 
+    # install_deps
 }
 
 
@@ -38,7 +38,7 @@ Build() {
 Package() {
     mkdir -p $bin_dir
     cd $source_dir
-    cp -a daphne.bin COPYING daphne-changelog.txt doc pics roms README.md run.sh singe.sh sound theory $bin_dir
+    cp -a daphne.bin COPYING daphne-changelog.txt libvldp2.so doc pics roms README.md run.sh singe.sh sound theory $bin_dir
     cd ${root_dir}
     dest_file="${runner_name}-${version}-${arch}.tar.gz"
     tar czf ${dest_file} ${runner_name}
