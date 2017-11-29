@@ -11,7 +11,6 @@ libcairo2                         libcairo.so.2
 libcdio13                         libcdio.so.13
 libcgmanager0                     libcgmanager.so.0
 libdatrie1                        libdatrie.so.1
-libevdev2                         libevdev.so.2
 libfaad2                          libfaad.so.2
 libfluidsynth1                    libfluidsynth.so.1
 libfribidi0                       libfribidi.so.0
@@ -57,7 +56,6 @@ libtdb1                           libtdb.so.1
 libthai0                          libthai.so.0
 libtiff5                          libtiff.so.5
 libtinfo5                         libtinfo.so.5
-libudev1                          libudev.so.1
 libupnp6                          libixml.so.2 libthreadutil.so.6 libupnp.so.6
 libwebp5                          libwebp.so.5
 libx264-148                       libx264.so.148
