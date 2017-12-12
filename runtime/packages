@@ -27,7 +27,6 @@ libleveldb1v5                     libleveldb.so.1
 liblua5.1-0                       liblua5.1.so.0
 liblua5.2-0                       liblua5.2.so.0
 libluajit-5.1-2                   libluajit-5.1.so.2
-liblzma5                          liblzma.so.5
 libmad0                           libmad.so.0
 libmikmod3                        libmikmod.so.3
 libminiupnpc10                    libminiupnpc.so.10
