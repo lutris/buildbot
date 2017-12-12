@@ -19,6 +19,11 @@ To create the containers, first make sure you have the client installed::
 
     sudo apt install lxd lxd-client
 
+Also make sure to add your current user to the lxc group::
+
+    sudo usermod -G lxd myusername
+    newgrp lxd
+
 You can create the containers with a command such as::
 
     lxc launch images:ubuntu/xenial/amd64 buildbot-xenial-amd64
