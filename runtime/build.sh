@@ -26,6 +26,7 @@ if [ "$STEAM" = '1' ]; then
     cd steam
     rm -rf runtime
     rm -rf amd64/installed/
+    rm -rf amd64/lib/x86_64-linux-gnu/libdbus-1.so.3
     rm -rf amd64/lib/x86_64-linux-gnu/libgcc_s.so.1
     rm -rf amd64/lib/x86_64-linux-gnu/libglib-2.0.so.0*
     rm -rf amd64/lib/x86_64-linux-gnu/libgpg-error.so.0*
@@ -59,6 +60,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/usr/share/glib-2.0
 
     rm -rf i386/installed/
+    rm -rf i386/lib/i386-linux-gnu/libdbus-1.so.3
     rm -rf i386/lib/i386-linux-gnu/libgcc_s.so.1
     rm -rf i386/lib/i386-linux-gnu/libglib-2.0.so.0*
     rm -rf i386/lib/i386-linux-gnu/libgpg-error.so.0*
