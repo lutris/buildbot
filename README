@@ -2,17 +2,30 @@ Lutris buildbot
 ===============
 
 This repository contains various build scripts for runners and games used by
-Lutris. The target system for these scripts is Ubuntu 14.04 (the same system
+Lutris. The target system for these scripts is Ubuntu 16.04 (the same system
 used by the Lutris runtime).
 
-It is advised to run these scripts from a LXC container. You can create one
-with the following command::
+It is advised to run these scripts from a LXC container. It's potentially
+possible to use other container technology such as Docker but we strongly
+advise against it. Virtual machines are ok to use too.
 
-    lxc lauch images:ubuntu/trusty/amd64 buildbot-trusty-amd64
+The only case where these containers need to communicate is when build 64bit
+builds of Wine. These builds are actually multi-arch and provide 32 and 64bit
+support. Make sure the 32 bit container is able to SSH (without a password) to
+ubuntu@buildbot64 and inversely, that the 64bit container can SSH to
+ubuntu@buildbot32.
+
+To create the containers, first make sure you have the client installed::
+
+    sudo apt install lxd lxd-client
+
+You can create the containers with a command such as::
+
+    lxc launch images:ubuntu/xenial/amd64 buildbot-xenial-amd64
 
 or for the 32bit container::
 
-    sudo lxc-create -t ubuntu -n buildbot32 -- -r trusty --arch i386
+    sudo lxc-create -t ubuntu -n buildbot32 -- -r xenial --arch i386
 
 The minimal system should have the following packages installed::
 
