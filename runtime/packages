@@ -51,7 +51,6 @@ libsoundtouch1                    libSoundTouch.so.1
 libsoxr0                          libsoxr.so.0
 libstdc++5                        libstdc++.so.5
 libswscale-ffmpeg3                libswscale-ffmpeg.so.3
-libtdb1                           libtdb.so.1
 libthai0                          libthai.so.0
 libtiff5                          libtiff.so.5
 libtinfo5                         libtinfo.so.5
