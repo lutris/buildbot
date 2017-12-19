@@ -11,20 +11,22 @@ source_dir="${root_dir}/0ad-src"
 bin_dir="${root_dir}/0ad"
 
 InstallBuildDependencies() {
-    install_deps build-essential libboost-dev libboost-filesystem-dev   \
-    libcurl4-gnutls-dev libenet-dev libgloox-dev libicu-dev    \
-    libminiupnpc-dev libnspr4-dev libnvtt-dev libogg-dev libopenal-dev   \
-    libpng-dev libsdl2-dev libvorbis-dev libwxgtk3.0-dev libxcursor-dev      \
+    install_deps build-essential libboost-dev libboost-filesystem-dev \
+    libcurl4-gnutls-dev libenet-dev libgloox-dev libicu-dev \
+    libminiupnpc-dev libnspr4-dev libnvtt-dev libogg-dev libopenal-dev \
+    libpng-dev libsdl2-dev libvorbis-dev libwxgtk3.0-dev libxcursor-dev \
     libxml2-dev subversion zlib1g-dev subversion
 }
 
 GetSources() {
     cd $root_dir
+    rm -rf $source_dir
     wget http://releases.wildfiregames.com/0ad-0.${version}-unix-build.tar.xz
     wget http://releases.wildfiregames.com/0ad-0.${version}-unix-data.tar.xz
 
     tar xvJf 0ad-0.${version}-unix-build.tar.xz
     tar xvJf 0ad-0.${version}-unix-data.tar.xz
+    mv 0ad-0.${version} $source_dir
 }
 
 BuildProject() {
