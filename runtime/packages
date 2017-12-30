@@ -15,7 +15,6 @@ libfaad2                          libfaad.so.2
 libfluidsynth1                    libfluidsynth.so.1
 libfribidi0                       libfribidi.so.0
 libfuse2                          libfuse.so.2
-libgcrypt20                       libgcrypt.so.20
 libgif7                           libgif.so.7
 libgloox13v5                      libgloox.so.13
 libgomp1                          libgomp.so.1
