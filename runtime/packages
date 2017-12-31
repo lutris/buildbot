@@ -61,7 +61,5 @@ libxinerama1                      libXinerama.so.1
 libxshmfence1                     libxshmfence.so.1
 libxml2                           libxml.so.2
 libxslt1.1                        libxslt.so.1 libexslt.so.0
-libxv1                            libXv.so.1
-libxxf86dga1                      libXxf86dga.so.1
 libzzip-0-13                      libzzip-0.so.13
 zlib1g                            libz.so.1
