@@ -28,11 +28,11 @@ InstallBuildDependencies() {
 
 GetSources() {
     clone $repo_url $source_dir
-    cd "${source_dir}"
 }
 
 
 BuildProject() {
+    cd "${source_dir}"
     mkdir -p ${build_dir}
     cd ${build_dir}
     cmake -DLINUX_LOCAL_DEV=1 ${source_dir}
