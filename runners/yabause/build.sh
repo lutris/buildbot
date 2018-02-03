@@ -28,10 +28,10 @@ DownloadStable() {
 
 DownloadGit() {
     clone https://github.com/Yabause/yabause.git ${source_dir}
-    cd "${source_dir}"
 }
 
 BuildProject() {
+    cd "${source_dir}"
     mkdir -p $build_dir
     cd $build_dir
     cmake ${source_dir}/yabause -DCMAKE_BUILD_TYPE=Release

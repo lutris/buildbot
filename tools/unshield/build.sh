@@ -15,10 +15,10 @@ bin_dir="${root_dir}/${pkg_name}"
 
 GetSources() {
     clone https://github.com/twogood/unshield.git $source_dir
-    cd "${source_dir}"
 }
 
 BuildProject() {
+    cd "${source_dir}"
     mkdir -p $build_dir
     cd $build_dir
     cmake $source_dir
