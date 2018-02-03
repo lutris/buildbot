@@ -15,6 +15,7 @@ bin_dir="${root_dir}/${pkg_name}"
 
 GetSources() {
     clone https://github.com/twogood/unshield.git $source_dir
+    cd "${source_dir}"
 }
 
 BuildProject() {
