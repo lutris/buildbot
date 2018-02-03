@@ -23,6 +23,7 @@ InstallDependencies() {
 
 GetSources() {
     clone https://github.com/citra-emu/citra ${source_dir} recurse
+    cd "${source_dir}"
 }
 
 Build() {

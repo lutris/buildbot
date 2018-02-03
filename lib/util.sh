@@ -14,10 +14,10 @@ function clone {
         cd ${source_dir}
         git checkout master
         git pull
+        cd ..
     else
         echo "Cloning sources"
         git clone ${recurse} ${repo_url} ${source_dir}
-        cd $source_dir
     fi
     if [ "$tag" ]; then
         git checkout ${tag}

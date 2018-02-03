@@ -17,6 +17,7 @@ version="0.3.0git"
 
 repo_url="https://github.com/residualvm/residualvm.git"
 clone $repo_url $source_dir
+cd "${source_dir}"
 
 deps="libsdl1.2-dev"
 install_deps $deps

@@ -28,6 +28,7 @@ InstallBuildDependencies() {
 
 GetSources() {
     clone $repo_url $source_dir
+    cd "${source_dir}"
 }
 
 

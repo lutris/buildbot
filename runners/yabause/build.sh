@@ -28,6 +28,7 @@ DownloadStable() {
 
 DownloadGit() {
     clone https://github.com/Yabause/yabause.git ${source_dir}
+    cd "${source_dir}"
 }
 
 BuildProject() {
