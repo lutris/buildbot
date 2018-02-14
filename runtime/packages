@@ -14,16 +14,22 @@ libdatrie1                        libdatrie.so.1
 libfaad2                          libfaad.so.2
 libfluidsynth1                    libfluidsynth.so.1
 libfontconfig1                    libfontconfig.so.1
+libfreetype6                      libfreetype.so.6
 libfribidi0                       libfribidi.so.0
 libfuse2                          libfuse.so.2
+libgcrypt20                       libgcrypt.so.20
 libgif7                           libgif.so.7
 libgloox13v5                      libgloox.so.13
+libgnutls30                       libgnutls.so.30 libnettle.so.6 libhogweed.so.4 libgmp.so.10 libtasn1.so.6 libidn.so.11
 libgomp1                          libgomp.so.1
+libgpg-error0                     libgpg-error.so.0
+libharfbuzz0b                     libharfbuzz.so.0
 libicu55                          libicui18n.so.55 libicuuc.so.55 libicudata.so.55
 libirrlicht1.8                    libIrrlicht.so.1.8
 libjansson4                       libjansson.so.4
 libjbig0                          libjbig.so.0
 libjson-c2                        libjson-c.so.2
+libldap-2.4-2                     libldap-2.4.so.2 libldap_r-2.4.so.2 liblber-2.4.so.2 libsasl2.so.2 libgssapi.so.3 libheimntlm.so.0 libkrb5.so.26 libasn1.so.8 libcom_err.so.2 libhcrypto.so.4 libroken.so.18 libwind.so.0 libheimbase.so.1 libhx509.so.5
 libleveldb1v5                     libleveldb.so.1
 liblua5.1-0                       liblua5.1.so.0
 liblua5.2-0                       liblua5.2.so.0
@@ -40,6 +46,8 @@ libnih1                           libnih.so.1
 libnih-dbus1                      libnih-dbus.so.1
 libopenjpeg5                      libopenjpeg.so.5
 libreadline6                      libhistory.so.6 libreadline.so.6
+libp11-kit0                       libp11-kit.so.0
+libpangoft2-1.0-0                 libpangoft2-1.0.so.0 libpango-1.0-0
 libphysfs1                        libphysfs.so.1
 libportaudio2                     libportaudio.so.2
 libsdl2-image-2.0-0               libSDL2_image-2.0.so.0
