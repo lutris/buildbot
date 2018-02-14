@@ -36,22 +36,27 @@ def find_lib_paths(required_libs):
         if parts[0] in required_libs:
             print("Found ", parts[0])
             lib_paths.append(parts[-1])
+    if len(lib_paths) == 0:
+        print("Not found", required_libs)
     return lib_paths
 
 
 def build_runtime():
     required_libs = []
     libs = get_libs()
+    subprocess.Popen(
+        ['apt-get', 'install', '--allow-downgrades', '--allow-remove-essential', '--allow-change-held-packages', '-q=2'] + libs.keys()
+    ).communicate()
     for lib_package in libs:
-        print("Installing {}".format(lib_package))
-        subprocess.Popen(
-            ['apt-get', 'install', '-y', '--force-yes', '-q=2', lib_package]
-        ).communicate()
         required_libs += libs[lib_package]
     lib_paths = find_lib_paths(required_libs)
     for lib in lib_paths:
-        print("Copying", lib)
-        shutil.copy(lib, RUNTIME_DIR)
+        exists = os.path.exists(lib)
+        if exists:
+            print("Copying", lib)
+            shutil.copy(lib, RUNTIME_DIR)
+        else:
+            print("Library not found", lib)
 
 
 if __name__ == "__main__":
