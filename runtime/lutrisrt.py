@@ -26,18 +26,26 @@ def get_ldconfig_libs():
     ldconfig = subprocess.Popen(['ldconfig', '-p'],
                                 stdout=subprocess.PIPE).communicate()[0]
     return [line.strip().split()
-            for line in ldconfig.split('\n')
+            for line in ldconfig.decode().split('\n')
             if line.startswith('\t')]
 
 
 def find_lib_paths(required_libs):
     lib_paths = []
+    ld_libs = []
     for parts in get_ldconfig_libs():
         if parts[0] in required_libs:
             print("Found ", parts[0])
             lib_paths.append(parts[-1])
-    if len(lib_paths) == 0:
-        print("Not found", required_libs)
+            ld_libs.append(parts[0])
+    libs_not_found = list(set(required_libs) - set(ld_libs))
+    for lib in libs_not_found[:]:
+        if os.path.exists(lib):
+            print("Found ", lib)
+            lib_paths.append(lib)
+            libs_not_found.remove(lib)
+    if len(libs_not_found) > 0:
+        print('Required libraries not found:', ' '.join(libs_not_found))
     return lib_paths
 
 
@@ -45,7 +53,7 @@ def build_runtime():
     required_libs = []
     libs = get_libs()
     subprocess.Popen(
-        ['apt-get', 'install', '--allow-downgrades', '--allow-remove-essential', '--allow-change-held-packages', '-q=2'] + libs.keys()
+        ['sudo', 'apt-get', 'install', '--allow-downgrades', '--allow-remove-essential', '--allow-change-held-packages', '-q=2'] + list(libs.keys())
     ).communicate()
     for lib_package in libs:
         required_libs += libs[lib_package]

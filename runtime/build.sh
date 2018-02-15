@@ -133,14 +133,14 @@ fi
 # Lutris runtime
 rm -rf ${runtime_dir}
 mkdir -p ${runtime_dir}
-sudo python2 lutrisrt.py
-sudo chown $(id -u):$(id -g) runtime -R
+python3 lutrisrt.py
 mv runtime/* ${runtime_dir}
 
 # Copy Lutris runtime extra libs
 cp -a extra/${runtime_dir}/* ${runtime_dir}
 
 runtime_archive="${runtime_dir}.tar.bz2"
+echo "Compressing runtime $runtime_archive..."
 tar cjf ${runtime_archive} ${runtime_dir}
 runtime_upload ${runtime_dir} ${runtime_archive}
 
