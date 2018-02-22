@@ -47,7 +47,7 @@ Maintainer: none
 Description: Package manager for .NET.' > control
     cd ../..
     dpkg-deb --build nuget_4.4.1-1
-    dpkg -i nuget_4.4.1-1.deb
+    sudo dpkg -i nuget_4.4.1-1.deb
     rm -r nuget*
 }
 
