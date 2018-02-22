@@ -42,7 +42,7 @@ Version: 4.4.1-1
 Section: base
 Priority: optional
 Architecture: amd64
-Depends: mono-complete (>= 5.0)
+Depends: mono-complete (>= 4.0)
 Maintainer: none
 Description: Package manager for .NET.' > control
     cd ../..
