@@ -33,7 +33,7 @@ InstallBuildDependencies() {
     cd "${root_dir}/nuget_4.4.1-1/usr/bin"
     wget https://dist.nuget.org/win-x86-commandline/v4.4.1/nuget.exe
     echo '#!/bin/sh
-mono --runtime=v4.0 /usr/lib/nuget/nuget.exe $*' > nuget
+mono --runtime=v4.0 /usr/bin/nuget.exe $*' > nuget
     chmod a+x nuget
     mkdir -p ../../DEBIAN
     cd ../../DEBIAN
