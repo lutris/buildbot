@@ -35,8 +35,10 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/lib/x86_64-linux-gnu/libselinux*
     rm -rf amd64/lib/x86_64-linux-gnu/libkeyutils*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libcurl.so*
-    rm -rf amd64/usr/lib/x86_64-linux-gnu/gio
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/gio*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/glib-2.0
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/gst*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libgst*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libSDL-1.2.so.0*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libatk-1.0.so.0*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libcairo.so.2*
@@ -61,6 +63,8 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/lib/x86_64-linux-gnu/libz.so*
     rm -rf amd64/usr/share/doc
     rm -rf amd64/usr/share/glib-2.0
+    rm -rf amd64/usr/share/gst-plugins-base/
+
 
     rm -rf i386/installed/
     rm -rf i386/lib/i386-linux-gnu/libdbus-1.so.3
@@ -72,7 +76,9 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/lib/i386-linux-gnu/libselinux*
     rm -rf i386/lib/i386-linux-gnu/libkeyutils*
     rm -rf i386/usr/lib/i386-linux-gnu/libcurl.so*
-    rm -rf i386/usr/lib/i386-linux-gnu/gio
+    rm -rf i386/usr/lib/i386-linux-gnu/gio*
+    rm -rf i386/usr/lib/i386-linux-gnu/gst*
+    rm -rf i386/usr/lib/i386-linux-gnu/libgst*
     rm -rf i386/usr/lib/i386-linux-gnu/glib-2.0
     rm -rf i386/usr/lib/i386-linux-gnu/libSDL-1.2.so.0*
     rm -rf i386/usr/lib/i386-linux-gnu/libatk-1.0.so.0*
@@ -98,6 +104,8 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/lib/i386-linux-gnu/libz.so*
     rm -rf i386/usr/share/doc
     rm -rf i386/usr/share/glib-2.0
+    rm -rf i386/usr/share/gst-plugins-base/
+
     cd ..
 
     tar cjf $steam_runtime_file steam
