@@ -58,6 +58,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libxml2.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libXrandr.so.2*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libvulkan.so.*
+    rm -rf amd64/lib/x86_64-linux-gnu/libz.so*
     rm -rf amd64/usr/share/doc
     rm -rf amd64/usr/share/glib-2.0
 
@@ -94,6 +95,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/usr/lib/i386-linux-gnu/libxml2.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libXrandr.so.2*
     rm -rf i386/usr/lib/i386-linux-gnu/libvulkan.so.*
+    rm -rf i386/lib/i386-linux-gnu/libz.so*
     rm -rf i386/usr/share/doc
     rm -rf i386/usr/share/glib-2.0
     cd ..
