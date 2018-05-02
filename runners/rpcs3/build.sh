@@ -14,10 +14,14 @@ root_dir=$(pwd)
 source_dir=$(pwd)/${runner_name}-src
 build_dir=$(pwd)/${runner_name}-build
 bin_dir=$(pwd)/${runner_name}
+dest_file="${runner_name}-${version}-${arch}.tar.gz"
+
+# Change to the base path of your Qt installation
+QT_BASE_DIR=/opt/Qt/5.10.1/gcc_64
 
 InstallDependencies() {
-    install_deps cmake build-essential libasound2-dev libopenal-dev libwxgtk3.0-dev libglew-dev \
-        zlib1g-dev libedit-dev libvulkan-dev libudev-dev git
+    install_deps cmake build-essential libasound2-dev libpulse-dev libopenal-dev libglew-dev \
+        zlib1g-dev libedit-dev libvulkan-dev libudev-dev git qt5-default
 }
 
 
@@ -26,17 +30,24 @@ GetSources() {
 }
 
 Build() {
-    cd $source_dir
-    cmake CMakeLists.txt 
+    export QTDIR=$QT_BASE_DIR
+    export PATH=$QT_BASE_DIR/bin:$PATH
+    export LD_LIBRARY_PATH=$QT_BASE_DIR/lib:$LD_LIBRARY_PATH
+    export PKG_CONFIG_PATH=$QT_BASE_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
+
+    cd $root_dir
+    mkdir -p $build_dir
+    cd $build_dir
+    cmake $source_dir
     make GitVersion
     make -j$(getconf _NPROCESSORS_ONLN)
 }
 
 
 Package() {
-    mkdir -p $bin_dir
     cd ${root_dir}
-    dest_file="${runner_name}-${version}-${arch}.tar.gz"
+    mkdir -p $bin_dir
+    cp -a $build_dir/bin/* $bin_dir
     tar czf ${dest_file} ${runner_name}
 }
 
