@@ -60,6 +60,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libtdb.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libxml2.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libxcb*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libX11.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libXrandr*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libXrender*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libvulkan.so.*
@@ -104,6 +105,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/usr/lib/i386-linux-gnu/libtdb.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libxml2.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libxcb*
+    rm -rf i386/usr/lib/i386-linux-gnu/libX11.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libXrandr*
     rm -rf i386/usr/lib/i386-linux-gnu/libXrender*
     rm -rf i386/usr/lib/i386-linux-gnu/libvulkan.so.*
