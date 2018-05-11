@@ -35,9 +35,11 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/lib/x86_64-linux-gnu/libselinux*
     rm -rf amd64/lib/x86_64-linux-gnu/libkeyutils*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libcurl.so*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/gdk*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/gio*
-    rm -rf amd64/usr/lib/x86_64-linux-gnu/glib-2.0
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/glib*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/gst*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/gtk*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgst*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libSDL-1.2.so.0*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libatk-1.0.so.0*
@@ -45,6 +47,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libpango*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/pango*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libfontconfig.so*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libgdk*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgio-2.0.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgmodule-2.0.so*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgmp.so*
@@ -80,8 +83,11 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/lib/i386-linux-gnu/libselinux*
     rm -rf i386/lib/i386-linux-gnu/libkeyutils*
     rm -rf i386/usr/lib/i386-linux-gnu/libcurl.so*
+    rm -rf i386/usr/lib/i386-linux-gnu/gdk*
     rm -rf i386/usr/lib/i386-linux-gnu/gio*
+    rm -rf i386/usr/lib/i386-linux-gnu/glib*
     rm -rf i386/usr/lib/i386-linux-gnu/gst*
+    rm -rf i386/usr/lib/i386-linux-gnu/gtk*
     rm -rf i386/usr/lib/i386-linux-gnu/libgst*
     rm -rf i386/usr/lib/i386-linux-gnu/glib-2.0
     rm -rf i386/usr/lib/i386-linux-gnu/libSDL-1.2.so.0*
@@ -90,6 +96,7 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/usr/lib/i386-linux-gnu/libpango*
     rm -rf i386/usr/lib/i386-linux-gnu/pango*
     rm -rf i386/usr/lib/i386-linux-gnu/libfontconfig.so*
+    rm -rf i386/usr/lib/i386-linux-gnu/libgdk*
     rm -rf i386/usr/lib/i386-linux-gnu/libgio-2.0.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libgmodule-2.0.so*
     rm -rf i386/usr/lib/i386-linux-gnu/libgmp.so*
