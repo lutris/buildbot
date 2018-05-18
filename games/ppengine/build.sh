@@ -7,7 +7,7 @@ source ../../lib/util.sh
 root_dir=$(pwd)
 source_dir="${root_dir}/ppengine"
 
-install_deps libsdl2-image-dev libsdl2-mixer-dev cmake
+install_deps libsdl2-image-dev libsdl2-mixer-dev libopenscenegraph-dev libalut-dev cmake
 
 cd $root_dir
 
@@ -17,17 +17,12 @@ cd gorilla-audio
 git submodule init
 git submodule update
 cd build
-cmake . 
+cmake .
 make
 
-export GORILLA_AUDIO_PATH="$source_dir/gorilla-audio/bin/linux/Release/"
+# build le ppengine
+export CPATH="${source_dir}/src/ppengine:${root_dir}/gorilla-audio/include"
+export GORILLA_AUDIO_PATH="${root_dir}/gorilla-audio"
 git clone "https://github.com/jonathanopalise/ppengine.git" $source_dir
 cd $source_dir
-make 
-
-# Build breaks here, some includes seem to be broken:
-
-#  src/scene/scene.h:7:10: fatal error: engine.h: No such file or directory
-#  #include "engine.h"
-#           ^~~~~~~~~~
-
+make
