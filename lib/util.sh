@@ -20,7 +20,9 @@ function clone {
         git clone ${recurse} ${repo_url} ${source_dir}
     fi
     if [ "$tag" ]; then
+        cd ${source_dir}
         git checkout ${tag}
+        cd ..
     fi
 }
 

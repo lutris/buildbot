@@ -8,12 +8,12 @@ source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
 root_dir=$(pwd)
-version=1.9.6.0-beta
-tag=v1960beta
+version=2.2.2
+tag=v2.2.2
 arch=$(uname -m)
 source_dir=${root_dir}/commander-genius-src
 
-deps="libsdl2-image-dev libboost-all-dev"
+deps="libsdl2-image-dev libboost-all-dev libsdl2-mixer-dev cmake"
 install_deps $deps
 
 clone https://github.com/gerstrong/Commander-Genius.git $source_dir true $tag
