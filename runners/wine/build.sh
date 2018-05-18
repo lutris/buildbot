@@ -19,11 +19,12 @@ arch=$(uname -m)
 version="1.8"
 configure_opts="--disable-tests --with-x --with-gstreamer"
 
-params=$(getopt -n $0 -o a:v:p:snd6k --long as:,version:,patch:,staging,noupload,dependencies,64bit,keep -- "$@")
+params=$(getopt -n $0 -o a:w:v:p:snd6k --long as:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
         -a|--as) build_name=$2; shift 2 ;;
+        -w|--with) repo_url=$2; shift 2 ;;
         -v|--version) version=$2; shift 2 ;;
         -p|--patch) patch=$2; shift 2 ;;
         -s|--staging) STAGING=1; shift ;;
@@ -70,15 +71,32 @@ InstallDependencies() {
 }
 
 DownloadWine() {
-    wine_archive="wine-${version}.tar.bz2"
+    # If a git repo as been specified use this instead and return
+    if [[ $repo_url ]]; then
+        git clone $repo_url $source_dir
+        return
+    fi
+
+    IFS="." read major minor patch_num <<< "$version"
+    if [[ $major -gt 1 && $minor -gt 0 ]]; then
+        version_base="$major.x"
+        wine_archive="wine-${version}.tar.xz"
+    elif [[ $major -gt 1 && $minor -eq 0 ]]; then
+        version_base=${version:0:3}
+        wine_archive="wine-${version}.tar.xz"
+    else
+        version_base=${version:0:3}
+        wine_archive="wine-${version}.tar.bz2"
+    fi
+
     mkdir -p .cache
     if [ ! -f ".cache/$wine_archive" ]; then
         echo "Downloading Wine ${version}"
-        wget http://dl.winehq.org/wine/source/${version:0:3}/${wine_archive} -O .cache/${wine_archive}
+        wget http://dl.winehq.org/wine/source/$version_base/${wine_archive} -O .cache/${wine_archive}
     else
         echo "Wine ${version} already cached"
     fi
-    tar xjf .cache/wine-${version}.tar.bz2
+    tar xf .cache/$wine_archive
     if [ -d ${source_dir} ]; then
         rm -rf ${source_dir}
     fi
@@ -86,15 +104,26 @@ DownloadWine() {
 }
 
 DownloadWineStaging() {
+    local ignore_errors
     if [ $STAGING ]; then
         echo "Adding Wine Staging patches"
         cd ${source_dir}
         staging_archive="v${version}.tar.gz"
-        wget https://github.com/wine-compholio/wine-staging/archive/${staging_archive}
-        tar xvzf ${staging_archive} --strip-components 1
-        ./patches/patchinstall.sh DESTDIR="$(pwd)" --all
+        wget https://github.com/wine-staging/wine-staging/archive/${staging_archive} || true
+        if [ -f $staging_archive ]; then
+            tar xvzf ${staging_archive} --strip-components 1
+            rm ${staging_archive}
+            ignore_errors=false
+        else
+            echo "Wine staging v$version not found, reverting to current git master, safety not guaranteed."
+            clone https://github.com/wine-staging/wine-staging.git ${source_dir}/wine-staging-git
+            cd ${source_dir}
+            mv ${source_dir}/wine-staging-git/* ${source_dir}
+            rm -rf ${source_dir}/wine-staging-git
+            ignore_errors=true
+        fi
+        ${source_dir}/patches/patchinstall.sh DESTDIR="$(pwd)" --all || $ignore_errors
         configure_opts="$configure_opts --with-xattr"
-        rm ${staging_archive}
     fi
 }
 
@@ -168,6 +197,9 @@ Send64BitBuildAndBuild32bit() {
     fi
     if [ $build_name ]; then
         opts="${opts} --as $build_name"
+    fi
+    if [ $repo_url ]; then
+        opts="${opts} --with $repo_url"
     fi
     ssh -t ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
     ./build.sh -v ${version} ${opts}

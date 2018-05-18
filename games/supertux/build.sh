@@ -8,7 +8,7 @@ source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
 root_dir=$(pwd)
-version=0.5.0
+version=0.5.1
 arch=$(uname -m)
 source_dir=${root_dir}/supertux-${version}
 build_dir=${root_dir}/supertux-build

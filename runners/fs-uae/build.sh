@@ -17,7 +17,7 @@ deps="libglew-dev libmpeg2-4-dev libsdl2-dev zip"
 
 install_deps $deps
 clone $repo_url $source_dir
-
+cd "${source_dir}"
 mkdir -p ${build_dir}
 
 cd $source_dir

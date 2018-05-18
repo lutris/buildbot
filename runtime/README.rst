@@ -19,3 +19,5 @@ repo. Here's a list of these libs and their source:
 - libpng15                    Proteus
 - libSDL1.2                   http://www.libsdl.org/download-1.2.php
 - libSDL2-2.0                 Fedora 20
+- libSoundTouch1              Ubuntu 16.04 (Required by PCSX2)
+- libharfbuzz0                Ubuntu 17.04 (Ubuntu 16.04 version too old to run MAME on Arch)

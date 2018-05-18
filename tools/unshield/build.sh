@@ -18,6 +18,7 @@ GetSources() {
 }
 
 BuildProject() {
+    cd "${source_dir}"
     mkdir -p $build_dir
     cd $build_dir
     cmake $source_dir

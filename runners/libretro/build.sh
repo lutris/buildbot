@@ -7,7 +7,7 @@ source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
-retroarch_version="1.3.6"
+retroarch_version="1.5.0"
 root_dir="$(pwd)"
 source_dir="${root_dir}/libretro-super"
 bin_dir="${root_dir}/retroarch"
@@ -27,6 +27,7 @@ done
 core="$1"
 
 clone git://github.com/libretro/libretro-super.git $source_dir
+cd "${source_dir}"
 
 mkdir -p ${bin_dir}
 

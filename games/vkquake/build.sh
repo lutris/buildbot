@@ -9,17 +9,19 @@ source ${lib_path}upload_handler.sh
 
 root_dir=$(pwd)
 package_name=vkquake
-version=0.1.0
+version=0.95
 arch=$(uname -m)
 source_dir=${root_dir}/${package_name}-src
 bin_dir=${root_dir}/${package_name}
 
 clone https://github.com/Novum/vkQuake $source_dir
 cd $source_dir/Quake
+git checkout $version
+make clean
 make
 
 mkdir -p $bin_dir
-mv quakespasm quakespasm.pak $bin_dir
+mv vkquake vkquake.pak $bin_dir
 
 cd $root_dir
 tar czf ${package_name}-${version}-${arch}.tar.gz $package_name

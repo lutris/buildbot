@@ -4,29 +4,29 @@ set -e
 
 source ../../lib/util.sh
 
-version="alpha20"
+version="0.22-alpha"
 arch="$(uname -m)"
 root_dir=$(pwd)
 source_dir="${root_dir}/0ad-src"
 bin_dir="${root_dir}/0ad"
 
 InstallBuildDependencies() {
-    install_deps build-essential libboost-dev libboost-filesystem-dev   \
-    libcurl4-gnutls-dev libenet-dev libgloox-dev libicu-dev    \
-    libminiupnpc-dev libnspr4-dev libnvtt-dev libogg-dev libopenal-dev   \
-    libpng-dev libsdl2-dev libvorbis-dev libwxgtk3.0-dev libxcursor-dev      \
+    install_deps build-essential libboost-dev libboost-filesystem-dev \
+    libcurl4-gnutls-dev libenet-dev libgloox-dev libicu-dev \
+    libminiupnpc-dev libnspr4-dev libnvtt-dev libogg-dev libopenal-dev \
+    libpng-dev libsdl2-dev libvorbis-dev libwxgtk3.0-dev libxcursor-dev \
     libxml2-dev subversion zlib1g-dev subversion
 }
 
 GetSources() {
     cd $root_dir
-    svn co http://svn.wildfiregames.com/public/ps/trunk/ 0ad-src
+    rm -rf $source_dir
+    wget http://releases.wildfiregames.com/0ad-0.${version}-unix-build.tar.xz
+    wget http://releases.wildfiregames.com/0ad-0.${version}-unix-data.tar.xz
 
-    # To build a specific version use revision numbers available here:
-    # http://trac.wildfiregames.com/wiki/Changelogs
-
-    # For Alpha 20:
-    # svn co -r 17965 http://svn.wildfiregames.com/public/ps/trunk/
+    tar xvJf 0ad-0.${version}-unix-build.tar.xz
+    tar xvJf 0ad-0.${version}-unix-data.tar.xz
+    mv 0ad-0.${version} $source_dir
 }
 
 BuildProject() {

@@ -12,6 +12,7 @@ build_dir="${root_dir}/xoreos-build"
 install_deps "libfaad-dev libxvidcore-dev"
 
 clone https://github.com/xoreos/xoreos.git $source_dir
+cd "${source_dir}"
 
 mkdir  -p $build_dir
 cd $build_dir
