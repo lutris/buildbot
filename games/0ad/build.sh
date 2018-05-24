@@ -16,7 +16,7 @@ InstallBuildDependencies() {
     libcurl4-gnutls-dev libenet-dev libgloox-dev libicu-dev \
     libminiupnpc-dev libnspr4-dev libnvtt-dev libogg-dev libopenal-dev \
     libpng-dev libsdl2-dev libvorbis-dev libwxgtk3.0-dev libxcursor-dev \
-    libxml2-dev subversion zlib1g-dev subversion
+    libxml2-dev subversion zlib1g-dev subversion libsodium-dev
 }
 
 GetSources() {
