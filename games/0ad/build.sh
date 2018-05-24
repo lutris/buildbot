@@ -1,10 +1,11 @@
 #!/bin/bash
 
 set -e
+set -x
 
 source ../../lib/util.sh
 
-version="0.22-alpha"
+version="0.23-alpha"
 arch="$(uname -m)"
 root_dir=$(pwd)
 source_dir="${root_dir}/0ad-src"
