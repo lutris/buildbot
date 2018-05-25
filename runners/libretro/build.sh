@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -x
 lib_path="../../lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
@@ -102,6 +103,7 @@ fi
 
 if [ $1 ]; then
     if [[ $1 == 'all' ]]; then
+        cd $root_dir
         for core in $(cat cores.list); do
             BuildLibretroCore $core
             PackageCore $core
