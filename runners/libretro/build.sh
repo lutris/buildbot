@@ -101,8 +101,15 @@ if [ $INSTALL_DEPS ]; then
 fi
 
 if [ $1 ]; then
-    BuildLibretroCore $1
-    PackageCore $1
+    if [[ $1 == 'all' ]]; then
+        for core in $(cat cores.list); do
+            BuildLibretroCore $core
+            PackageCore $core
+        done
+    else
+        BuildLibretroCore $1
+        PackageCore $1
+    fi
 else
     BuildRetroarch
     PackageRetroarch
