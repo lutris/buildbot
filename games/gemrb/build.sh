@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -x
 
 source ../../lib/util.sh
 
@@ -25,9 +26,11 @@ GetSources() {
 Build() {
     echo "Building ${pkg_name}"
     cd $source_dir
-    ./autogen.sh
-    ./configure
-    make 
+    mkdir build
+    cd build
+    cmake .. -DLAYOUT=opt -DPREFIX=$bin_dir
+    make
+    make install
 }
 
 Package() {
