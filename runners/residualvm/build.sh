@@ -13,10 +13,10 @@ source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
 arch="$(uname -m)"
-version="0.3.0git"
+version="0.3.1"
 
 repo_url="https://github.com/residualvm/residualvm.git"
-clone $repo_url $source_dir
+clone $repo_url $source_dir true $version
 cd "${source_dir}"
 
 deps="libsdl1.2-dev"
