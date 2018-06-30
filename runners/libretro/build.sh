@@ -48,9 +48,17 @@ BuildRetroarch() {
     strip retroarch
     cp retroarch $bin_dir
     cp tools/cg2glsl.py ${bin_dir}/retroarch-cg2glsl
+
+    # Assets
     cp -a media/assets ${bin_dir}
-    cp -a ../dist/info ${bin_dir}
     rm -rf ${bin_dir}/assets/.git
+
+    # Info files
+    cp -a ../dist/info ${bin_dir}
+
+    # Database
+    mkdir -p ${bin_dir}/database
+    cp -a -t ${bin_dir}/database media/libretrodb/cht media/libretrodb/cursors media/libretrodb/rdb
 }
 
 BuildLibretroCore() {
