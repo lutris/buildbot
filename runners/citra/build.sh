@@ -17,7 +17,7 @@ bin_dir=$(pwd)/${runner_name}
 
 InstallDependencies() {
     install_deps libsdl2-dev qtbase5-dev libqt5opengl5-dev gcc-6 g++-6 \
-        qt5-default libqt5opengl5-dev xorg-dev lib32stdc++6 libc++-dev clang
+        qt5-default libqt5opengl5-dev xorg-dev lib32stdc++6 libc++-dev clang qtmultimedia5-dev
 }
 
 
