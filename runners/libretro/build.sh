@@ -43,7 +43,7 @@ BuildRetroarch() {
     cd ${source_dir}
     SHALLOW_CLONE=1 ./libretro-fetch.sh retroarch
     cd ${source_dir}/retroarch
-    ./configure --disable-ffmpeg --disable-qt
+    ./configure --disable-ffmpeg --disable-qt --disable-cg
     make -j$cpus
     strip retroarch
     cp retroarch $bin_dir
