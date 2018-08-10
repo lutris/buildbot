@@ -74,7 +74,8 @@ InstallDependencies() {
 DownloadWine() {
     # If a git repo as been specified use this instead and return
     if [[ $repo_url ]]; then
-        git clone $repo_url $source_dir
+        # The branch name has to match the build name
+        git clone -b "$build_name" --single-branch "$repo_url" "$source_dir"
         return
     fi
 
