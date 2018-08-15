@@ -20,11 +20,12 @@ arch=$(uname -m)
 version="1.8"
 configure_opts="--disable-tests --with-x --with-gstreamer"
 
-params=$(getopt -n $0 -o a:w:v:p:snd6k --long as:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep -- "$@")
+params=$(getopt -n $0 -o a:b:w:v:p:snd6k --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
         -a|--as) build_name=$2; shift 2 ;;
+        -b|--branch) branch_name=$2; shift 2 ;;
         -w|--with) repo_url=$2; shift 2 ;;
         -v|--version) version=$2; shift 2 ;;
         -p|--patch) patch=$2; shift 2 ;;
@@ -74,8 +75,9 @@ InstallDependencies() {
 DownloadWine() {
     # If a git repo as been specified use this instead and return
     if [[ $repo_url ]]; then
-        # The branch name has to match the build name
-        git clone -b "$build_name" --single-branch "$repo_url" "$source_dir"
+        # The branch name defaults to the build name
+        branch_name=${branch_name:-$repo_url}
+        git clone -b "$build_name" --single-branch "$branch_name" "$source_dir"
         return
     fi
 
