@@ -205,8 +205,14 @@ Send64BitBuildAndBuild32bit() {
     if [ $repo_url ]; then
         opts="${opts} --with $repo_url"
     fi
+    if [ "$branch_name" ]; then
+        opts="${opts} --branch $branch_name"
+    fi
+    echo "Building 32bit wine on 32bit container"
     ssh -t ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
+    echo "Relaunch local build after the 32bit build finished"
     ./build.sh -v ${version} ${opts}
+    echo "Build relaunched"
 }
 
 Combine64and32bitBuilds() {
@@ -217,7 +223,7 @@ Combine64and32bitBuilds() {
         echo "Missing wine64 build file $wine64build_archive"
         exit 2
     fi
-    tar xzf $wine64build_archive
+    tar xzf "$wine64build_archive"
 
     # Rename the 32bit build of wine
     mv wine wine32
