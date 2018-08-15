@@ -76,8 +76,8 @@ DownloadWine() {
     # If a git repo as been specified use this instead and return
     if [[ $repo_url ]]; then
         # The branch name defaults to the build name
-        branch_name=${branch_name:-$repo_url}
-        git clone -b "$build_name" --single-branch "$branch_name" "$source_dir"
+        branch_name=${branch_name:-$build_name}
+        git clone -b "$branch_name" --single-branch "$repo_url" "$source_dir"
         return
     fi
 
