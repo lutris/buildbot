@@ -16,28 +16,40 @@ GetSources() {
     filename="${version}.tar.gz"
     wget https://github.com/Winetricks/winetricks/archive/${filename}
     tar xzf ${filename}
-    mv winetricks-${version} ${source_dir}
+    rm ${filename}
+    mv winetricks-${version} "${source_dir}"
 }
 
 BuildProject() {
-    echo "build"
-    mkdir -p ${bin_dir}
-    cp ${source_dir}/src/winetricks ${bin_dir}
+    cd "${source_dir}"
+
+    # Fix language bug on unattended dotnet462 install
+    sed -i 's/WINEDLLOVERRIDES=fusion=b "$WINE" "$file_package" ${W_OPT_UNATTENDED:+$unattended_args}/WINEDLLOVERRIDES=fusion=b "$WINE" "$file_package" \/sfxlang:1027 ${W_OPT_UNATTENDED:+$unattended_args}/g' src/winetricks
+
+    # xact 64 bit is required for various games to not have broken audio (i.e. UT, hellblade etc.), so revert this commit https://github.com/Winetricks/winetricks/commit/f2b3d268d941120d13b4c3c3960b78a879d37761
+    patch -Np1 -R < ../'patches/xact.revert.patch'
+
+    # dotnet471 support, 64-bit mostly working
+    # patch -Np1 < ../'patches/dotnet471.patch'
+
+    mkdir -p "${bin_dir}"
+    cp "${source_dir}/src/winetricks" "${bin_dir}"
 }
 
+
 PackageProject() {
-    cd $root_dir
-    tar czf ${pkg_name}-${version}-${arch}.tar.gz ${pkg_name}
+    cd "$root_dir"
+    tar czf "${pkg_name}-${version}-${arch}.tar.gz" "${pkg_name}"
 }
 
 Cleanup() {
-    cd $root_dir
-    rm -rf $bin_dir
-    rm -rf $source_dir
+    cd "$root_dir"
+    rm -rf "$bin_dir"
+    rm -rf "$source_dir"
 }
 
 
-if [ $1 ]; then
+if [ "$1" ]; then
     $1
 else
     GetSources $version
