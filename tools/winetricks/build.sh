@@ -30,7 +30,7 @@ BuildProject() {
     patch -Np1 -R < ../'patches/xact.revert.patch'
 
     # dotnet471 support, 64-bit mostly working
-    # patch -Np1 < ../'patches/dotnet471.patch'
+    patch -Np1 < ../'patches/dotnet471.patch'
 
     mkdir -p "${bin_dir}"
     cp "${source_dir}/src/winetricks" "${bin_dir}"
