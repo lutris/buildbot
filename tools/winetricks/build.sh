@@ -5,7 +5,7 @@ set -e
 source ../../lib/util.sh
 
 pkg_name="winetricks"
-version="20180815"
+version="master"
 arch=$(uname -m)
 root_dir=$(pwd)
 source_dir="${root_dir}/${pkg_name}-src"
