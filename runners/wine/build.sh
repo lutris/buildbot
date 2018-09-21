@@ -293,6 +293,7 @@ UploadRunner() {
     if [ ! $NOUPLOAD ]; then
         cd ${root_dir}
         aws s3 --endpoint-url=https://nyc3.digitaloceanspaces.com cp ${dest_file} s3://lutris/runners/wine/
+        s3cmd setacl s3://lutris/runners/wine/${dest_file} --acl-public
         url="https://lutris.nyc3.digitaloceanspaces.com/runners/wine/${dest_file}"
         runner_upload ${runner_name} ${filename_opts}${version} ${arch} ${url}
     fi
