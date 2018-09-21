@@ -11,8 +11,6 @@ runner_upload() {
         architecture="armv7"
     fi
 
-    filename=$4
-
     token_path="../../.lutris_token"
     if [ ! -f $token_path ]; then
         echo "You are not authenticated, runner won't upload"
@@ -20,17 +18,34 @@ runner_upload() {
     fi
     access_token=$(cat $token_path)
 
+    if [[ "$4" == http* ]]; then
+        url=$4
+    else
+        filename=$4
+    fi
+
     host="https://lutris.net"
     upload_url="${host}/api/runners/${runner}/versions"
     echo "Uploading to ${upload_url}"
-    curl \
-        -v \
-        --request POST \
-        --header "Authorization: Token $access_token" \
-        --form "version=${version}" \
-        --form "architecture=${architecture}" \
-        --form "file=@${filename}" \
-        "$upload_url"
+    if [[ "$url" == http* ]]; then
+        curl \
+            -v \
+            --request POST \
+            --header "Authorization: Token $access_token" \
+            --form "version=${version}" \
+            --form "architecture=${architecture}" \
+            --form "url=@${url}" \
+            "$upload_url"
+    else
+        curl \
+            -v \
+            --request POST \
+            --header "Authorization: Token $access_token" \
+            --form "version=${version}" \
+            --form "architecture=${architecture}" \
+            --form "file=@${filename}" \
+            "$upload_url"
+    fi
 }
 
 runtime_upload() {
