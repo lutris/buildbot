@@ -34,7 +34,7 @@ runner_upload() {
             --header "Authorization: Token $access_token" \
             --form "version=${version}" \
             --form "architecture=${architecture}" \
-            --form "url=@${url}" \
+            --form "url=${url}" \
             "$upload_url"
     else
         curl \
