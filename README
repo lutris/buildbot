@@ -30,7 +30,7 @@ You can create the containers with a command such as::
 
 or for the 32bit container::
 
-    sudo lxc-create -t ubuntu -n buildbot32 -- -r xenial --arch i386
+    lxc launch images:ubuntu/xenial/i386 buildbot-xenial-i386
 
 The minimal system should have the following packages installed::
 
