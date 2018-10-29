@@ -70,3 +70,11 @@ runtime_upload() {
         --form "file=@${filename}" \
         "$upload_url"
 }
+
+
+spaces_upload() {
+    filename=$1
+    destination=$2
+    aws s3 --endpoint-url=https://nyc3.digitaloceanspaces.com cp ${filename} s3://lutris/${destination}/${filename}
+    s3cmd setacl s3://lutris/${destination}/${filename} --acl-public
+}
