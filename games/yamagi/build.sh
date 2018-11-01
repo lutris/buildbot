@@ -9,8 +9,8 @@ source ${lib_path}upload_handler.sh
 
 root_dir=$(pwd)
 package_name=yamagi
-version=5.34
-tag=QUAKE2_5_34
+version=7.30
+tag=QUAKE2_7_30
 arch=$(uname -m)
 game=yquake2
 
