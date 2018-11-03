@@ -1,5 +1,12 @@
 #!/bin/bash
 
+spaces_upload() {
+    filename=$1
+    destination=$2
+    aws s3 --endpoint-url=https://nyc3.digitaloceanspaces.com cp ${filename} s3://lutris/${destination}/${filename}
+    s3cmd setacl s3://lutris/${destination}/${filename} --acl-public
+}
+
 runner_upload() {
     runner=$1
     version=$2
@@ -59,22 +66,19 @@ runtime_upload() {
     fi
     access_token=$(cat $token_path)
 
+    echo "Uploading archive to Spaces"
+    spaces_upload $filename "runtime"
+
     host="https://lutris.net"
     upload_url="${host}/api/runtime"
     echo "Uploading to ${upload_url}"
+    url="https://lutris.nyc3.digitaloceanspaces.com/runtime/${name}.tar.bz2"
+
     curl \
         -v \
         --request POST \
         --header "Authorization: Token $access_token" \
         --form "name=${name}" \
-        --form "file=@${filename}" \
+        --form "url=${url}" \
         "$upload_url"
-}
-
-
-spaces_upload() {
-    filename=$1
-    destination=$2
-    aws s3 --endpoint-url=https://nyc3.digitaloceanspaces.com cp ${filename} s3://lutris/${destination}/${filename}
-    s3cmd setacl s3://lutris/${destination}/${filename} --acl-public
 }
