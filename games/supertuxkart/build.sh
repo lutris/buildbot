@@ -30,7 +30,7 @@ Build() {
     mkdir -p build
     cd build
     cmake .. -DCMAKE_INSTALL_PREFIX="${bin_dir}"
-    make -j4
+    make -j$(getconf _NPROCESSORS_ONLN)
     make install
 }
 
