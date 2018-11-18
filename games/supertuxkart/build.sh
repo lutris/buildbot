@@ -8,9 +8,11 @@ version="0.9.3-net"
 arch=$(uname -m)
 root_dir=$(pwd)
 pkg_name="SuperTuxKart"
-source_dir="${root_dir}/${pkg_name}-src"
+build_dir="${root_dir}/${pkg_name}-build"
+src_dir="${build_dir}/stk-code"
+asset_dir="${build_dir}/stk-assets"
 bin_dir="${root_dir}/${pkg_name}"
-package_libraries="libenet"
+package_libraries="libenet libcurl"
 
 InstallBuildDependencies() {
     install_deps build-essential cmake libbluetooth-dev \
@@ -21,16 +23,19 @@ InstallBuildDependencies() {
 
 GetSources() {
     cd $root_dir
-    clone https://github.com/supertuxkart/stk-code.git "${source_dir}/stk-code"
-    svn co https://svn.code.sf.net/p/supertuxkart/code/stk-assets "${source_dir}/stk-assets"
+    clone https://github.com/supertuxkart/stk-code.git "${src_dir}"
+    # don't redownload the assets if they seem to exist, ie CACHE file exists
+    if [ ! -d "${asset_dir}" ]; then
+        svn co https://svn.code.sf.net/p/supertuxkart/code/stk-assets "${asset_dir}"
+    fi
 }
 
 Build() {
-    cd "${source_dir}/stk-code"
+    cd "${src_dir}"
     mkdir -p build
     cd build
     cmake .. -DCMAKE_INSTALL_PREFIX="${bin_dir}"
-    make -j$(getconf _NPROCESSORS_ONLN)
+    make -j $((($(cat /proc/cpuinfo | egrep ^processor | wc -l) +1)))
     make install
 }
 
@@ -50,7 +55,12 @@ Package() {
 Clean() {
     cd "${root_dir}"
     rm -rf "${bin_dir}"
-    rm -rf "${source_dir}"
+    # '$ touch CACHE' to not delete the assets and reuse them
+    if [ ! -f "CACHE" ]; then
+        rm -rf "${build_dir}"
+    else
+        rm -rf "${src_dir}"
+    fi
 }
 
 if [ $1 ]; then
