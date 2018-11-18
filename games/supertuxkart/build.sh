@@ -14,9 +14,9 @@ package_libraries="libenet"
 
 InstallBuildDependencies() {
     install_deps build-essential cmake libbluetooth-dev \
-libcurl4-openssl-dev libenet-dev libfreetype6-dev libfribidi-dev \
-libgl1-mesa-dev libglew-dev libjpeg-dev libogg-dev libopenal-dev libpng-dev \
-libssl-dev libvorbis-dev libxrandr-dev libx11-dev pkg-config zlib1g-dev
+        libcurl4-openssl-dev libenet-dev libfreetype6-dev libfribidi-dev \
+        libgl1-mesa-dev libglew-dev libjpeg-dev libogg-dev libopenal-dev libpng-dev \
+        libssl-dev libvorbis-dev libxrandr-dev libx11-dev pkg-config zlib1g-dev subversion
 }
 
 GetSources() {
@@ -36,7 +36,7 @@ Build() {
 
 Package() {
     cd $root_dir
-    cp run_game.sh "${bin_dir}/"
+    cp run_game.sh ${bin_dir}
     chmod +x "${bin_dir}/run_game.sh"
     LIB_DIR="${bin_dir}/lib"
     mkdir "${LIB_DIR}"
