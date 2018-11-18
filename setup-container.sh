@@ -7,7 +7,7 @@ user='ubuntu'
 
 InstallDependencies() {
     lxc exec $container -- apt update
-    lxc exec $container -- apt -y install wget curl build-essential git python openssh-server zsh
+    lxc exec $container -- apt -y install wget curl build-essential git python openssh-server zsh s3cmd awscli
 }
 
 SetupSSH() {

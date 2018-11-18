@@ -4,7 +4,7 @@ set -e
 
 source ../../lib/util.sh
 
-version="907"
+version="1081"
 arch="$(uname -m)"
 root_dir=$(pwd)
 pkg_name="quake2xp"

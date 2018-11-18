@@ -73,7 +73,7 @@ Package() {
     mkdir -p ${bin_dir}
     mv $engine_type $engine_type.pk3 ${bin_dir}
     if [[ $engine_type == 'gzdoom' ]]; then
-        mv lights.pk3 brightmaps.pk3 output_sdl/liboutput_sdl.so $bin_dir
+        mv lights.pk3 brightmaps.pk3 $bin_dir
         a='' && [ "$(uname -m)" = x86_64 ] && a=64
         cp ${source_dir}/fmodapi44464linux/api/lib/libfmodex"$a"-4.44.64.so $bin_dir
     fi

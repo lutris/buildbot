@@ -41,6 +41,8 @@ if [ "$STEAM" = '1' ]; then
     rm -rf amd64/usr/lib/x86_64-linux-gnu/gst*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/gtk*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libgst*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/libasound.so.2*
+    rm -rf amd64/usr/lib/x86_64-linux-gnu/alsa-lib/
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libSDL-1.2.so.0*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libatk-1.0.so.0*
     rm -rf amd64/usr/lib/x86_64-linux-gnu/libcairo.so.2*
@@ -88,8 +90,9 @@ if [ "$STEAM" = '1' ]; then
     rm -rf i386/usr/lib/i386-linux-gnu/glib*
     rm -rf i386/usr/lib/i386-linux-gnu/gst*
     rm -rf i386/usr/lib/i386-linux-gnu/gtk*
+    rm -rf i386/usr/lib/i386-linux-gnu/libasound.so.2*
+    rm -rf i386/usr/lib/i386-linux-gnu/alsa-lib/
     rm -rf i386/usr/lib/i386-linux-gnu/libgst*
-    rm -rf i386/usr/lib/i386-linux-gnu/glib-2.0
     rm -rf i386/usr/lib/i386-linux-gnu/libSDL-1.2.so.0*
     rm -rf i386/usr/lib/i386-linux-gnu/libatk-1.0.so.0*
     rm -rf i386/usr/lib/i386-linux-gnu/libcairo.so.2*
