@@ -32,6 +32,10 @@ or for the 32bit container::
 
     lxc launch images:ubuntu/xenial/i386 buildbot-xenial-i386
 
+To set up the container, you can enter it with the following command::
+
+    lxc exec <container name> bash
+
 The minimal system should have the following packages installed::
 
     sudo apt-get install -y build-essential vim git wget curl python
