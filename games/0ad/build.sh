@@ -16,7 +16,17 @@ InstallBuildDependencies() {
     libcurl4-gnutls-dev libenet-dev libgloox-dev libicu-dev \
     libminiupnpc-dev libnspr4-dev libnvtt-dev libogg-dev libopenal-dev \
     libpng-dev libsdl2-dev libvorbis-dev libwxgtk3.0-dev libxcursor-dev \
-    libxml2-dev subversion zlib1g-dev subversion libsodium-dev
+    libxml2-dev subversion zlib1g-dev subversion
+}
+
+InstallLibSodium() {
+    # The version of libsodium in Ubuntu 16.04 is not recent enough
+    wget https://download.libsodium.org/libsodium/releases/LATEST.tar.gz
+    tar xvzf LATEST.tar.gz
+    cd libsodium-stable
+    ./configure
+    make && make check
+    sudo make install
 }
 
 GetSources() {
@@ -73,6 +83,7 @@ if [ $1 ]; then
     $1
 else
     InstallBuildDependencies
+    InstallLibSodium
     GetSources
     BuildProject
     PackageProject
