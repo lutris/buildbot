@@ -32,9 +32,9 @@ GetSources() {
 
 BuildProject() {
     cd ${source_dir}/build/workspaces
-    ./update-workspaces.sh -j3
+    ./update-workspaces.sh -j$(getconf _NPROCESSORS_ONLN)
     cd gcc
-    make -j3
+    make -j$(getconf _NPROCESSORS_ONLN)
 }
 
 PackageProject() {
