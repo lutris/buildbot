@@ -22,11 +22,20 @@ InstallBuildDependencies() {
 GetSources() {
     cd $root_dir
     rm -rf $source_dir
-    wget http://releases.wildfiregames.com/0ad-0.${version}-unix-build.tar.xz
-    wget http://releases.wildfiregames.com/0ad-0.${version}-unix-data.tar.xz
 
-    tar xvJf 0ad-0.${version}-unix-build.tar.xz
-    tar xvJf 0ad-0.${version}-unix-data.tar.xz
+    engine_archive="0ad-0.${version}-unix-build.tar.xz"
+    data_archive="0ad-0.${version}-unix-data.tar.xz"
+
+    if [ ! -f $engine_archive ]; then
+        wget "http://releases.wildfiregames.com/${engine_archive}"
+    fi
+
+    if [ ! -f $data_archive ]; then
+        wget "http://releases.wildfiregames.com/${data_archive}"
+    fi
+
+    tar xvJf $engine_archive
+    tar xvJf $data_archive
     mv 0ad-0.${version} $source_dir
 }
 
