@@ -17,7 +17,10 @@ GetSources() {
 
 BuildProject() {
     mkdir -p "${bin_dir}"
-    cp "${source_dir}/gamecontrollerdb.txt" "${bin_dir}"
+    cd "$source_dir"
+
+    cp gamecontrollerdb.txt README.md LICENSE "${bin_dir}"
+    cp older_releases/* "${bin_dir}"
 }
 
 
