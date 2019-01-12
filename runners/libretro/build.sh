@@ -61,6 +61,9 @@ BuildRetroarch() {
         ${bin_dir}/assets/wallpapers \
         ${bin_dir}/assets/xmb/retroactive
 
+    # autoconfig
+    cp -a media/autoconfig ${bin_dir}
+
     # Info files
     cp -a ../dist/info ${bin_dir}
 
