@@ -1,16 +1,22 @@
-from __future__ import print_function
+"""Script used to gather runtime libraries"""
 import os
 import subprocess
 import shutil
+import logging
+
+LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.DEBUG)
+
 
 RUNTIME_DIR = "runtime"
 
 
 def get_libs():
-    libs = {}
     release_name = subprocess.check_output(["lsb_release", "-is"]).decode().strip()
     version = subprocess.check_output(["lsb_release", "-rs"]).decode().strip()
     package_file = "%s-%s.packages" % (release_name, version)
+    LOGGER.info("Getting packages from %s", package_file)
+    libs = {}
     with open(package_file, 'r') as packages:
         packages_lines = packages.readlines()
     for line in packages_lines:
@@ -38,17 +44,17 @@ def find_lib_paths(required_libs):
     ld_libs = []
     for parts in get_ldconfig_libs():
         if parts[0] in required_libs:
-            print("Found ", parts[0])
+            LOGGER.info("Found %s", parts[0])
             lib_paths.append(parts[-1])
             ld_libs.append(parts[0])
     libs_not_found = list(set(required_libs) - set(ld_libs))
     for lib in libs_not_found[:]:
         if os.path.exists(lib):
-            print("Found ", lib)
+            LOGGER.info("Found %s", lib)
             lib_paths.append(lib)
             libs_not_found.remove(lib)
     if len(libs_not_found) > 0:
-        print('Required libraries not found:', ' '.join(libs_not_found))
+        LOGGER.warning('Required libraries not found: %s', ' '.join(libs_not_found))
     return lib_paths
 
 
@@ -64,10 +70,10 @@ def build_runtime():
     for lib in lib_paths:
         exists = os.path.exists(lib)
         if exists:
-            print("Copying", lib)
+            LOGGER.info("Copying %s", lib)
             shutil.copy(lib, RUNTIME_DIR)
         else:
-            print("Library not found", lib)
+            LOGGER.warning("Library not found: %s", lib)
 
 
 if __name__ == "__main__":
