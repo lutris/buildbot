@@ -133,7 +133,7 @@ python3 lutrisrt.py
 mv runtime/* ${runtime_dir}
 
 # Copy Lutris runtime extra libs
-cp -a extra/${runtime_dir}/* ${runtime_dir}
+# cp -a extra/${runtime_dir}/* ${runtime_dir}
 
 runtime_archive="${runtime_dir}.tar.bz2"
 echo "Compressing runtime $runtime_archive..."
