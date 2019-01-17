@@ -4,14 +4,6 @@ set -e
 lib_path="../lib/"
 source ${lib_path}upload_handler.sh
 
-arch=$(uname -m)
-if [[ "$arch" == "i686" ]]; then
-    bit="32"
-else
-    bit="64"
-fi
-runtime_dir="lib${bit}"
-
 # Steam runtime
 # Only build steam runtime once since it contains both archs
 if [ "$STEAM" = '1' ]; then
@@ -134,6 +126,7 @@ if [ "$STEAM" = '1' ]; then
 fi
 
 # Lutris runtime
+runtime_dir="$(lsb_release -is)-$(lsb_release -rs)-$(uname -m)"
 rm -rf ${runtime_dir}
 mkdir -p ${runtime_dir}
 python3 lutrisrt.py
