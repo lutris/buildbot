@@ -38,7 +38,37 @@ To set up the container, you can enter it with the following command::
 
 The minimal system should have the following packages installed::
 
-    sudo apt-get install -y build-essential vim git wget curl python
+    apt-get install -y build-essential vim git wget curl python openssh-server
+
+Set a passwd for your ubuntu user::
+
+    passwd ubuntu
+
+Get the IP of the container with `lxc list`::
+
+
+    +-----------------------+---------+-----------------------+-----------------------------------------------+------------+-----------+
+    |         NAME          |  STATE  |         IPV4          |                     IPV6                      |    TYPE    | SNAPSHOTS |
+    +-----------------------+---------+-----------------------+-----------------------------------------------+------------+-----------+
+    | buildbot-bionic-amd64 | RUNNING | 10.214.185.55 (eth0)  | fd42:60c9:f70b:59b1:216:7eff:fe9a:f6c4 (eth0) | PERSISTENT |           |
+    +-----------------------+---------+-----------------------+-----------------------------------------------+------------+-----------+
+    | buildbot-bionic-i386  | RUNNING | 10.214.185.101 (eth0) | fd42:60c9:f70b:59b1:216:7eff:fe52:272e (eth0) | PERSISTENT |           |
+    +-----------------------+---------+-----------------------+-----------------------------------------------+------------+-----------+
+
+
+Set up entries in your ~/.ssh/config::
+
+    Host buildbot-bionic-amd64
+        Hostname 10.214.185.55
+        User ubuntu
+
+    Host buildbot-bionic-i386
+        Hostname 10.214.185.101
+        User ubuntu
+
+Connect to the container::
+
+    ssh buildbot-bionic-i386
 
 To install packages without having to enter a root password add with visudo:
 
