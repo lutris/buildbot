@@ -7,7 +7,7 @@ user='ubuntu'
 
 InstallDependencies() {
     lxc exec $container -- apt update
-    lxc exec $container -- apt -y install wget curl build-essential git python openssh-server zsh s3cmd awscli
+    lxc exec $container -- apt -y install wget curl build-essential git python openssh-server s3cmd awscli
 }
 
 SetupSSH() {
@@ -24,8 +24,6 @@ SetupSSH() {
 }
 
 SetupUser() {
-    lxc exec $container -- passwd $user
-    lxc exec $container -- chsh -s /bin/zsh $user
     lxc file push --uid=1000 --gid=1000 ./setup-userspace.sh $container/home/$user/
 }
 
