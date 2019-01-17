@@ -4,7 +4,7 @@ libaudio2                         libaudio.so.2
 libavcodec57                      libavcodec.so.57
 libavformat57                     libavformat.so.57
 libavutil55                       libavutil.so.55
-libswscale4                       libswscale-ffmpeg.so.4
+libswscale4                       libswscale.so.4
 libboost-filesystem1.62.0         libboost_filesystem.so.1.62.0
 libboost-iostreams1.62.0          libboost_iostreams.so.1.62.0
 libboost-system1.62.0             libboost_system.so.1.62.0
@@ -60,7 +60,7 @@ libwebp6                          libwebp.so.6
 libx264-152                       libx264.so.152
 libxinerama1                      libXinerama.so.1
 libxshmfence1                     libxshmfence.so.1
-libxml2                           libxml.so.2
+libxml2                           libxml2.so.2
 libxslt1.1                        libxslt.so.1 libexslt.so.0
 libzzip-0-13                      libzzip-0.so.13
 zlib1g                            libz.so.1
