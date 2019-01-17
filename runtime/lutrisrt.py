@@ -8,7 +8,10 @@ RUNTIME_DIR = "runtime"
 
 def get_libs():
     libs = {}
-    with open('packages', 'r') as packages:
+    release_name = subprocess.check_output(["lsb_release", "-is"]).decode().strip()
+    version = subprocess.check_output(["lsb_release", "-rs"]).decode().strip()
+    package_file = "%s-%s.packages" % (release_name, version)
+    with open(package_file, 'r') as packages:
         packages_lines = packages.readlines()
     for line in packages_lines:
         line = line.strip()
