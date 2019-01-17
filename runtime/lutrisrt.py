@@ -4,8 +4,17 @@ import subprocess
 import shutil
 import logging
 
-LOGGER = logging.getLogger(__name__)
-LOGGER.setLevel(logging.DEBUG)
+
+def get_logger():
+    logger = logging.getLogger(__name__)
+    handler = logging.StreamHandler()
+    handler.setLevel(logging.DEBUG)
+    logger.addHandler(handler)
+    return logger
+
+
+LOGGER = get_logger()
+
 
 
 RUNTIME_DIR = "runtime"
