@@ -81,6 +81,10 @@ Run the container setup script::
 
     ./setup-container buildbot-bionic-amd64
 
+On both containers, run the necessary ssh-copy-id commands and make sure that
+the 64bit container is able to ssh to the 32bit one with `ssh buildbot32` and
+the other way around with `ssh buildbot64`.
+
 To install packages without having to enter a root password add with visudo:
 
     ubuntu   ALL=NOPASSWD: /usr/bin/apt-get
