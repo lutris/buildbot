@@ -70,6 +70,20 @@ Connect to the container::
 
     ssh buildbot-bionic-i386
 
+Generate ssh keys for both containers::
+
+    cd ssh/buildbot32
+    ssh-keygen -f ./id_rsa
+    cd ../buildbot64
+    ssh-keygen -f ./id_rsa
+
+Run the container setup script::
+
+    ./setup-container buildbot-bionic-amd64
+
 To install packages without having to enter a root password add with visudo:
 
     ubuntu   ALL=NOPASSWD: /usr/bin/apt-get
+
+If you plan to publish runners and runtimes to Digital Ocean, don't forget to
+copy the configuration files in ~/.aws/credentials and ~/.s3cfg
