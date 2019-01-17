@@ -26,11 +26,11 @@ Also make sure to add your current user to the lxc group::
 
 You can create the containers with a command such as::
 
-    lxc launch images:ubuntu/xenial/amd64 buildbot-xenial-amd64
+    lxc launch images:ubuntu/bionic/amd64 buildbot-bionic-amd64
 
 or for the 32bit container::
 
-    lxc launch images:ubuntu/xenial/i386 buildbot-xenial-i386
+    lxc launch images:ubuntu/bionic/i386 buildbot-bionic-i386
 
 To set up the container, you can enter it with the following command::
 
