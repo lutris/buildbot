@@ -64,7 +64,7 @@ InstallDependencies() {
         ocl-icd-opencl-dev oss4-dev prelink sharutils unixodbc-dev valgrind
     release=$(lsb_release -rs)
     if [ "$release" = "18.04" ]; then
-        install_deps linux-libc-dev libkdb5-9 libppl13v5 libcolord2 libvulkan-dev \
+        install_deps linux-libc-dev libkdb5-9 libppl14 libcolord2 libvulkan-dev \
             libgnutls28-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev gcc-4.8 \
             libpng-dev libkadm5clnt-mit11 libkadm5srv-mit11
     elif [ "$release" = "16.04" ]; then
