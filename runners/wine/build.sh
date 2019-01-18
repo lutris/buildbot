@@ -55,10 +55,9 @@ wine32_archive="${bin_dir}-32bit.tar.gz"
 
 InstallDependencies() {
     install_deps autoconf bison debhelper desktop-file-utils docbook-to-man \
-        docbook-utils docbook-xsl flex fontforge gawk gcc-4.7 gettext libacl1-dev \
+        docbook-utils docbook-xsl flex fontforge gawk gettext libacl1-dev \
         libasound2-dev libcapi20-dev libcloog-ppl1 libcups2-dev libdbus-1-dev \
-        libgif-dev libglu1-mesa-dev libgphoto2-dev \
-        libgsm1-dev libgtk-3-dev libjasper1 \
+        libgif-dev libglu1-mesa-dev libgphoto2-dev libgsm1-dev libgtk-3-dev \
         libkrb5-dev liblcms2-dev libldap2-dev libmpg123-dev libncurses5-dev \
         libopenal-dev libosmesa6-dev libpcap-dev libpulse-dev libsane-dev \
         libssl-dev libtiff5-dev libudev-dev libv4l-dev libva-dev libxslt1-dev libxt-dev \
@@ -66,16 +65,16 @@ InstallDependencies() {
     release=$(lsb_release -rs)
     if [ "$release" = "18.04" ]; then
         install_deps libtxc-dxtn-s2tc-dev linux-libc-dev libkdb5-8 libppl13v5 libcolord2 libvulkan-dev \
-            libgnutls28-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev \
+            libgnutls28-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev gcc-4.8 \
             libpng-dev libkadm5clnt-mit11 libkadm5srv-mit11
     elif [ "$release" = "16.04" ]; then
         install_deps libtxc-dxtn-s2tc-dev linux-libc-dev libkdb5-8 libppl13v5 libcolord2 libvulkan-dev \
-            libesd0-dev libgnutls-dev libgstreamer-plugins-base0.10-dev \
+            libesd0-dev libgnutls-dev libgstreamer-plugins-base0.10-dev gcc-4.7 \
             libgstreamer-plugins-base1.0-dev libgstreamer0.10-dev libpng12-dev \
             libkadm5clnt-mit9 libkadm5srv-mit9
     else
         install_deps libtxc-dxtn-dev linux-kernel-headers libkdb5-7 libppl13 libcolord1 \
-            libesd0-dev libgnutls-dev libgstreamer-plugins-base0.10-dev \
+            libesd0-dev libgnutls-dev libgstreamer-plugins-base0.10-dev gcc-4.7 \
             libgstreamer-plugins-base1.0-dev libgstreamer0.10-dev libpng12-dev \
             libkadm5clnt-mit9 libkadm5srv-mit9
     fi
