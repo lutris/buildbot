@@ -22,8 +22,8 @@ arch=$(uname -m)
 repo_url="https://github.com/dolphin-emu/dolphin"
 
 InstallBuildDependencies() {
-    install_deps cmake libwxbase3.0-dev libwxgtk3.0-dev libgtk2.0-dev libxext-dev \
-        libreadline-dev libgl1-mesa-dev libevdev-dev libudev-dev libusb-1.0-0-dev
+    install_deps cmake libxext-dev libreadline-dev libgl1-mesa-dev libevdev-dev \
+        libudev-dev libusb-1.0-0-dev qtbase5-dev
 }
 
 GetSources() {
