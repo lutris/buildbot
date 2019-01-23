@@ -54,7 +54,7 @@ PackageProject() {
     cp -a ${source_dir}/Data/Sys ${bin_dir}
     mkdir -p ${bin_dir}/lib
     # cp ${build_dir}/Externals/**/*.so* ${bin_dir}/lib
-    cp /usr/lib/x86_64-linux-gnu/libav*-ffmpeg* ${bin_dir}/lib
+    cp /usr/lib/x86_64-linux-gnu/libav* ${bin_dir}/lib
     cd ${root_dir}
     dest_file="${runner_name}-${version}-${arch}.tar.gz"
     tar czf ${dest_file} ${runner_name}
