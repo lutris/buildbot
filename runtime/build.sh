@@ -4,6 +4,8 @@ set -e
 lib_path="../lib/"
 source ${lib_path}upload_handler.sh
 
+runtime_version="1804"
+
 # Steam runtime
 # Only build steam runtime once since it contains both archs
 if [ "$STEAM" = '1' ]; then
@@ -133,7 +135,7 @@ python3 lutrisrt.py
 mv runtime/* ${runtime_dir}
 
 # Copy Lutris runtime extra libs
-# cp -a extra/${runtime_dir}/* ${runtime_dir}
+cp -a extra/${runtime_dir}-${runtime_version}/* ${runtime_dir}
 
 runtime_archive="${runtime_dir}.tar.bz2"
 echo "Compressing runtime $runtime_archive..."
