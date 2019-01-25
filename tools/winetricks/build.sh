@@ -32,9 +32,6 @@ BuildProject() {
     # dotnet471 support, 64-bit mostly working
     patch -Np1 < ../'patches/dotnet471.patch'
 
-    # dotnet20 for 64-bit
-    patch -Np1 < ../'patches/dotnet20x64.patch'
-
     mkdir -p "${bin_dir}"
     cp "${source_dir}/src/winetricks" "${bin_dir}"
 }
