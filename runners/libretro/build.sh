@@ -51,8 +51,19 @@ BuildRetroarch() {
     cp tools/cg2glsl.py ${bin_dir}/retroarch-cg2glsl
 
     # Assets
+    # TODO: Restore files that pushed the package size to be too big
+    # - assets/wallpapers
+    # - assets/xmb/retroactive
     cp -a media/assets ${bin_dir}
-    rm -rf ${bin_dir}/assets/.git
+    rm -rf ${bin_dir}/assets/.git \
+        ${bin_dir}/assets/src \
+        ${bin_dir}/assets/switch \
+        ${bin_dir}/assets/nxrgui \
+        ${bin_dir}/assets/wallpapers \
+        ${bin_dir}/assets/xmb/retroactive
+
+    # autoconfig
+    cp -a media/autoconfig ${bin_dir}
 
     # Info files
     cp -a ../dist/info ${bin_dir}
