@@ -19,7 +19,8 @@ InstallBuildDependencies() {
 
 GetSources() {
     cd $root_dir
-    git svn clone -r HEAD https://svn.eduke32.com/eduke32/ "${src_dir}"
+    git svn clone -r HEAD https://svn.eduke32.com/eduke32/
+    mv eduke32 eduke32-src
 }
 
 Build() {
