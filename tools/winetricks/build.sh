@@ -26,6 +26,9 @@ BuildProject() {
     # Fix language bug on unattended dotnet462 install
     sed -i 's/WINEDLLOVERRIDES=fusion=b "$WINE" "$file_package" ${W_OPT_UNATTENDED:+$unattended_args}/WINEDLLOVERRIDES=fusion=b "$WINE" "$file_package" \/sfxlang:1027 ${W_OPT_UNATTENDED:+$unattended_args}/g' src/winetricks
 
+    # dotnet471 support, 64-bit mostly working	
+    patch -Np1 < ../'patches/dotnet471.patch'
+
     mkdir -p "${bin_dir}"
     cp "${source_dir}/src/winetricks" "${bin_dir}"
 }
