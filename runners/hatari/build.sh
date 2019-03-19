@@ -13,7 +13,7 @@ source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-version="1.9.0"
+version="2.2.1"
 repo_url="http://hg.tuxfamily.org/mercurialroot/hatari/hatari"
 
 deps="mercurial"
