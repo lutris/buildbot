@@ -72,6 +72,7 @@ Connect to the container::
 
 Generate ssh keys for both containers::
 
+    mkdir -p ssh/buildbot{32,64}
     cd ssh/buildbot32
     ssh-keygen -f ./id_rsa
     cd ../buildbot64
