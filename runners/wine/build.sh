@@ -7,6 +7,7 @@ root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd ${root_dir}
 
 lib_path="../../lib/"
+runtime_path="../../runtime/extra/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
@@ -54,7 +55,7 @@ bin_dir="${filename_opts}${version}-${arch}"
 wine32_archive="${bin_dir}-32bit.tar.gz"
 
 InstallDependencies() {
-    install_deps autoconf bison debhelper desktop-file-utils docbook-to-man \
+    sudo apt install -y autoconf bison debhelper desktop-file-utils docbook-to-man \
         docbook-utils docbook-xsl flex fontforge gawk gettext libacl1-dev \
         libasound2-dev libcapi20-dev libcloog-ppl1 libcups2-dev libdbus-1-dev \
         libgif-dev libglu1-mesa-dev libgphoto2-dev libgsm1-dev libgtk-3-dev \
@@ -64,16 +65,24 @@ InstallDependencies() {
         ocl-icd-opencl-dev oss4-dev prelink sharutils unixodbc-dev valgrind
     release=$(lsb_release -rs)
     if [ "$release" = "18.04" ]; then
-        install_deps linux-libc-dev libkdb5-9 libppl14 libcolord2 libvulkan-dev \
+        sudo apt install -y linux-libc-dev libkdb5-9 libppl14 libcolord2 libvulkan-dev \
             libgnutls28-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev gcc-4.8 \
-            libpng-dev libkadm5clnt-mit11 libkadm5srv-mit11
-    elif [ "$release" = "16.04" ]; then
-        install_deps libtxc-dxtn-s2tc-dev linux-libc-dev libkdb5-8 libppl13v5 libcolord2 libvulkan-dev \
+            libpng-dev libkadm5clnt-mit11 libkadm5srv-mit11 libsdl2-dev libavcodec-dev \
+	    libavutil-dev libswresample-dev libavcodec57 libswresample2 libavutil55
+	if [ "$(uname -m)" = "x86_64" ] ; then
+		wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/amd64/libfaudio0_19.04-0~bionic_amd64.deb
+	else
+		wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/i386/libfaudio0_19.04-0~bionic_i386.deb
+	fi
+	wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/all/libfaudio-dev_19.04-0~bionic_all.deb
+	sudo dpkg -i *.deb
+    elif [ "$release" = "16.04" ]; then #note: 16.04 does not have FAudio packages or capability due to ffmpeg being too old
+        sudo apt install -y libtxc-dxtn-s2tc-dev linux-libc-dev libkdb5-8 libppl13v5 libcolord2 libvulkan-dev \
             libesd0-dev libgnutls-dev libgstreamer-plugins-base0.10-dev gcc-4.7 \
             libgstreamer-plugins-base1.0-dev libgstreamer0.10-dev libpng12-dev \
             libkadm5clnt-mit9 libkadm5srv-mit9
     else
-        install_deps libtxc-dxtn-dev linux-kernel-headers libkdb5-7 libppl13 libcolord1 \
+        sudo apt install -y libtxc-dxtn-dev linux-kernel-headers libkdb5-7 libppl13 libcolord1 \
             libesd0-dev libgnutls-dev libgstreamer-plugins-base0.10-dev gcc-4.7 \
             libgstreamer-plugins-base1.0-dev libgstreamer0.10-dev libpng12-dev \
             libkadm5clnt-mit9 libkadm5srv-mit9
@@ -204,6 +213,9 @@ Send64BitBuildAndBuild32bit() {
     if [ $NOUPLOAD ]; then
         opts="${opts} --noupload"
     fi
+    if [ $INSTALL_DEPS ]; then
+        opts="${opts} --dependencies"
+    fi
     if [ $patch ]; then
         opts="${opts} --patch $patch"
     fi
@@ -216,6 +228,7 @@ Send64BitBuildAndBuild32bit() {
     if [ "$branch_name" ]; then
         opts="${opts} --branch $branch_name"
     fi
+
     echo "Building 32bit wine on 32bit container"
     ssh -t ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
     echo "Relaunch local build after the 32bit build finished"
@@ -291,6 +304,10 @@ Package() {
     if [ -d ${bin_dir}/lib64 ]; then
         find ${bin_dir}/lib64 -name "*.so" -exec strip {} \;
     fi
+    #copy lutris runtime libraries to the correct folder so they are properly utilized by the build
+    cp $runtime_path/lib64/* ${bin_dir}/lib64/
+    cp $runtime_path/lib32/* ${bin_dir}/lib/
+
     rm -rf ${bin_dir}/include
 
     dest_file="wine-${filename_opts}${version}-${arch}.tar.gz"

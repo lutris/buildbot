@@ -13,15 +13,7 @@ InstallDependencies() {
 SetupSSH() {
     lxc exec $container -- mkdir -p /home/$user/.ssh
     lxc exec $container -- chown ubuntu /home/$user/.ssh
-    if [[ $container == *"64"* ]]; then
-        key_folder=./ssh/buildbot64
-    else
-        key_folder=./ssh/buildbot32
-    fi
-    lxc file push ./ssh/authorized_keys $container/home/$user/.ssh/
-    lxc file push ./ssh/config $container/home/$user/.ssh/
-    lxc file push ${key_folder}/id_rsa $container/home/$user/.ssh/
-    lxc file push ${key_folder}/id_rsa.pub $container/home/$user/.ssh/
+    lxc file push ~/.ssh/config $container/home/$user/.ssh/
 }
 
 SetupUser() {

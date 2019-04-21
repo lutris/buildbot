@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+git clone https://github.com/lutris/buildbot.git
 
 if [ ! -d ".dotfiles" ]; then
     git clone https://github.com/strycore/dotfiles .dotfiles
@@ -10,4 +11,3 @@ if [ ! -d ".dotfiles" ]; then
     cd
 fi
 
-git clone https://github.com/lutris/buildbot.git
