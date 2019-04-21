@@ -24,6 +24,14 @@ Also make sure to add your current user to the lxc group::
     sudo usermod -G lxd myusername
     newgrp lxd
 
+If this is a new lxd installation, prepare the host environment:
+
+    cat buildbot/preseed | lxd init --preseed
+
+alternatively to manually set all lxd options (not recommended) use:
+
+    lxd init
+
 You can create the containers with a command such as::
 
     lxc launch images:ubuntu/bionic/amd64 buildbot-bionic-amd64
@@ -36,56 +44,76 @@ To set up the container, you can enter it with the following command::
 
     lxc exec <container name> bash
 
-The minimal system should have the following packages installed::
+On each container, the minimal system should have the following packages installed::
 
     apt-get install -y build-essential vim git wget curl python openssh-server
 
-Set a passwd for your ubuntu user::
+On each container, set a passwd for your ubuntu user::
 
     passwd ubuntu
 
-Get the IP of the container with `lxc list`::
+On each container, to install packages without having to enter a root password add with visudo:
 
+    ubuntu ALL=NOPASSWD: /usr/bin/apt
+    ubuntu ALL=NOPASSWD: /usr/bin/apt-get
+    ubuntu ALL=NOPASSWD: /usr/bin/dpkg
 
-    +-----------------------+---------+-----------------------+-----------------------------------------------+------------+-----------+
-    |         NAME          |  STATE  |         IPV4          |                     IPV6                      |    TYPE    | SNAPSHOTS |
-    +-----------------------+---------+-----------------------+-----------------------------------------------+------------+-----------+
-    | buildbot-bionic-amd64 | RUNNING | 10.214.185.55 (eth0)  | fd42:60c9:f70b:59b1:216:7eff:fe9a:f6c4 (eth0) | PERSISTENT |           |
-    +-----------------------+---------+-----------------------+-----------------------------------------------+------------+-----------+
-    | buildbot-bionic-i386  | RUNNING | 10.214.185.101 (eth0) | fd42:60c9:f70b:59b1:216:7eff:fe52:272e (eth0) | PERSISTENT |           |
-    +-----------------------+---------+-----------------------+-----------------------------------------------+------------+-----------+
+Exit both containers, then run setup.sh to setup ssh config files on the host and containers:
 
+    cd buildbot
+    ./setup.sh buildbot-bionic-amd64 buildbot-bionic-i386
 
-Set up entries in your ~/.ssh/config::
+Run the container setup script on each container:
 
-    Host buildbot-bionic-amd64
-        Hostname 10.214.185.55
-        User ubuntu
+    ./setup-container.sh buildbot-bionic-amd64
+    ./setup-container.sh buildbot-bionic-i386
 
-    Host buildbot-bionic-i386
-        Hostname 10.214.185.101
-        User ubuntu
+Connect to each container and perform the following so that they can communicate with eachother and are build ready:
 
-Copy your SSH key so you can connect without a password:
-    ssh-copy-id buildbot-bionic-amd64
-    ssh-copy-id buildbot-bionic-i386
+    ssh buildbot-bionic-amd64
+    chown -R ubuntu:ubuntu ~/.ssh/config
+    ssh-keygen
+    ssh-copy-id ubuntu@buildbot32
+    ./setup-userspace.sh
+    exit
 
-Generate ssh keys for both containers::
+    ssh buildbot-bionic-i386
+    chown -R ubuntu:ubuntu ~/.ssh/config
+    ssh-keygen
+    ssh-copy-id ubuntu@buildbot64
+    ./setup-userspace.sh
+    exit
 
-    mkdir -p ssh/buildbot{32,64}
-    cd ssh/buildbot32
-    ssh-keygen -f ./id_rsa
-    cd ../buildbot64
-    ssh-keygen -f ./id_rsa
+Now you are ready to compile. To build a wine runner:
 
-Run the container setup script::
+   ssh buildbot-bionic-amd64
+   cd buildbot/runners/wine
+   ./build.sh -pass -your -options -here
 
-    ./setup-container buildbot-bionic-i386
-    ./setup-container buildbot-bionic-amd64
+Options available are:
 
-On both containers, run the necessary ssh-copy-id commands and make sure that
-the 64bit container is able to ssh to the 32bit one with `ssh buildbot32` and
-the other way around with `ssh buildbot64`.
+        -a|--as) usage: -a <custom build name>
+        -b|--branch) usage: -b <git repo branch>
+        -w|--with) usage: -w <git repo>
+        -v|--version) usage: -v <version>
+        -p|--patch) usage: -p <patch>
+        -s|--staging
+        -n|--noupload
+        -d|--dependencies
+        -6|--64bit
+        -k|--keep
+
+Example:
+
+x86_64:
+	ssh ubuntu@buildbot-bionic-amd64
+	./build.sh -a tkg-protonified-faudio-4.6 -w https://github.com/lutris/wine -b tkg-protonified-faudio -d -n -k
+
+i386:
+	ssh ubuntu@buildbot-bionic-i386
+	./build.sh -a tkg-protonified-faudio-4.6 -w https://github.com/lutris/wine -b tkg-protonified-faudio -d -n -k
+
+Note: x86_64 build utilizes the i386 lxd container and is built with 32 bit included, you don't need to run both. i386 is for an i386-only build.
 
 If you plan to publish runners and runtimes to Digital Ocean, don't forget to
 copy the configuration files in ~/.aws/credentials and ~/.s3cfg
