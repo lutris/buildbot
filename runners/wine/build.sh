@@ -305,8 +305,8 @@ Package() {
         find ${bin_dir}/lib64 -name "*.so" -exec strip {} \;
     fi
     #copy lutris runtime libraries to the correct folder so they are properly utilized by the build
-    cp $runtime_path/lib64/* ${bin_dir}/lib64/
-    cp $runtime_path/lib32/* ${bin_dir}/lib/
+    cp -R $runtime_path/lib64/* ${bin_dir}/lib64/
+    cp -R $runtime_path/lib32/* ${bin_dir}/lib/
 
     rm -rf ${bin_dir}/include
 
