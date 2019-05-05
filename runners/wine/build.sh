@@ -304,9 +304,17 @@ Package() {
     if [ -d ${bin_dir}/lib64 ]; then
         find ${bin_dir}/lib64 -name "*.so" -exec strip {} \;
     fi
-    #copy lutris runtime libraries to the correct folder so they are properly utilized by the build
-    cp -R $runtime_path/lib64/* ${bin_dir}/lib64/
-    cp -R $runtime_path/lib32/* ${bin_dir}/lib/
+    #copy sdl2, faudio, and ffmpeg libraries
+    cp -R $runtime_path/lib64/libavcodec* ${bin_dir}/lib64/
+    cp -R $runtime_path/lib64/libavutil* ${bin_dir}/lib64/
+    cp -R $runtime_path/lib64/libFAudio* ${bin_dir}/lib64/
+    cp -R $runtime_path/lib64/libSDL2* ${bin_dir}/lib64/
+    cp -R $runtime_path/lib64/libswresample* ${bin_dir}/lib64/
+    cp -R $runtime_path/lib32/libavcodec* ${bin_dir}/lib/
+    cp -R $runtime_path/lib32/libavutil* ${bin_dir}/lib/
+    cp -R $runtime_path/lib32/libFAudio* ${bin_dir}/lib/
+    cp -R $runtime_path/lib32/libSDL2* ${bin_dir}/lib/
+    cp -R $runtime_path/lib32/libswresample* ${bin_dir}/lib/
 
     rm -rf ${bin_dir}/include
 
