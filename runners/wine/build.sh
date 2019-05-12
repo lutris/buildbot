@@ -177,7 +177,15 @@ BuildWine() {
         configure_opts="$configure_opts --with-wine64=../wine64 --with-wine-tools=../wine32"
     fi
 
-    $source_dir/configure ${configure_opts} --prefix=$prefix
+    if [ "$(uname -m)" = "x86_64" ]; then
+        export LD_LIBRARY_PATH=$(readlink -f $(runtime_path))/lib64
+        custom_ld_flags="-L$(readlink -f $(runtime_path))/lib64 -Wl,-rpath-link,$(readlink -f $(runtime_path))/lib64"
+    else
+        export export LD_LIBRARY_PATH=$(readlink -f $(runtime_path))/lib32
+	custom_ld_flags="-L$(readlink -f $(runtime_path))/lib32 -Wl,-rpath-link,$(readlink -f $(runtime_path))/lib32"
+    fi
+
+    LDFLAGS=$custom_ld_flags $source_dir/configure ${configure_opts} --prefix=$prefix
     make -j$(getconf _NPROCESSORS_ONLN)
 }
 
@@ -305,16 +313,8 @@ Package() {
         find ${bin_dir}/lib64 -name "*.so" -exec strip {} \;
     fi
     #copy sdl2, faudio, and ffmpeg libraries
-    cp -R $runtime_path/lib64/libavcodec* ${bin_dir}/lib64/
-    cp -R $runtime_path/lib64/libavutil* ${bin_dir}/lib64/
-    cp -R $runtime_path/lib64/libFAudio* ${bin_dir}/lib64/
-    cp -R $runtime_path/lib64/libSDL2* ${bin_dir}/lib64/
-    cp -R $runtime_path/lib64/libswresample* ${bin_dir}/lib64/
-    cp -R $runtime_path/lib32/libavcodec* ${bin_dir}/lib/
-    cp -R $runtime_path/lib32/libavutil* ${bin_dir}/lib/
-    cp -R $runtime_path/lib32/libFAudio* ${bin_dir}/lib/
-    cp -R $runtime_path/lib32/libSDL2* ${bin_dir}/lib/
-    cp -R $runtime_path/lib32/libswresample* ${bin_dir}/lib/
+    cp -R $runtime_path/lib64/* ${bin_dir}/lib64/
+    cp -R $runtime_path/lib32/* ${bin_dir}/lib/
 
     rm -rf ${bin_dir}/include
 
