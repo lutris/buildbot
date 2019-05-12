@@ -7,7 +7,7 @@ root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd ${root_dir}
 
 lib_path="../../lib/"
-runtime_path="../../runtime/extra/"
+runtime_path=$(readlink -f "../../runtime/extra/")
 source ${lib_path}path.sh
 source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
@@ -182,10 +182,10 @@ BuildWine() {
         custom_ld_flags="-L$(readlink -f $runtime_path)/lib64 -Wl,-rpath-link,$(readlink -f $runtime_path)/lib64"
     else
         export export LD_LIBRARY_PATH=$(readlink -f $(runtime_path))/lib32
-	custom_ld_flags="-L$(readlink -f "$runtime_path")/lib32 -Wl,-rpath-link,$(readlink -f "$runtime_path")/lib32"
+	custom_ld_flags="-L$runtime_path/lib32 -Wl,-rpath-link,$runtime_path/lib32"
     fi
 
-    LDFLAGS=$custom_ld_flags $source_dir/configure ${configure_opts} --prefix=$prefix
+    LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix
     make -j$(getconf _NPROCESSORS_ONLN)
 }
 
