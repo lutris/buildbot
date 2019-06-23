@@ -66,12 +66,13 @@ Set up entries in your ~/.ssh/config::
         Hostname 10.214.185.101
         User ubuntu
 
-Connect to the container::
-
-    ssh buildbot-bionic-i386
+Copy your SSH key so you can connect without a password:
+    ssh-copy-id buildbot-bionic-amd64
+    ssh-copy-id buildbot-bionic-i386
 
 Generate ssh keys for both containers::
 
+    mkdir -p ssh/buildbot{32,64}
     cd ssh/buildbot32
     ssh-keygen -f ./id_rsa
     cd ../buildbot64
@@ -79,15 +80,12 @@ Generate ssh keys for both containers::
 
 Run the container setup script::
 
+    ./setup-container buildbot-bionic-i386
     ./setup-container buildbot-bionic-amd64
 
 On both containers, run the necessary ssh-copy-id commands and make sure that
 the 64bit container is able to ssh to the 32bit one with `ssh buildbot32` and
 the other way around with `ssh buildbot64`.
-
-To install packages without having to enter a root password add with visudo:
-
-    ubuntu   ALL=NOPASSWD: /usr/bin/apt-get
 
 If you plan to publish runners and runtimes to Digital Ocean, don't forget to
 copy the configuration files in ~/.aws/credentials and ~/.s3cfg

@@ -7,6 +7,7 @@ user='ubuntu'
 
 InstallDependencies() {
     lxc exec $container -- apt update
+    lxc exec $container -- apt -y full-upgrade
     lxc exec $container -- apt -y install wget curl build-essential git python openssh-server s3cmd awscli
 }
 
@@ -24,12 +25,8 @@ SetupSSH() {
     lxc file push ${key_folder}/id_rsa.pub $container/home/$user/.ssh/
 }
 
-SetupUser() {
-    lxc file push --uid=1000 --gid=1000 ./setup-userspace.sh $container/home/$user/
-}
-
 SetupUserspace() {
-    lxc exec $container -- chmod +x /home/$user/setup-userspace.sh
+    lxc exec $container -- git clone https://github.com/lutris/buildbot.git
 }
 
 SetupHost() {
@@ -54,6 +51,5 @@ else
     InstallDependencies
     SetupHost
     SetupSSH
-    SetupUser
     SetupUserspace
 fi

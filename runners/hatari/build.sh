@@ -13,13 +13,9 @@ source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-version="1.9.0"
-repo_url="http://hg.tuxfamily.org/mercurialroot/hatari/hatari"
+version="2.2.1"
 
-deps="mercurial"
-install_deps $deps
-
-hg clone $repo_url $source_dir
+git clone https://git.tuxfamily.org/hatari/hatari.git/ $source_dir
 
 mkdir -p $build_dir
 cd $build_dir

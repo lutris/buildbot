@@ -48,6 +48,7 @@ libsdl-net1.2                     libSDL_net-1.2.so.0
 libsdl-sound1.2                   libSDL_sound-1.0.so.1
 libsdl-ttf2.0-0                   libSDL_ttf-2.0.so.0
 libsnappy1v5                      libsnappy.so.1
+libsndio6.1                       libsndio.so.6.1
 libsoundtouch1                    libSoundTouch.so.1
 libsoxr0                          libsoxr.so.0
 libstdc++5                        libstdc++.so.5
@@ -56,6 +57,8 @@ libtinfo5                         libtinfo.so.5
 libupnp6                          libixml.so.2 libthreadutil.so.6 libupnp.so.6
 libv4lconvert0                    libv4lconvert.so.0
 libwebp6                          libwebp.so.6
+libwxbase3.0-0v5                  libwx_baseu-3.0.so.0
+libwxgtk3.0-0v5                   libwx_gtk2u_core-3.0.so.0 libwx_gtk2u_adv-3.0.so.0
 libx264-152                       libx264.so.152
 libxinerama1                      libXinerama.so.1
 libxshmfence1                     libxshmfence.so.1

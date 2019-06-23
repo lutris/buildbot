@@ -26,15 +26,9 @@ BuildProject() {
     # Fix language bug on unattended dotnet462 install
     sed -i 's/WINEDLLOVERRIDES=fusion=b "$WINE" "$file_package" ${W_OPT_UNATTENDED:+$unattended_args}/WINEDLLOVERRIDES=fusion=b "$WINE" "$file_package" \/sfxlang:1027 ${W_OPT_UNATTENDED:+$unattended_args}/g' src/winetricks
 
-    # xact 64 bit is required for various games to not have broken audio (i.e. UT, hellblade etc.), so revert this commit https://github.com/Winetricks/winetricks/commit/f2b3d268d941120d13b4c3c3960b78a879d37761
-    patch -Np1 -R < ../'patches/xact.revert.patch'
-
-    # dotnet471 support, 64-bit mostly working
+    # dotnet471 support, 64-bit mostly working	
     patch -Np1 < ../'patches/dotnet471.patch'
-
-    # fix for "tkg" builds version detection
-    patch -Np1 < ../'lutris-tkg.patch'
-
+    
     mkdir -p "${bin_dir}"
     cp "${source_dir}/src/winetricks" "${bin_dir}"
 }
