@@ -107,11 +107,11 @@ Example:
 
 x86_64:
 	ssh ubuntu@buildbot-bionic-amd64
-	./build.sh -a tkg-protonified-faudio-4.6 -w https://github.com/lutris/wine -b tkg-protonified-faudio -d -n -k
+	./build.sh --as lutris --version 4.10 --with https://github.com/lutris/wine --branch ge-protonified-4.10 --noupload --keep
 
 i386:
 	ssh ubuntu@buildbot-bionic-i386
-	./build.sh -a tkg-protonified-faudio-4.6 -w https://github.com/lutris/wine -b tkg-protonified-faudio -d -n -k
+	./build.sh --as lutris --version 4.10 --with https://github.com/lutris/wine --branch ge-protonified-4.10 --noupload --keep
 
 Note: x86_64 build utilizes the i386 lxd container and is built with 32 bit included, you don't need to run both. i386 is for an i386-only build.
 
