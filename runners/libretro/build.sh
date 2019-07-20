@@ -15,6 +15,10 @@ bin_dir="${root_dir}/retroarch"
 cores_dir="${root_dir}/cores"
 cpus=$(getconf _NPROCESSORS_ONLN)
 arch=$(uname -m)
+buildbotarch="x86"
+if [ "$arch" == "x86_64"]; then
+    buildbotarch="x64"
+fi
 
 params=$(getopt -n $0 -o d --long dependencies -- "$@")
 eval set -- $params
@@ -93,8 +97,7 @@ BuildLibretroCore() {
         git reset --hard
         cd ..
     else
-        SHALLOW_CLONE=1 ./libretro-fetch.sh $core
-        ./libretro-build.sh $core
+        SINGLE_CORE=$core FORCE=YES NOCLEAN=1 SHALLOW_CLONE=1 EXIT_ON_ERROR=1 ./libretro-buildbot-recipe.sh recipes/linux/cores-linux-${buildbotarch}-generic
         ./libretro-install.sh ${cores_dir}
     fi
 }
