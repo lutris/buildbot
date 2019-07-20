@@ -5,7 +5,7 @@ set -e
 source ../../lib/util.sh
 
 pkg_name="innoextract"
-version="1.7-pre"
+version="1.8-pre"
 arch=$(uname -m)
 root_dir=$(pwd)
 source_dir="${root_dir}/${pkg_name}-src"
