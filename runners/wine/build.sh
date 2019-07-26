@@ -70,9 +70,9 @@ InstallDependencies() {
             libpng-dev libkadm5clnt-mit11 libkadm5srv-mit11 libsdl2-dev libavcodec-dev \
 	    libavutil-dev libswresample-dev libavcodec57 libswresample2 libavutil55
 	if [ "$(uname -m)" = "x86_64" ] ; then
-		wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/amd64/libfaudio0_19.06.07-0~bionic_amd64.deb
+		wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/amd64/libfaudio0_19.07-0~bionic_amd64.deb
 	else
-		wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/i386/libfaudio0_19.06.07-0~bionic_i386.deb
+		wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/i386/libfaudio0_19.07-0~bionic_amd64.deb
 	fi
 	wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/all/libfaudio-dev_19.06.07-0~bionic_all.deb
 	sudo dpkg -i *.deb
