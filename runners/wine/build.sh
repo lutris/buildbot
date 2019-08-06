@@ -318,8 +318,8 @@ Package() {
 
     rm -rf ${bin_dir}/include
 
-    dest_file="wine-${filename_opts}${version}-${arch}.tar.gz"
-    tar czf ${dest_file} ${bin_dir}
+    dest_file="wine-${filename_opts}${version}-${arch}.tar.xz"
+    tar cJf ${dest_file} ${bin_dir}
 }
 
 UploadRunner() {
