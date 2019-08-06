@@ -25,6 +25,7 @@ BuildProject() {
     cd $source_dir
     make clean
     make 7z
+    make 7za
     rm -rf $bin_dir
     mv ./bin $bin_dir
 }
