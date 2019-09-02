@@ -30,7 +30,7 @@ InstallBuildDependencies() {
 
 GetSources() {
     repo_url="https://github.com/residualvm/residualvm.git"
-    clone $repo_url $source_dir true $version
+    clone $repo_url $source_dir true "master"
     cd "${source_dir}"
 }
 
