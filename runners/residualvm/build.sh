@@ -7,7 +7,7 @@ source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
-version="master"
+version="$(date "+%Y%m%d")"
 arch="$(uname -m)"
 
 root_dir="$(pwd)"
