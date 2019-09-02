@@ -19,7 +19,7 @@ params=$(getopt -n $0 -o d --long dependencies -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
-        -d|--dependencies) INSTALL_DEPS=1; shift ;;
+        -d|--dependencies) INSTALL_DEPS="1"; shift ;;
         *) shift; break ;;
     esac
 done
@@ -62,10 +62,12 @@ CleanUp() {
 if [ $1 ]; then
     $1
 else
-    InstallBuildDependencies
+    if [[ "$INSTALL_DEPS" == "1" ]]; then
+        InstallBuildDependencies
+    fi
     GetSources
     Build
     Package
-    # Upload
-    # CleanUp
+    Upload
+    CleanUp
 fi
