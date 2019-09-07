@@ -25,7 +25,7 @@ while true ; do
 done
 
 InstallBuildDependencies() {
-    install_deps libsdl1.2-dev libglew-dev
+    install_deps libsdl1.2-dev libglew-dev libvorbis-dev
 }
 
 GetSources() {
