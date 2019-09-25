@@ -6,9 +6,10 @@ container=$1
 user='ubuntu'
 
 InstallDependencies() {
+    lxc exec $container -- add-apt-repository ppa:cybermax-dexter/sdl2-backport
     lxc exec $container -- apt update
     lxc exec $container -- apt -y full-upgrade
-    lxc exec $container -- apt -y install wget curl build-essential git python openssh-server s3cmd awscli
+    lxc exec $container -- apt -y install wget curl build-essential git python openssh-server s3cmd awscli vim zsh fontconfig faudio
 }
 
 SetupSSH() {
@@ -18,7 +19,8 @@ SetupSSH() {
 }
 
 SetupUserspace() {
-    lxc exec $container -- git clone https://github.com/lutris/buildbot.git
+    lxc file push setup-userspace.sh $container/home/$user/
+    lxc exec $container -- ./setup-userspace.sh
 }
 
 SetupHost() {

@@ -44,10 +44,6 @@ To set up the container, you can enter it with the following command::
 
     lxc exec <container name> bash
 
-On each container, the minimal system should have the following packages installed:
-
-    apt-get install -y build-essential vim git wget curl python openssh-server zsh fontconfig
-
 On each container, set a passwd for your ubuntu user::
 
     passwd ubuntu
@@ -68,25 +64,18 @@ Run the container setup script on each container:
     ./setup-container.sh buildbot-bionic-amd64
     ./setup-container.sh buildbot-bionic-i386
 
-Copy the setup-userspace script to each container:
-
-    scp setup-userspace.sh ubuntu@buildbot-bionic-amd64:/home/ubuntu/
-    scp setup-userspace.sh ubuntu@buildbot-bionic-i386:/home/ubuntu/
-
 Perform the following so that each container can communicate with eachother and are build ready:
 
     ssh buildbot-bionic-amd64
     chown -R ubuntu:ubuntu ~/.ssh/config
     ssh-keygen
     ssh-copy-id ubuntu@buildbot32
-    ./setup-userspace.sh
     exit
 
     ssh buildbot-bionic-i386
     chown -R ubuntu:ubuntu ~/.ssh/config
     ssh-keygen
     ssh-copy-id ubuntu@buildbot64
-    ./setup-userspace.sh
     exit
 
 Now you are ready to compile. To build a wine runner:
