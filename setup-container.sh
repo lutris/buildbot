@@ -1,15 +1,16 @@
 #!/bin/bash
 
-set -e
-
 container=$1
 user='ubuntu'
 
 InstallDependencies() {
-    lxc exec $container -- add-apt-repository ppa:cybermax-dexter/sdl2-backport
     lxc exec $container -- apt update
     lxc exec $container -- apt -y full-upgrade
-    lxc exec $container -- apt -y install wget curl build-essential git python openssh-server s3cmd awscli vim zsh fontconfig faudio
+    # this package is necessary to add repositories using add-apt-repository
+    lxc exec $container -- apt install software-properties-common
+    lxc exec $container -- add-apt-repository ppa:cybermax-dexter/sdl2-backport -y
+    lxc exec $container -- apt update
+    lxc exec $container -- apt install -y wget curl build-essential git python openssh-server s3cmd awscli vim zsh fontconfig
 }
 
 SetupSSH() {
