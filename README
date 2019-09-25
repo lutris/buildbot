@@ -2,7 +2,7 @@ Lutris buildbot
 ===============
 
 This repository contains various build scripts for runners and games used by
-Lutris. The target system for these scripts is Ubuntu 16.04 (the same system
+Lutris. The target system for these scripts is Ubuntu 18.04 (the same system
 used by the Lutris runtime).
 
 It is advised to run these scripts from a LXC container. It's potentially
@@ -44,9 +44,9 @@ To set up the container, you can enter it with the following command::
 
     lxc exec <container name> bash
 
-On each container, the minimal system should have the following packages installed::
+On each container, the minimal system should have the following packages installed:
 
-    apt-get install -y build-essential vim git wget curl python openssh-server
+    apt-get install -y build-essential vim git wget curl python openssh-server zsh fontconfig
 
 On each container, set a passwd for your ubuntu user::
 
@@ -68,7 +68,12 @@ Run the container setup script on each container:
     ./setup-container.sh buildbot-bionic-amd64
     ./setup-container.sh buildbot-bionic-i386
 
-Connect to each container and perform the following so that they can communicate with eachother and are build ready:
+Copy the setup-userspace script to each container:
+
+    scp setup-userspace.sh ubuntu@buildbot-bionic-amd64:/home/ubuntu/
+    scp setup-userspace.sh ubuntu@buildbot-bionic-i386:/home/ubuntu/
+
+Perform the following so that each container can communicate with eachother and are build ready:
 
     ssh buildbot-bionic-amd64
     chown -R ubuntu:ubuntu ~/.ssh/config
@@ -107,13 +112,14 @@ Example:
 
 x86_64:
 	ssh ubuntu@buildbot-bionic-amd64
-	./build.sh --as lutris --version 4.10 --with https://github.com/lutris/wine --branch ge-protonified-4.10 --noupload --keep
+	./build.sh --as lutris --version 4.16 --with https://github.com/lutris/wine --branch lutris-ge-4.16 --noupload --keep
 
 i386:
 	ssh ubuntu@buildbot-bionic-i386
-	./build.sh --as lutris --version 4.10 --with https://github.com/lutris/wine --branch ge-protonified-4.10 --noupload --keep
+	./build.sh --as lutris --version 4.16 --with https://github.com/lutris/wine --branch lutris-ge-4.16 --noupload --keep
 
-Note: x86_64 build utilizes the i386 lxd container and is built with 32 bit included, you don't need to run both. i386 is for an i386-only build.
+Note #1: If you are running a build for the first time, you will also want to use the -d option to install build dependencies  
+Note #2: x86_64 build utilizes the i386 lxd container and is built with 32 bit included, you do not need to run both. i386 is for an i386-only build.
 
 If you plan to publish runners and runtimes to Digital Ocean, don't forget to
 copy the configuration files in ~/.aws/credentials and ~/.s3cfg
