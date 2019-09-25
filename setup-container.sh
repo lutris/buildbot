@@ -21,7 +21,7 @@ SetupSSH() {
 
 SetupUserspace() {
     lxc file push setup-userspace.sh $container/home/$user/
-    lxc exec $container -- ./setup-userspace.sh
+    lxc exec $container -- sudo --login --user $user ./setup-userspace.sh
 }
 
 SetupHost() {
