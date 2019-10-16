@@ -20,10 +20,7 @@ repo_url="https://github.com/reicast/reicast-emulator.git"
 clone $repo_url $source_dir
 
 export USE_PULSEAUDIO=1
-cd ${source_dir}
-patch -p0 < ../fix-soft-renderer.patch
-cd shell/linux
-
+cd ${source_dir}/shell/linux
 make
 
 mkdir -p ${build_dir}
