@@ -68,14 +68,7 @@ InstallDependencies() {
         sudo apt install -y linux-libc-dev libkdb5-9 libppl14 libcolord2 libvulkan-dev \
             libgnutls28-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev gcc-4.8 \
             libpng-dev libkadm5clnt-mit11 libkadm5srv-mit11 libsdl2-dev libavcodec-dev \
-	    libavutil-dev libswresample-dev libavcodec57 libswresample2 libavutil55
-	if [ "$(uname -m)" = "x86_64" ] ; then
-		wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/amd64/libfaudio0_19.07-0~bionic_amd64.deb
-	else
-		wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/i386/libfaudio0_19.07-0~bionic_i386.deb
-	fi
-	wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/all/libfaudio-dev_19.07-0~bionic_all.deb
-	sudo dpkg -i *.deb
+	    libavutil-dev libswresample-dev libavcodec58 libswresample3 libavutil56 libfaudio0 libfaudio-dev
     elif [ "$release" = "16.04" ]; then #note: 16.04 does not have FAudio packages or capability due to ffmpeg being too old
         sudo apt install -y libtxc-dxtn-s2tc-dev linux-libc-dev libkdb5-8 libppl13v5 libcolord2 libvulkan-dev \
             libesd0-dev libgnutls-dev libgstreamer-plugins-base0.10-dev gcc-4.7 \
