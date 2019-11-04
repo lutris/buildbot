@@ -22,7 +22,7 @@ arch=$(uname -m)
 repo_url="https://github.com/dolphin-emu/dolphin"
 
 InstallBuildDependencies() {
-    install_deps cmake libxext-dev libreadline-dev libgl1-mesa-dev libevdev-dev \
+    sudo apt install -y cmake libxext-dev libreadline-dev libgl1-mesa-dev libevdev-dev \
         libudev-dev libusb-1.0-0-dev qtbase5-dev qtbase5-private-dev
 }
 
