@@ -18,7 +18,7 @@ src_archive="${runner_name}-${version}.tar.xz"
 src_url="https://mednafen.github.io/releases/files/${src_archive}"
 
 deps="libsndfile-dev"
-install_deps $deps
+sudo apt install -y $deps
 
 wget "${src_url}"
 tar xJf "${src_archive}"
