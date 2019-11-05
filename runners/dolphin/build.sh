@@ -56,8 +56,8 @@ PackageProject() {
     # cp ${build_dir}/Externals/**/*.so* ${bin_dir}/lib
     cp /usr/lib/x86_64-linux-gnu/libav* ${bin_dir}/lib
     cd ${root_dir}
-    dest_file="${runner_name}-${version}-${arch}.tar.gz"
-    tar czf ${dest_file} ${runner_name}
+    dest_file="${runner_name}-${version}-${arch}.tar.xz"
+    tar cJf ${dest_file} ${runner_name}
 }
 
 UploadPackage() {
@@ -65,7 +65,7 @@ UploadPackage() {
         GetVersion
     fi
     cd $root_dir
-    dest_file="${runner_name}-${version}-${arch}.tar.gz"
+    dest_file="${runner_name}-${version}-${arch}.tar.xz"
     runner_upload ${runner_name} ${version} ${arch} ${dest_file}
 }
 
