@@ -1,6 +1,8 @@
 4do
 atari800
+blastem
 bluemsx
+bsnes
 cap32
 chailove
 citra
@@ -15,6 +17,7 @@ fbneo
 fceumm
 fmsx
 fuse
+flycast
 gambatte
 genesis_plus_gx
 handy
@@ -22,6 +25,7 @@ hatari
 higan_sfc
 higan_sfc_balanced
 mame
+mame2003_plus
 mednafen_gba
 mednafen_ngp
 mednafen_pce_fast
@@ -33,10 +37,13 @@ mednafen_psx
 mednafen_psx_hw
 melonds
 mesen
+mesen-s
 mgba
 mupen64plus
+mupen64plus_next
 nestopia
 nekop2
+neocd
 np2kai
 nxengine
 o2em
@@ -47,6 +54,7 @@ pokemini
 px68k
 ppsspp
 prosystem
+quasi88
 redream
 reicast
 scummvm
@@ -59,6 +67,11 @@ vba_next
 vbam
 virtualjaguar
 vice_x128
+vice_xcbm2
+vice_xpet
 vice_xplus4
+vice_x64sc
 vice_x64
 vice_xvic
+vitaquake2
+vitaquake3
