@@ -36,6 +36,14 @@ InstallDeps() {
     install_deps $deps
     if [ $ECE ]; then
         install_deps "p7zip-full"
+
+        # Install mt32 lib
+        cd $root_dir
+        clone https://github.com/munt/munt.git munt
+        cd ${root_dir}/munt
+        cmake -DCMAKE_BUILD_TYPE:STRING=Release .
+        make
+        sudo make install
     else
         install_deps "subversion"
     fi
