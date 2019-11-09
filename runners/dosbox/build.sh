@@ -6,17 +6,20 @@ source ${lib_path}path.sh
 source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
-params=$(getopt -n $0 -o gd --long glide,dependencies -- "$@")
+params=$(getopt -n $0 -o egd --long ece,glide,dependencies -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
+        -e|--ece) ECE=1; shift ;;
         -g|--glide) GLIDE=1; shift ;;
         -d|--dependencies) INSTALL_DEPS=1; shift ;;
         *) shift; break ;;
     esac
 done
 
-if [ $GLIDE ]; then
+if [ $ECE ]; then
+    filename_opts="-ece"
+elif [ $GLIDE ]; then
     filename_opts="-glide"
 fi
 
@@ -24,13 +27,14 @@ runner_name="$(get_runner)${filename_opts}"
 root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
+dosbox_ece_revision=4280
 arch=$(uname -m)
 
 
 InstallDeps() {
     deps="subversion libsdl-sound1.2-dev libsdl1.2-dev libpng-dev libsdl-net1.2-dev libasound2-dev autotools-dev"
     install_deps $deps
-    if [ $GLIDE ]; then
+    if [ $GLIDE || $ECE ]; then
         cd $root_dir
         clone https://github.com/voyageur/openglide openglide
         cd ${root_dir}/openglide
@@ -41,8 +45,18 @@ InstallDeps() {
     fi
 }
 
+GetSources() {
+    if [ $ECE ]; then
+        wget "https://dosboxdl.yesterplay.net/DOSBox%20ECE%20r${dosbox_ece_revision}%20(Linux%20source).7z"
+        mkdir -p ${source_dir}
+        7z x "DOSBox ECE r${dosbox_ece_revision} (Linux source).7z" -o${source_dir}
+        rm "DOSBox ECE r${dosbox_ece_revision} (Linux source).7z"
+    else
+        svn checkout svn://svn.code.sf.net/p/dosbox/code-0/dosbox/trunk ${source_dir}
+    fi
+}
+
 BuildDosbox() {
-    svn checkout svn://svn.code.sf.net/p/dosbox/code-0/dosbox/trunk ${source_dir}
     mkdir -p "${build_dir}"
     cd $source_dir
     ./autogen.sh
@@ -55,8 +69,11 @@ BuildDosbox() {
 }
 
 PackageDosbox() {
-    revision=$(svn info | grep "^Revision" | cut -d" " -f 2)
-    version="svn${revision}"
+    if [ $ECE ]; then
+        version=$dosbox_ece_revision
+    else
+        version=$(svn info | grep "^Revision" | cut -d" " -f 2)
+    fi
     cd ${root_dir}
     dest_file="${runner_name}-${version}-${arch}.tar.gz"
     tar czf ${dest_file} ${runner_name}
@@ -67,5 +84,6 @@ if [ $INSTALL_DEPS ]; then
     InstallDeps
 fi
 
+GetSources
 BuildDosbox
 PackageDosbox
