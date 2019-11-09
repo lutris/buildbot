@@ -32,8 +32,13 @@ arch=$(uname -m)
 
 
 InstallDeps() {
-    deps="subversion libsdl-sound1.2-dev libsdl1.2-dev libpng-dev libsdl-net1.2-dev libasound2-dev autotools-dev"
+    deps="libsdl-sound1.2-dev libsdl1.2-dev libpng-dev libsdl-net1.2-dev libasound2-dev autotools-dev"
     install_deps $deps
+    if [ $ECE ]; then
+        install_deps "p7zip-full"
+    else
+        install_deps "subversion"
+    fi
     if [ $GLIDE || $ECE ]; then
         cd $root_dir
         clone https://github.com/voyageur/openglide openglide
