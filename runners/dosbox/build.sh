@@ -40,7 +40,7 @@ InstallDeps() {
         # Install mt32 lib
         cd $root_dir
         clone https://github.com/munt/munt.git munt
-        cd ${root_dir}/munt
+        cd ${root_dir}/munt/mt32emu
         cmake -DCMAKE_BUILD_TYPE:STRING=Release .
         make
         sudo make install
