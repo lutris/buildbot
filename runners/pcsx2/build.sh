@@ -17,7 +17,7 @@ arch=$(uname -m)
 version="1.5.0-dev-$(date +%Y%m)"
 
 InstallBuildDependencies() {
-    deps="wx3.0-headers libaio-dev libasound2-dev libbz2-dev libgl1-mesa-dev \
+    deps="cmake wx3.0-headers libaio-dev libasound2-dev libbz2-dev libgl1-mesa-dev \
         libglu1-mesa-dev libgtk2.0-dev libpng-dev libpng++-dev libpulse-dev libsdl2-dev \
         libsoundtouch-dev libwxbase3.0-dev libwxgtk3.0-dev libx11-dev portaudio19-dev zlib1g-dev"
     install_deps $deps
