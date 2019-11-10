@@ -47,7 +47,7 @@ InstallDeps() {
     else
         install_deps "subversion"
     fi
-    if [ $GLIDE || $ECE ]; then
+    if [[ $GLIDE || $ECE ]]; then
         cd $root_dir
         clone https://github.com/voyageur/openglide openglide
         cd ${root_dir}/openglide
