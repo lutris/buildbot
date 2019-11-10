@@ -23,7 +23,7 @@ elif [ $GLIDE ]; then
     filename_opts="-glide"
 fi
 
-runner_name="$(get_runner)${filename_opts}"
+runner_name="$(get_runner)"
 root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
@@ -88,7 +88,7 @@ PackageDosbox() {
         version=$(svn info | grep "^Revision" | cut -d" " -f 2)
     fi
     cd ${root_dir}
-    dest_file="${runner_name}-${version}-${arch}.tar.gz"
+    dest_file="${runner_name}${filename_opts}-${version}-${arch}.tar.gz"
     tar czf ${dest_file} ${runner_name}
     runner_upload dosbox ${version}${filename_opts} ${arch} ${dest_file}
 }
