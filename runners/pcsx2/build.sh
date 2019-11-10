@@ -14,7 +14,7 @@ build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
 log_file="${root_dir}/${runner_name}.log"
 arch=$(uname -m)
-version="1.5.0-dev"
+version="1.5.0-dev-$(date +%Y%m)"
 
 InstallBuildDependencies() {
     deps="wx3.0-headers libaio-dev libasound2-dev libbz2-dev libgl1-mesa-dev \
