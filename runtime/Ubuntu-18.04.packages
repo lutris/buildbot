@@ -43,6 +43,7 @@ libnih1                           libnih.so.1
 libnih-dbus1                      libnih-dbus.so.1
 #libopenjpeg5                      libopenjpeg.so.5
 libreadline7                      libhistory.so.7 libreadline.so.7
+libpangocairo-1.0-0               libpangocairo-1.0.so.0
 libphysfs1                        libphysfs.so.1
 libportaudio2                     libportaudio.so.2
 libsdl2-image-2.0-0               libSDL2_image-2.0.so.0
