@@ -14,7 +14,7 @@ mv runtime/* ${runtime_dir}
 # Copy Lutris runtime extra libs
 cp -a extra/${runtime_dir}/* ${runtime_dir}
 
-runtime_archive="${runtime_dir}.tar.bz2"
+runtime_archive="${runtime_dir}.tar.xz"
 echo "Compressing runtime $runtime_archive..."
-tar cjf ${runtime_archive} ${runtime_dir}
+tar cJf ${runtime_archive} ${runtime_dir}
 runtime_upload ${runtime_dir} ${runtime_archive}
