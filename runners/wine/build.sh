@@ -315,8 +315,11 @@ Package() {
         find ${bin_dir}/lib64 -name "*.so" -exec strip {} \;
     fi
     #copy sdl2, faudio, and ffmpeg libraries
-    cp -R $runtime_path/lib64/* ${bin_dir}/lib64/
     cp -R $runtime_path/lib32/* ${bin_dir}/lib/
+
+    if [ "$(uname -m)" = "x86_64" ]; then
+        cp -R $runtime_path/lib64/* ${bin_dir}/lib64/
+    fi
 
     rm -rf ${bin_dir}/include
 
