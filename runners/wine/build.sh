@@ -21,7 +21,7 @@ arch=$(uname -m)
 version="1.8"
 configure_opts="--disable-tests --with-x --with-gstreamer"
 
-params=$(getopt -n $0 -o a:b:w:v:p:snd6k --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep -- "$@")
+params=$(getopt -n $0 -o a:b:w:v:p:snd6k --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-destination-file -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -35,6 +35,7 @@ while true ; do
         -d|--dependencies) INSTALL_DEPS=1; shift ;;
         -6|--64bit) WOW64=1; shift ;;
         -k|--keep) KEEP=1; shift ;;
+        -kdf|--keep-destination-file) KEEP_DEST_FILE=1; shift ;;
         *) shift; break ;;
     esac
 done
@@ -87,7 +88,12 @@ DownloadWine() {
     if [[ $repo_url ]]; then
         # The branch name defaults to the build name
         branch_name=${branch_name:-$build_name}
-        git clone -b "$branch_name" --single-branch "$repo_url" "$source_dir"
+        if [ -d "$source_dir" ]; then
+	    git -C "$source_dir" fetch "$repo_url" "$branch_name":"$branch_name"
+	    git -C "$source_dir" checkout "$branch_name"
+	else
+            git clone -b "$branch_name" "$repo_url" "$source_dir"
+	fi
         return
     fi
 
@@ -178,7 +184,7 @@ BuildWine() {
 	custom_ld_flags="-L$runtime_path/lib32 -Wl,-rpath-link,$runtime_path/lib32"
     fi
 
-    LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix
+    CC="ccache gcc" LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix
     make -j$(getconf _NPROCESSORS_ONLN)
 }
 
@@ -210,6 +216,9 @@ Send64BitBuildAndBuild32bit() {
     fi
     if [ $KEEP ]; then
         opts="${opts} --keep"
+    fi
+    if [ $KEEP_DEST_FILE ]; then
+        opts="${opts} --keep-destination-file"
     fi
     if [ $NOUPLOAD ]; then
         opts="${opts} --noupload"
@@ -259,7 +268,7 @@ Combine64and32bitBuilds() {
     tar czf ${wine32_archive} ${bin_dir}
     scp ${wine32_archive} ${buildbot64host}:${root_dir}
     if [ ! $KEEP ]; then
-        rm -rf ${wine32_archive} ${wine64build_archive} wine32 wine64 ${bin_dir}
+        rm -rf ${build_dir} ${wine32_archive} ${wine64build_archive} wine32 wine64 ${bin_dir}
     fi
 }
 
@@ -328,7 +337,11 @@ UploadRunner() {
 Clean() {
     if [ ! $KEEP ]; then
         cd ${root_dir}
-        rm -rf ${build_dir} ${source_dir} ${bin_dir} ${dest_file}
+        rm -rf ${build_dir} ${bin_dir} ${wine32_archive}
+    fi
+    if [ ! $KEEP_DEST_FILE ]; then
+        cd ${root_dir}
+        rm -rf ${dest_file}
     fi
 }
 
