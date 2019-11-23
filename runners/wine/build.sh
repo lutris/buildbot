@@ -56,7 +56,7 @@ bin_dir="${filename_opts}${version}-${arch}"
 wine32_archive="${bin_dir}-32bit.tar.gz"
 
 InstallDependencies() {
-    sudo apt install -y autoconf bison debhelper desktop-file-utils docbook-to-man \
+    sudo apt install -y autoconf bison ccache debhelper desktop-file-utils docbook-to-man \
         docbook-utils docbook-xsl flex fontforge gawk gettext libacl1-dev \
         libasound2-dev libcapi20-dev libcloog-ppl1 libcups2-dev libdbus-1-dev \
         libgif-dev libglu1-mesa-dev libgphoto2-dev libgsm1-dev libgtk-3-dev \
