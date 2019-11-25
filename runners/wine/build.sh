@@ -35,7 +35,7 @@ while true ; do
         -d|--dependencies) INSTALL_DEPS=1; shift ;;
         -6|--64bit) WOW64=1; shift ;;
         -k|--keep) KEEP=1; shift ;;
-        -kdf|--keep-destination-file) KEEP_DEST_FILE=1; shift ;;
+        -f|--keep-destination-file) KEEP_DEST_FILE=1; shift ;;
         *) shift; break ;;
     esac
 done
@@ -347,10 +347,9 @@ Clean() {
     if [ ! $KEEP ]; then
         cd ${root_dir}
         rm -rf ${build_dir} ${bin_dir} ${wine32_archive}
-    fi
-    if [ ! $KEEP_DEST_FILE ]; then
-        cd ${root_dir}
+      if [ ! $KEEP_DEST_FILE ]; then
         rm -rf ${dest_file}
+      fi
     fi
 }
 
