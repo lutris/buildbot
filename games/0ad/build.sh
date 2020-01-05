@@ -5,7 +5,7 @@ set -x
 
 source ../../lib/util.sh
 
-version="0.23-alpha"
+version="0.23b-alpha"
 arch="$(uname -m)"
 root_dir=$(pwd)
 source_dir="${root_dir}/0ad-src"
