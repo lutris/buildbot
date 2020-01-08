@@ -1,3 +1,6 @@
 .lutris_token
 ssh/buildbot32/*
 ssh/buildbot64/*
+runners/wine/build-preparation/wine
+runners/wine/build-preparation/wine-staging
+runners/wine/build-preparation/PKGBUILDS
