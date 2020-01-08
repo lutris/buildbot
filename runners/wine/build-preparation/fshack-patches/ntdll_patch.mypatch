@@ -1,0 +1,28 @@
+From: Zebediah Figura <z.figura12@gmail.com>
+Subject: [PATCH] ntdll: Fix a typo in get_current_directory().
+Message-Id: <20200104173505.30502-1-z.figura12@gmail.com>
+Date: Sat,  4 Jan 2020 11:35:05 -0600
+
+Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=48415
+Signed-off-by: Zebediah Figura <z.figura12@gmail.com>
+---
+ dlls/ntdll/env.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dlls/ntdll/env.c b/dlls/ntdll/env.c
+index 116a57a8e7c..de3ada01a08 100644
+--- a/dlls/ntdll/env.c
++++ b/dlls/ntdll/env.c
+@@ -622,7 +622,7 @@ static void get_current_directory( UNICODE_STRING *dir )
+         if (!wine_unix_to_nt_file_name( &unix_name, &nt_name ))
+         {
+             /* skip the \??\ prefix */
+-            if (nt_name.Length > 6 * sizeof(WCHAR*) && nt_name.Buffer[5] == ':')
++            if (nt_name.Length > 6 * sizeof(WCHAR) && nt_name.Buffer[5] == ':')
+             {
+                 dir->Length = nt_name.Length - 4 * sizeof(WCHAR);
+                 memcpy( dir->Buffer, nt_name.Buffer + 4, dir->Length );
+
+-- 
+2.24.1
+

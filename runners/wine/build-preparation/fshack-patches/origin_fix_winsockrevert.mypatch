@@ -1,0 +1,52 @@
+From: Damjan Jovanovic <damjan.jov@gmail.com>
+Subject: [PATCH 1/5] server: revert b4a1d80ae35d35f5c170e101922bf1563488be18 for now
+Message-Id: <CAJm2B-mMqe=+EYS6_Kwf-ECnU7HREfVtPWxBmbOXRRjGkrhdxQ@mail.gmail.com>
+Date: Sun, 5 Jan 2020 20:32:31 +0200
+
+That commit regressed at least 3 applications:
+48375
+48388
+48411
+and I won't have time to investigate and fix what is wrong
+before Wine 5.0 is released.
+
+I also believe our time now is better spent on cleaning up
+the winsock tests and then doing these riskier changes
+later on, when they can be tested properly.
+
+Signed-off-by: Damjan Jovanovic <damjan.jov@gmail.com>
+---
+ dlls/ws2_32/tests/sock.c | 5 +++--
+ server/sock.c            | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/dlls/ws2_32/tests/sock.c b/dlls/ws2_32/tests/sock.c
+index fa9d081185..60c5dfc63f 100644
+--- a/dlls/ws2_32/tests/sock.c
++++ b/dlls/ws2_32/tests/sock.c
+@@ -3053,8 +3053,9 @@ static void test_WSAEnumNetworkEvents(void)
+                 }
+                 else
+                 {
+-                    ok (net_events.lNetworkEvents == 0, "Test[%d]: expected 0, got %d\n",
+-                        i, net_events.lNetworkEvents);
++                    todo_wine_if (i != 0) /* Remove when fixed */
++                        ok (net_events.lNetworkEvents == 0, "Test[%d]: expected 0, got %d\n",
++                            i, net_events.lNetworkEvents);
+                 }
+                 for (k = 0; k < FD_MAX_EVENTS; k++)
+                 {
+diff --git a/server/sock.c b/server/sock.c
+index 29542cd01f..1a53ce4b09 100644
+--- a/server/sock.c
++++ b/server/sock.c
+@@ -1228,7 +1228,7 @@ DECL_HANDLER(set_socket_event)
+                                                 FILE_WRITE_ATTRIBUTES, &sock_ops))) return;
+     old_event = sock->event;
+     sock->mask    = req->mask;
+-    sock->hmask   &= (FD_WRITE | ~req->mask); /* re-enable held events */
++    sock->hmask   &= ~req->mask; /* re-enable held events */
+     sock->event   = NULL;
+     sock->window  = req->window;
+     sock->message = req->msg;
+
