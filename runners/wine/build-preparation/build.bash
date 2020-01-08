@@ -18,7 +18,7 @@ if [ $flavour ]; then
   infix="$flavour-"
 fi
 branch_name=lutris-"$infix""$version"
-wine_source_dir="${root_dir}/wine/"
+wine_source_dir="${root_dir}/wine"
 
 GetSources() {
     if [ ! -d "${root_dir}/wine/" ]; then
@@ -33,12 +33,16 @@ GetSources() {
     if [ -d "${root_dir}/PKGBUILDS/" ]; then
       git -C "${root_dir}/PKGBUILDS/" fetch
       git -C "${root_dir}/PKGBUILDS/" reset --hard origin/master
+      git -C "${root_dir}/PKGBUILDS/" clean -fx
     else
       git clone https://github.com/Tk-Glitch/PKGBUILDS.git "${root_dir}/PKGBUILDS/"
     fi
 }
 
 PrepareWineVersion() {
+    if [[ "$wine_source_dir" ]]; then
+        git -C "$wine_source_dir" clean -fx
+    fi
     if [[ `git -C "$wine_source_dir" branch -v | grep -w -o "$branch_name"-old` ]]; then
         git -C "$wine_source_dir" reset --hard
         git -C "$wine_source_dir" checkout $branch_name
@@ -87,15 +91,21 @@ PrepareTKGSource() {
     cd "${root_dir}/PKGBUILDS/wine-tkg-git/"
     chmod +x "${root_dir}/PKGBUILDS/wine-tkg-git/non-makepkg-build.sh"
     "${root_dir}/PKGBUILDS/wine-tkg-git/non-makepkg-build.sh" || true
-    rm -rf "${root_dir}/PKGBUILDS/wine-tkg-git/src/wine-mirror-git/*.orig"
+    find "${root_dir}/PKGBUILDS/wine-tkg-git/src/wine-mirror-git/" -name \*.orig -type f -delete
     rm -rf "${root_dir}/PKGBUILDS/wine-tkg-git/src/wine-mirror-git/autom4te.cache"
 }
 CommitTKGSource() {
     cd "$wine_source_dir"
     git -C "$wine_source_dir" rm -rf "$wine_source_dir"/*
     cp -R "${root_dir}/PKGBUILDS/wine-tkg-git/src/wine-mirror-git/"[!.]* "$wine_source_dir"
-    git add .
-    git commit -am "lutris-"$infix""$version", generated with Tk-Glitch/PKGBUILDS"
+    cp -R ""${root_dir}"/"$infix"patches/" "$wine_source_dir/lutris-patches/"
+    if [[ `ls -R | grep .rej ` ]]; then
+        echo Rejects were found! Aborting.
+        exit
+      else
+        git add .
+        git commit -am "lutris-"$infix""$version", generated with Tk-Glitch/PKGBUILDS"
+    fi
 }
 
 if [ "$version" ]; then
