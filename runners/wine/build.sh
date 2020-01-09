@@ -89,12 +89,12 @@ DownloadWine() {
         # The branch name defaults to the build name
         branch_name=${branch_name:-$build_name}
         if [ -d "$source_dir" ]; then
+          git -C "$source_dir" clean -dfx
           if [[ `git -C "$source_dir" branch -v | grep -o "$branch_name"` ]]; then
                 git -C "$source_dir" branch -m "$branch_name" "$branch_name"-old
           fi   
 	  git -C "$source_dir" fetch "$repo_url" "$branch_name":"$branch_name"
 	  git -C "$source_dir" checkout "$branch_name"
-	  git -C "$source_dir" clean -fx
           if [[ `git -C "$source_dir" branch -v | grep -o "$branch_name"-old` ]]; then
                 git -C "$source_dir" branch -D "$branch_name"-old
           fi                   
@@ -170,9 +170,6 @@ ApplyPatch() {
 BuildWine() {
     prefix=${root_dir}/${bin_dir}
     mkdir -p $build_dir
-    cd $source_dir
-    tools/make_requests
-    autoreconf
     cd $build_dir
 
     # Do not use $arch here since it migth have been changed for the WOW64

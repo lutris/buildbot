@@ -92,7 +92,6 @@ PrepareTKGSource() {
     chmod +x "${root_dir}/PKGBUILDS/wine-tkg-git/non-makepkg-build.sh"
     "${root_dir}/PKGBUILDS/wine-tkg-git/non-makepkg-build.sh" || true
     find "${root_dir}/PKGBUILDS/wine-tkg-git/src/wine-mirror-git/" -name \*.orig -type f -delete
-    rm -rf "${root_dir}/PKGBUILDS/wine-tkg-git/src/wine-mirror-git/autom4te.cache"
 }
 CommitTKGSource() {
     cd "$wine_source_dir"
