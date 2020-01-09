@@ -21,7 +21,7 @@ arch=$(uname -m)
 version="1.8"
 configure_opts="--disable-tests --with-x --with-gstreamer"
 
-params=$(getopt -n $0 -o a:b:w:v:p:snd6k --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-destination-file -- "$@")
+params=$(getopt -n $0 -o a:b:w:v:p:snd6kf --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-destination-file -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -94,6 +94,7 @@ DownloadWine() {
           fi   
 	  git -C "$source_dir" fetch "$repo_url" "$branch_name":"$branch_name"
 	  git -C "$source_dir" checkout "$branch_name"
+	  git -C "$source_dir" clean -fx
           if [[ `git -C "$source_dir" branch -v | grep -o "$branch_name"-old` ]]; then
                 git -C "$source_dir" branch -D "$branch_name"-old
           fi                   
@@ -169,6 +170,9 @@ ApplyPatch() {
 BuildWine() {
     prefix=${root_dir}/${bin_dir}
     mkdir -p $build_dir
+    cd $source_dir
+    tools/make_requests
+    autoreconf
     cd $build_dir
 
     # Do not use $arch here since it migth have been changed for the WOW64
