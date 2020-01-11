@@ -2,15 +2,65 @@
 
 spaces_upload() {
     filename=$1
-    destination=$2
-    aws s3 --endpoint-url=https://nyc3.digitaloceanspaces.com cp ${filename} s3://lutris/${destination}/${filename}
-    s3cmd setacl s3://lutris/${destination}/${filename} --acl-public
+    type=$2
+    subtype=$3
+    if [ $subtype ]; then
+        subtype="/$subtype"
+    fi 
+
+    aws s3 --endpoint-url=https://nyc3.digitaloceanspaces.com cp ${filename} s3://lutris/${type}$subtype/${filename}
+    s3cmd setacl s3://lutris/${type}$subtype/${filename} --acl-public
+}
+
+s3cmd_check_existence() {
+    filename=$1
+    type=$2  
+    subtype=$3
+    if [ $subtype ]; then
+        subtype="/$subtype"
+    fi
+
+    s3cmd ls s3://lutris/${type}$subtype/ | grep -o $filename
+}
+
+doctl_purge_cdn() {
+    PATH=$PATH:/snap/bin
+    filename=$1
+    type=$2   
+    subtype=$3
+    if [ $subtype ]; then
+        subtype="/$subtype"
+    fi  
+
+    case README in
+        "$(ls ../. | grep -o README)")
+        doctl_cdn_id_path="../.doctl_cdn_id"
+        ;;
+        "$(ls ../../. | grep -o README)")
+        doctl_cdn_id_path="../../.doctl_cdn_id"
+        ;;
+        *)
+        doctl_cdn_id_path="./.doctl_cdn_id"
+        ;;
+    esac
+
+    if [ ! -e "$doctl_cdn_id_path" ]; then
+        echo "Enter CDN ID. You can get it by running 'doctl compute cdn ls':"
+        read id_input
+        echo $id_input >> $doctl_cdn_id_path
+        echo "CDN ID $id_input is cached into $doctl_cdn_id_path"
+    fi
+    
+    doctl_cdn_id=$(cat $doctl_cdn_id_path)
+
+    doctl compute cdn flush $doctl_cdn_id --files ${type}$subtype/${filename}
 }
 
 runner_upload() {
     runner=$1
     version=$2
     architecture=$3
+    filename=$4
     if [[ "$architecture" == "i686" ]]; then
         architecture="i386"
     fi
@@ -24,34 +74,39 @@ runner_upload() {
         return
     fi
     access_token=$(cat $token_path)
-
-    if [[ "$4" == http* ]]; then
-        url=$4
-    else
-        filename=$4
+    
+    if [ $(s3cmd_check_existence $filename "runners" ${runner}) ]; then
+        file_exists=yes
     fi
+    spaces_upload $filename "runners" ${runner}
+    if [ $file_exists ]; then
+        doctl_purge_cdn $filename "runners" ${runner}
+    fi
+    url="https://lutris.nyc3.cdn.digitaloceanspaces.com/runners/${runner}/$filename"
 
-    host="https://lutris.net"
-    upload_url="${host}/api/runners/${runner}/versions"
-    echo "Uploading to ${upload_url}"
-    if [[ "$url" == http* ]]; then
-        curl \
-            -v \
-            --request POST \
-            --header "Authorization: Token $access_token" \
-            --form "version=${version}" \
-            --form "architecture=${architecture}" \
-            --form "url=${url}" \
-            "$upload_url"
-    else
-        curl \
-            -v \
-            --request POST \
-            --header "Authorization: Token $access_token" \
-            --form "version=${version}" \
-            --form "architecture=${architecture}" \
-            --form "file=@${filename}" \
-            "$upload_url"
+    if [ ! $file_exists ]; then
+        host="https://lutris.net"
+        upload_url="${host}/api/runners/${runner}/versions"
+        echo "Uploading to ${upload_url}"
+        if [[ "$url" == http* ]]; then
+            curl \
+                -v \
+                --request POST \
+                --header "Authorization: Token $access_token" \
+                --form "version=${version}" \
+                --form "architecture=${architecture}" \
+                --form "url=${url}" \
+                "$upload_url"
+        else
+            curl \
+                -v \
+                --request POST \
+                --header "Authorization: Token $access_token" \
+                --form "version=${version}" \
+                --form "architecture=${architecture}" \
+                --form "file=@${filename}" \
+                "$upload_url"
+        fi
     fi
 }
 
@@ -68,11 +123,12 @@ runtime_upload() {
 
     echo "Uploading archive to Spaces"
     spaces_upload $filename "runtime"
+    doctl_purge_cdn $filename "runtime"
 
     host="https://lutris.net"
     upload_url="${host}/api/runtime"
     echo "Uploading to ${upload_url}"
-    url="https://lutris.nyc3.digitaloceanspaces.com/runtime/${name}.tar.bz2"
+    url="https://lutris.nyc3.cdn.digitaloceanspaces.com/runtime/${name}.tar.xz"
 
     curl \
         -v \
