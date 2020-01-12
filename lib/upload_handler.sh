@@ -114,25 +114,14 @@ runner_upload() {
         host="https://lutris.net"
         upload_url="${host}/api/runners/${runner}/versions"
         echo "Uploading to ${upload_url}"
-        if [[ "$url" == http* ]]; then
-            curl \
-                -v \
-                --request POST \
-                --header "Authorization: Token $access_token" \
-                --form "version=${version}" \
-                --form "architecture=${architecture}" \
-                --form "url=${url}" \
-                "$upload_url"
-        else
-            curl \
-                -v \
-                --request POST \
-                --header "Authorization: Token $access_token" \
-                --form "version=${version}" \
-                --form "architecture=${architecture}" \
-                --form "file=@${filename}" \
-                "$upload_url"
-        fi
+        curl \
+            -v \
+            --request POST \
+            --header "Authorization: Token $access_token" \
+            --form "version=${version}" \
+            --form "architecture=${architecture}" \
+            --form "url=${url}" \
+            "$upload_url"
     fi
 }
 
