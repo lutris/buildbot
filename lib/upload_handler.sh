@@ -23,6 +23,32 @@ s3cmd_check_existence() {
     s3cmd ls s3://lutris/${type}$subtype/ | grep -o $filename
 }
 
+api_check_runner_existence() {
+    host='https://lutris.net'
+    runner=$1
+    architecture=$2
+    version=$3
+
+    curl \
+        --compressed \
+        --false-start \
+        --globoff \
+        --location \
+        --path-as-is \
+        --request GET \
+        --retry 3 \
+        --silent \
+        --tcp-fastopen \
+        --url "${host}/api/runners/${runner}" | \
+
+        sed -e 's/^.*"versions":\[\([^]]*\)\].*$/\1/' -e 's/^{//;s/}$//;s/},{/\
+    /g' | \
+        sed -n -e '/"version":"'"$(printf '%s' "${version}" | sed 's/[]\\/$*.^[]/\\&/g')"'"/{
+            /"architecture":"'"$(printf '%s' "${architecture}" | sed 's/[]\\/$*.^[]/\\&/g')"'"/p
+        }' | \
+        grep -q -F '' && echo true || echo false
+}
+
 doctl_purge_cdn() {
     PATH=$PATH:/snap/bin
     filename=$1
@@ -84,7 +110,7 @@ runner_upload() {
     fi
     url="https://lutris.nyc3.cdn.digitaloceanspaces.com/runners/${runner}/$filename"
 
-    if [ ! $file_exists ]; then
+    if [ $(api_check_runner_existence ${runner} $architecture $filename) = false ]; then
         host="https://lutris.net"
         upload_url="${host}/api/runners/${runner}/versions"
         echo "Uploading to ${upload_url}"
