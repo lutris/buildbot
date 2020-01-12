@@ -103,8 +103,9 @@ CommitTKGSource() {
         exit
       else
         git add .
-        git commit -am "lutris-"$infix""$version", generated with Tk-Glitch/PKGBUILDS"
+        git commit -am "lutris-${infix}${version}, generated with Tk-Glitch/PKGBUILDS"
     fi
+    git -C "$wine_source_dir" push origin "lutris-${infix}${version}"
 }
 
 if [ "$version" ]; then
