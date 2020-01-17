@@ -1,4 +1,5 @@
 .lutris_token
+.doctl_cdn_id
 ssh/buildbot32/*
 ssh/buildbot64/*
 runners/wine/build-preparation/wine
