@@ -2,13 +2,14 @@
 
 set -e
 
-params=$(getopt -n $0 -o v:r:f: --long version:,remote:,flavour: -- "$@")
+params=$(getopt -n $0 -o v:r:f:n: --long version:,remote:,flavour:,noupload: -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
         -v|--version) version=$2; shift 2 ;;
         -r|--remote) remote=$2; shift 2 ;;
         -f|--flavour) flavour=$2; shift 2 ;;
+        -n|--noupload) noupload=1; shift ;;
         *) shift; break ;;
     esac
 done
@@ -115,7 +116,9 @@ CommitTKGSource() {
         git add .
         git commit -am "lutris-${infix}${version}, generated with Tk-Glitch/PKGBUILDS"
     fi
-    git -C "$wine_source_dir" push origin "lutris-${infix}${version}"
+    if [ ! $noupload ]; then
+    git -C "$wine_source_dir" push --force origin "lutris-${infix}${version}"
+    fi
 }
 
 if [ "$version" ]; then
