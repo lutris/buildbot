@@ -2,7 +2,7 @@
 
 set -e
 
-params=$(getopt -n $0 -o v:s:r:f: --long version:,staging-patch-override:,remote:,flavour: -- "$@")
+params=$(getopt -n $0 -o v:r:f: --long version:,remote:,flavour: -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
