@@ -68,7 +68,7 @@ PrepareWineVersion() {
 
 
 ApplyStagingPatches() {
-    if [ $flavour ]; then
+    if [ $flavour -a -e "${root_dir}/$flavour.override-preset" ]; then
     override_preset=$(cat "${root_dir}/$flavour.override-preset")
     "${root_dir}/wine-staging/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf $override_preset
     else
@@ -80,11 +80,21 @@ ApplyStagingPatches() {
 }
 
 ConfigureTKG() {
+    if [ $flavour -a -e "${root_dir}/"$infix"wine-tkg.cfg" ]; then
+      flavour_cfg=$infix
+    else
+      flavour_cfg=
+    fi
+    if [ $flavour -a -d "${root_dir}"/"$flavour_patches"patches/ ]; then
+      flavour_patches=$infix
+    else
+      flavour_patches=
+    fi
     git -C "${root_dir}/PKGBUILDS/" clean -df
     sed -i s@"_EXT_CONFIG_PATH=~/.config/frogminer/wine-tkg.cfg"@"_EXT_CONFIG_PATH=${root_dir}/PKGBUILDS/wine-tkg.cfg"@g "${root_dir}/PKGBUILDS/wine-tkg-git/customization.cfg"
-    cp "${root_dir}/"$infix"wine-tkg.cfg" "${root_dir}/PKGBUILDS/wine-tkg.cfg"
+    cp "${root_dir}/"$flavour_cfg"wine-tkg.cfg" "${root_dir}/PKGBUILDS/wine-tkg.cfg"
     sed -i s/WINEVERSION/"v$version"/g "${root_dir}/PKGBUILDS/wine-tkg.cfg"
-    cp "${root_dir}"/"$infix"patches/*.mypatch "${root_dir}/PKGBUILDS/wine-tkg-git/wine-tkg-userpatches/"
+    cp "${root_dir}"/"$flavour_patches"patches/*.mypatch "${root_dir}/PKGBUILDS/wine-tkg-git/wine-tkg-userpatches/"
 }
 
 PrepareTKGSource() {
