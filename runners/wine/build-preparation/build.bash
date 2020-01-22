@@ -41,25 +41,25 @@ GetSources() {
 }
 
 PrepareWineVersion() {
-    if [[ "$wine_source_dir" ]]; then
+    if [ "$wine_source_dir" ]; then
         git -C "$wine_source_dir" clean -fx
     fi
-    if [[ `git -C "$wine_source_dir" branch -v | grep -w -o "$branch_name"-old` ]]; then
+    if [ $(git -C "$wine_source_dir" branch -v | grep -w -o "$branch_name"-old) ]; then
         git -C "$wine_source_dir" reset --hard
         git -C "$wine_source_dir" checkout $branch_name
         git -C "$wine_source_dir" branch -D "$branch_name"-old
     fi
-    if [[ `git -C "$wine_source_dir" branch -v | grep -w -o "$branch_name"` ]]; then
+    if [ $(git -C "$wine_source_dir" branch -v | grep -w -o "$branch_name") ]; then
         git -C "$wine_source_dir" branch -m "$branch_name" "$branch_name"-old
     fi
-    if [[ ! `git -C "$wine_source_dir" remote -v | grep -m 1 -o winehq-github` ]]; then
+    if [ ! $(git -C "$wine_source_dir" remote -v | grep -m 1 -o winehq-github) ]; then
         git -C "$wine_source_dir" remote add winehq-github https://github.com/wine-mirror/wine.git
     fi
       git -C "$wine_source_dir" fetch winehq-github master:$branch_name
       git -C "$wine_source_dir" reset --hard
       git -C "$wine_source_dir" checkout $branch_name
       git -C "$wine_source_dir" reset --hard "wine-$version"
-    if [[ `git -C "$wine_source_dir" branch -v | grep -w -o "$branch_name"-old` ]]; then
+    if [ $(git -C "$wine_source_dir" branch -v | grep -w -o "$branch_name"-old) ]; then
           git -C "$wine_source_dir" branch -D "$branch_name"-old
     fi
     git -C "$wine_source_dir" clean -df
@@ -109,7 +109,7 @@ CommitTKGSource() {
     git -C "$wine_source_dir" rm -rf "$wine_source_dir"/*
     cp -R "${root_dir}/PKGBUILDS/wine-tkg-git/src/wine-mirror-git/"[!.]* "$wine_source_dir"
     cp -R ""${root_dir}"/"$infix"patches/" "$wine_source_dir/lutris-patches/"
-    if [[ `ls -R | grep .rej ` ]]; then
+    if [ $(ls -R | grep .rej) ]; then
         echo Rejects were found! Aborting.
         exit
       else
