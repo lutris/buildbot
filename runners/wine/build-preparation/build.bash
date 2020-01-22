@@ -44,12 +44,12 @@ PrepareWineVersion() {
     if [ "$wine_source_dir" ]; then
         git -C "$wine_source_dir" clean -fx
     fi
-    if [ $(git -C "$wine_source_dir" branch -v | grep -w -o "$branch_name"-old) ]; then
+    if [ $(git -C "$wine_source_dir" branch -v | grep -o -E "$branch_name-old\s+") ]; then
         git -C "$wine_source_dir" reset --hard
         git -C "$wine_source_dir" checkout $branch_name
         git -C "$wine_source_dir" branch -D "$branch_name"-old
     fi
-    if [ $(git -C "$wine_source_dir" branch -v | grep -w -o "$branch_name") ]; then
+    if [ $(git -C "$wine_source_dir" branch -v | grep -o -E "$branch_name\s+") ]; then
         git -C "$wine_source_dir" branch -m "$branch_name" "$branch_name"-old
     fi
     if [ ! $(git -C "$wine_source_dir" remote -v | grep -m 1 -o winehq-github) ]; then
@@ -59,7 +59,7 @@ PrepareWineVersion() {
       git -C "$wine_source_dir" reset --hard
       git -C "$wine_source_dir" checkout $branch_name
       git -C "$wine_source_dir" reset --hard "wine-$version"
-    if [ $(git -C "$wine_source_dir" branch -v | grep -w -o "$branch_name"-old) ]; then
+    if [ $(git -C "$wine_source_dir" branch -v | grep -o -E "$branch_name-old\s+") ]; then
           git -C "$wine_source_dir" branch -D "$branch_name"-old
     fi
     git -C "$wine_source_dir" clean -df
