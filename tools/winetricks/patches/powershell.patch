@@ -1,0 +1,50 @@
+diff --git a/src/winetricks b/src/winetricks
+index 9f1a59c2..c6a29eaa 100755
+--- a/src/winetricks
++++ b/src/winetricks
+@@ -14953,6 +14953,45 @@ load_openwatcom()
+ 
+ #----------------------------------------------------------------
+ 
++w_metadata powershell apps \
++    title="Windows Powershell" \
++    publisher="Microsoft" \
++    year="2019" \
++    media="download" \
++    file1="PowerShell-6.1.6-win-x86.zip" \
++    installed_file1="$W_SYSTEM32_DLLS_WIN/WindowsPowerShell/v1.0/powershell.exe"
++
++load_powershell()
++{
++    w_package_unsupported_win64
++
++    w_warn "Installing Powershell into $W_SYSTEM32_DLLS_WIN/WindowsPowerShell/v1.0/. Note that some functionality may not work without Windows Management Framework"
++
++    w_call dotnet462
++
++    w_download https://github.com/PowerShell/PowerShell/releases/download/v6.1.6/PowerShell-6.1.6-win-x86.zip 1dc690c9a1091d0ed5b71de903ab3cd7b58ba9638acdfeb9f9fe7031abaf47e9
++
++    w_override_dlls native powershell.exe
++
++    # remove builtin placeholders
++    rm -f "$W_SYSTEM32_DLLS"/powershell.exe
++
++
++    w_try mkdir -p "$W_SYSTEM32_DLLS"/WindowsPowerShell/v1.0
++
++    w_try_7z  "$W_SYSTEM32_DLLS"/WindowsPowerShell/v1.0/ "${W_CACHE}/${W_PACKAGE}/${file1}"
++    w_try_cd "$W_SYSTEM32_DLLS"/WindowsPowerShell/v1.0
++    w_try cp -f pwsh.exe powershell.exe
++    for file in *\\*; do
++        target=$(printf '%s\n' "$file" | sed 's#\\#/#g')
++        w_try mkdir -p "${target%/*}"
++        w_try mv -v "$file" "$target"
++    done
++    w_append_path "$W_SYSTEM32_DLLS"/WindowsPowerShell/v1.0
++}
++
++#----------------------------------------------------------------
++
+ w_metadata protectionid apps \
+     title="Protection ID" \
+     publisher="CDKiLLER & TippeX" \

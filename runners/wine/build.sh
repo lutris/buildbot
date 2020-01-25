@@ -21,7 +21,7 @@ arch=$(uname -m)
 version="1.8"
 configure_opts="--disable-tests --with-x --with-gstreamer"
 
-params=$(getopt -n $0 -o a:b:w:v:p:snd6k --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep -- "$@")
+params=$(getopt -n $0 -o a:b:w:v:p:snd6kf --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-destination-file -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -35,6 +35,7 @@ while true ; do
         -d|--dependencies) INSTALL_DEPS=1; shift ;;
         -6|--64bit) WOW64=1; shift ;;
         -k|--keep) KEEP=1; shift ;;
+        -f|--keep-destination-file) KEEP_DEST_FILE=1; shift ;;
         *) shift; break ;;
     esac
 done
@@ -55,7 +56,7 @@ bin_dir="${filename_opts}${version}-${arch}"
 wine32_archive="${bin_dir}-32bit.tar.gz"
 
 InstallDependencies() {
-    sudo apt install -y autoconf bison debhelper desktop-file-utils docbook-to-man \
+    sudo apt install -y autoconf bison ccache debhelper desktop-file-utils docbook-to-man \
         docbook-utils docbook-xsl flex fontforge gawk gettext libacl1-dev \
         libasound2-dev libcapi20-dev libcloog-ppl1 libcups2-dev libdbus-1-dev \
         libgif-dev libglu1-mesa-dev libgphoto2-dev libgsm1-dev libgtk-3-dev \
@@ -87,7 +88,19 @@ DownloadWine() {
     if [[ $repo_url ]]; then
         # The branch name defaults to the build name
         branch_name=${branch_name:-$build_name}
-        git clone -b "$branch_name" --single-branch "$repo_url" "$source_dir"
+        if [ -d "$source_dir" ]; then
+          git -C "$source_dir" clean -dfx
+          if [[ `git -C "$source_dir" branch -v | grep -o -E "$branch_name\s+"` ]]; then
+                git -C "$source_dir" branch -m "$branch_name" "$branch_name"-old
+          fi   
+	  git -C "$source_dir" fetch "$repo_url" "$branch_name":"$branch_name"
+	  git -C "$source_dir" checkout "$branch_name"
+          if [[ `git -C "$source_dir" branch -v | grep -o -E "$branch_name-old\s+"` ]]; then
+                git -C "$source_dir" branch -D "$branch_name"-old
+          fi                   
+	else
+            git clone -b "$branch_name" "$repo_url" "$source_dir"
+	fi
         return
     fi
 
@@ -178,7 +191,7 @@ BuildWine() {
 	custom_ld_flags="-L$runtime_path/lib32 -Wl,-rpath-link,$runtime_path/lib32"
     fi
 
-    LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix
+    CC="ccache gcc" LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix
     make -j$(getconf _NPROCESSORS_ONLN)
 }
 
@@ -210,6 +223,9 @@ Send64BitBuildAndBuild32bit() {
     fi
     if [ $KEEP ]; then
         opts="${opts} --keep"
+    fi
+    if [ $KEEP_DEST_FILE ]; then
+        opts="${opts} --keep-destination-file"
     fi
     if [ $NOUPLOAD ]; then
         opts="${opts} --noupload"
@@ -259,7 +275,7 @@ Combine64and32bitBuilds() {
     tar czf ${wine32_archive} ${bin_dir}
     scp ${wine32_archive} ${buildbot64host}:${root_dir}
     if [ ! $KEEP ]; then
-        rm -rf ${wine32_archive} ${wine64build_archive} wine32 wine64 ${bin_dir}
+        rm -rf ${build_dir} ${wine32_archive} ${wine64build_archive} wine32 wine64 ${bin_dir}
     fi
 }
 
@@ -306,8 +322,11 @@ Package() {
         find ${bin_dir}/lib64 -name "*.so" -exec strip {} \;
     fi
     #copy sdl2, faudio, and ffmpeg libraries
-    cp -R $runtime_path/lib64/* ${bin_dir}/lib64/
     cp -R $runtime_path/lib32/* ${bin_dir}/lib/
+
+    if [ "$(uname -m)" = "x86_64" ]; then
+        cp -R $runtime_path/lib64/* ${bin_dir}/lib64/
+    fi
 
     rm -rf ${bin_dir}/include
 
@@ -318,17 +337,17 @@ Package() {
 UploadRunner() {
     if [ ! $NOUPLOAD ]; then
         cd ${root_dir}
-        aws s3 --endpoint-url=https://nyc3.digitaloceanspaces.com cp ${dest_file} s3://lutris/runners/wine/
-        s3cmd setacl s3://lutris/runners/wine/${dest_file} --acl-public
-        url="https://lutris.nyc3.digitaloceanspaces.com/runners/wine/${dest_file}"
-        runner_upload ${runner_name} ${filename_opts}${version} ${arch} ${url}
+        runner_upload ${runner_name} ${filename_opts}${version} ${arch} ${dest_file}
     fi
 }
 
 Clean() {
     if [ ! $KEEP ]; then
         cd ${root_dir}
-        rm -rf ${build_dir} ${source_dir} ${bin_dir} ${dest_file}
+        rm -rf ${build_dir} ${bin_dir} ${wine32_archive}
+      if [ ! $KEEP_DEST_FILE ]; then
+        rm -rf ${dest_file}
+      fi
     fi
 }
 
