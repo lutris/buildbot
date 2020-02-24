@@ -9,6 +9,7 @@ InstallDependencies() {
     # this package is necessary to add repositories using add-apt-repository
     lxc exec $container -- apt -y install software-properties-common
     lxc exec $container -- add-apt-repository ppa:cybermax-dexter/sdl2-backport -y
+    lxc exec $container -- add-apt-repository ppa:cybermax-dexter/vkd3d -y
     lxc exec $container -- apt update
     lxc exec $container -- apt -y install wget curl build-essential git python openssh-server s3cmd awscli vim zsh fontconfig snapd
     lxc exec $container -- snap install doctl
@@ -21,8 +22,13 @@ SetupSSH() {
 }
 
 SetupUserspace() {
-    lxc file push setup-userspace.sh $container/home/$user/
-    lxc exec $container -- sudo --login --user $user ./setup-userspace.sh
+    lxc file push -r ../buildbot $container/home/$user/
+
+    #optional - for strider
+    if [ -d "setup-userspace.sh" ]; then
+        lxc file push setup-userspace.sh $container/home/$user/
+        lxc exec $container -- sudo --login --user $user ./setup-userspace.sh
+    fi
 }
 
 SetupHost() {

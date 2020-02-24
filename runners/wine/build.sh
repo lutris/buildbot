@@ -69,7 +69,8 @@ InstallDependencies() {
         sudo apt install -y linux-libc-dev libkdb5-9 libppl14 libcolord2 libvulkan-dev \
             libgnutls28-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev gcc-4.8 \
             libpng-dev libkadm5clnt-mit11 libkadm5srv-mit11 libsdl2-dev libavcodec-dev \
-	    libavutil-dev libswresample-dev libavcodec58 libswresample3 libavutil56 libfaudio0 libfaudio-dev
+	    libavutil-dev libswresample-dev libavcodec58 libswresample3 libavutil56 libfaudio0 libfaudio-dev \
+            libvkd3d1 libvkd3d-dev libvkd3d-utils1 libvkd3d-shader1 vkd3d-demos libvulkan1
     elif [ "$release" = "16.04" ]; then #note: 16.04 does not have FAudio packages or capability due to ffmpeg being too old
         sudo apt install -y libtxc-dxtn-s2tc-dev linux-libc-dev libkdb5-8 libppl13v5 libcolord2 libvulkan-dev \
             libesd0-dev libgnutls-dev libgstreamer-plugins-base0.10-dev gcc-4.7 \
@@ -321,7 +322,7 @@ Package() {
     if [ -d ${bin_dir}/lib64 ]; then
         find ${bin_dir}/lib64 -name "*.so" -exec strip {} \;
     fi
-    #copy sdl2, faudio, and ffmpeg libraries
+    #copy sdl2, faudio, vkd3d, and ffmpeg libraries
     cp -R $runtime_path/lib32/* ${bin_dir}/lib/
 
     if [ "$(uname -m)" = "x86_64" ]; then
