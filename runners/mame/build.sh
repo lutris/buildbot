@@ -16,18 +16,11 @@ install_deps curl wget unzip debhelper libexpat1-dev libflac-dev libfontconfig1-
      libjpeg8-dev libportmidi-dev qtbase5-dev qt5-default libsdl2-ttf-dev libsdl2-dev \
      libxinerama-dev subversion python-dev zlib1g-dev gcc-5
 
-release=$(curl http://mamedev.org/release.html | grep -E "href.*s.zip" | cut -d"\"" -f 2)
-version=$(curl http://mamedev.org/release.html | grep -E -o "release is version [\.0-9]+" | grep -E -o 0.[0-9]+)
-archive=$(echo ${release} | cut -d"/" -f 9)
+version=$(curl https://www.mamedev.org/release.html | grep -oP "(?<=MAME )[.0-9]+(?= Source)")
+branch="mame$(echo $version | tr -d .)"
+git clone -b $branch --depth 1 https://github.com/mamedev/mame.git $build_dir
 
-wget "${release}" -O ${archive}
-unzip -o $archive
-
-mkdir -p ${source_dir}
-mv mame.zip ${source_dir}
 cd ${source_dir}
-unzip -o mame.zip || true
-rm mame.zip
 
 unset FULLNAME
 
