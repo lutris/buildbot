@@ -18,8 +18,7 @@ install_deps curl wget unzip debhelper libexpat1-dev libflac-dev libfontconfig1-
 
 version=$(curl https://www.mamedev.org/release.html | grep -oP "(?<=MAME )[.0-9]+(?= Source)")
 branch="mame$(echo $version | tr -d .)"
-git clone -b $branch --depth 1 https://github.com/mamedev/mame.git $build_dir
-
+git clone -b $branch --depth 1 https://github.com/mamedev/mame.git $source_dir
 cd ${source_dir}
 
 unset FULLNAME
