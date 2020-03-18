@@ -86,7 +86,7 @@ ConfigureTKG() {
     else
       flavour_cfg=
     fi
-    if [ $flavour -a -d "${root_dir}"/"$flavour_patches"patches/ ]; then
+    if [ $flavour -a -d "${root_dir}"/"$infix"patches/ ]; then
       flavour_patches=$infix
     else
       flavour_patches=
@@ -108,7 +108,7 @@ CommitTKGSource() {
     cd "$wine_source_dir"
     git -C "$wine_source_dir" rm -rf "$wine_source_dir"/*
     cp -R "${root_dir}/PKGBUILDS/wine-tkg-git/src/wine-mirror-git/"[!.]* "$wine_source_dir"
-    cp -R ""${root_dir}"/"$infix"patches/" "$wine_source_dir/lutris-patches/"
+    cp -R ""${root_dir}"/"$flavour_patches"patches/" "$wine_source_dir/lutris-patches/"
     if [ $(ls -R | grep .rej) ]; then
         echo Rejects were found! Aborting.
         exit
