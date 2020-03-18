@@ -120,7 +120,7 @@ CommitTKGSource() {
     git -C "$wine_source_dir" rm -rf "$wine_source_dir"/*
     cp -R "${root_dir}/PKGBUILDS/wine-tkg-git/src/wine-mirror-git/"[!.]* "$wine_source_dir"
     cp -R ""${root_dir}"/"$flavour_patches"patches/" "$wine_source_dir/lutris-patches/"
-    if [ $(ls -R | grep .rej) ]; then
+    if [ "$(ls -R | grep .rej)" ]; then
         echo Rejects were found! Aborting.
         exit
       else
