@@ -12,7 +12,7 @@ root_dir="$(pwd)"
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
 arch="$(uname -m)"
-version="1.21.3"
+version="1.24.0"
 
 src_archive="${runner_name}-${version}.tar.xz"
 src_url="https://mednafen.github.io/releases/files/${src_archive}"
