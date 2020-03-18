@@ -2,7 +2,7 @@
 
 set -e
 
-params=$(getopt -n $0 -o v:r:f:n: --long version:,remote:,flavour:,noupload: -- "$@")
+params=$(getopt -n $0 -o v:r:f:n:s: --long version:,remote:,flavour:,noupload:,staging-override: -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -10,6 +10,7 @@ while true ; do
         -r|--remote) remote=$2; shift 2 ;;
         -f|--flavour) flavour=$2; shift 2 ;;
         -n|--noupload) noupload=1; shift ;;
+        -s|--staging-override) staging_version_override=$2; shift 2 ;;
         *) shift; break ;;
     esac
 done
@@ -64,7 +65,11 @@ PrepareWineVersion() {
     fi
     git -C "$wine_source_dir" clean -df
 
-    git -C "${root_dir}/wine-staging/" reset --hard "v$version"
+    if [ $staging_version_override ]; then
+      git -C "${root_dir}/wine-staging/" reset --hard "$staging_version_override"
+    else
+      git -C "${root_dir}/wine-staging/" reset --hard "v$version"
+    fi
 }
 
 
@@ -94,7 +99,13 @@ ConfigureTKG() {
     git -C "${root_dir}/PKGBUILDS/" clean -df
     sed -i s@"_EXT_CONFIG_PATH=~/.config/frogminer/wine-tkg.cfg"@"_EXT_CONFIG_PATH=${root_dir}/PKGBUILDS/wine-tkg.cfg"@g "${root_dir}/PKGBUILDS/wine-tkg-git/customization.cfg"
     cp "${root_dir}/"$flavour_cfg"wine-tkg.cfg" "${root_dir}/PKGBUILDS/wine-tkg.cfg"
-    sed -i s/WINEVERSION/"v$version"/g "${root_dir}/PKGBUILDS/wine-tkg.cfg"
+
+    if [ $staging_version_override ]; then
+      sed -i s/WINEVERSION/"$staging_version_override"/g "${root_dir}/PKGBUILDS/wine-tkg.cfg"
+    else
+      sed -i s/WINEVERSION/"v$version"/g "${root_dir}/PKGBUILDS/wine-tkg.cfg"
+    fi
+
     cp "${root_dir}"/"$flavour_patches"patches/*.mypatch "${root_dir}/PKGBUILDS/wine-tkg-git/wine-tkg-userpatches/"
 }
 
