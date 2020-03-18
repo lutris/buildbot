@@ -2,12 +2,7 @@ From 4c4a5347a6fbe69a8f525db3cf9f6826c70944cf Mon Sep 17 00:00:00 2001
 From: Derek Lesho <dlesho@codeweavers.com>
 Date: Fri, 10 Jan 2020 15:34:45 -0600
 Subject: [PATCH] Add some semi-stubs in user32.
-
 ---
- dlls/user32/misc.c      |  26 ------
- dlls/user32/sysparams.c | 181 +++++++++++++++++++++++++++++++++++++++-
- include/wingdi.h        |   2 +-
- 3 files changed, 180 insertions(+), 29 deletions(-)
 
 diff --git a/dlls/user32/misc.c b/dlls/user32/misc.c
 index bed5812a47..6e1f60612b 100644
@@ -254,18 +249,5 @@ index 1f65959bc6..b135ea136f 100644
 +
 +    return ERROR_SUCCESS;
 +}
-diff --git a/include/wingdi.h b/include/wingdi.h
-index bed2c70798..ba74fc1e49 100644
---- a/include/wingdi.h
-+++ b/include/wingdi.h
-@@ -3409,7 +3409,7 @@ typedef enum
- 
- typedef enum
- {
--    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_OTHER = -1,
-+    DISPLAYCONFIG_OUTPUT_TECHNOLOGY_OTHER = 0xffffffff,
-     DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HD15 = 0,
-     DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SVIDEO = 1,
-     DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPOSITE_VIDEO = 2,
 -- 
 2.24.1
