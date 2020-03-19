@@ -21,7 +21,7 @@ arch=$(uname -m)
 version="1.8"
 configure_opts="--disable-tests --with-x --with-gstreamer"
 
-params=$(getopt -n $0 -o a:b:w:v:p:snd6kf --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-destination-file -- "$@")
+params=$(getopt -n $0 -o a:b:w:v:p:snd6kfc --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-destination-file,useccache -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -36,6 +36,7 @@ while true ; do
         -6|--64bit) WOW64=1; shift ;;
         -k|--keep) KEEP=1; shift ;;
         -f|--keep-destination-file) KEEP_DEST_FILE=1; shift ;;
+        -c|--useccache) CCACHE=1; shift ;;
         *) shift; break ;;
     esac
 done
@@ -192,7 +193,12 @@ BuildWine() {
 	custom_ld_flags="-L$runtime_path/lib32 -Wl,-rpath-link,$runtime_path/lib32"
     fi
 
-    CC="ccache gcc" LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix
+    if [ $CCACHE ]; then
+        CC="ccache gcc" LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix
+    else
+        LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix
+    fi
+    
     make -j$(getconf _NPROCESSORS_ONLN)
 }
 
