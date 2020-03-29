@@ -32,12 +32,12 @@ GetSources() {
     else
       git clone https://github.com/wine-staging/wine-staging.git "${root_dir}/wine-staging/"
     fi
-    if [ -d "${root_dir}/PKGBUILDS/" ]; then
-      git -C "${root_dir}/PKGBUILDS/" fetch
-      git -C "${root_dir}/PKGBUILDS/" reset --hard origin/master
-      git -C "${root_dir}/PKGBUILDS/" clean -fx
+    if [ -d "${root_dir}/wine-tkg-git/" ]; then
+      git -C "${root_dir}/wine-tkg-git/" fetch
+      git -C "${root_dir}/wine-tkg-git/" reset --hard origin/master
+      git -C "${root_dir}/wine-tkg-git/" clean -fx
     else
-      git clone https://github.com/Tk-Glitch/PKGBUILDS.git "${root_dir}/PKGBUILDS/"
+      git clone https://github.com/Frogging-Family/wine-tkg-git.git "${root_dir}/wine-tkg-git/"
     fi
 }
 
@@ -96,29 +96,29 @@ ConfigureTKG() {
     else
       flavour_patches=
     fi
-    git -C "${root_dir}/PKGBUILDS/" clean -df
-    sed -i s@"_EXT_CONFIG_PATH=~/.config/frogminer/wine-tkg.cfg"@"_EXT_CONFIG_PATH=${root_dir}/PKGBUILDS/wine-tkg.cfg"@g "${root_dir}/PKGBUILDS/wine-tkg-git/customization.cfg"
-    cp "${root_dir}/"$flavour_cfg"wine-tkg.cfg" "${root_dir}/PKGBUILDS/wine-tkg.cfg"
+    git -C "${root_dir}/wine-tkg-git/" clean -df
+    sed -i s@"_EXT_CONFIG_PATH=~/.config/frogminer/wine-tkg.cfg"@"_EXT_CONFIG_PATH=${root_dir}/wine-tkg-git/wine-tkg.cfg"@g "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-profiles/advanced-customization.cfg"
+    cp "${root_dir}/"$flavour_cfg"wine-tkg.cfg" "${root_dir}/wine-tkg-git/wine-tkg.cfg"
 
     if [ $staging_version_override ]; then
-      sed -i s/WINEVERSION/"$staging_version_override"/g "${root_dir}/PKGBUILDS/wine-tkg.cfg"
+      sed -i s/WINEVERSION/"$staging_version_override"/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     else
-      sed -i s/WINEVERSION/"v$version"/g "${root_dir}/PKGBUILDS/wine-tkg.cfg"
+      sed -i s/WINEVERSION/"v$version"/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     fi
 
-    cp "${root_dir}"/"$flavour_patches"patches/*.mypatch "${root_dir}/PKGBUILDS/wine-tkg-git/wine-tkg-userpatches/"
+    cp "${root_dir}"/"$flavour_patches"patches/*.mypatch "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-userpatches/"
 }
 
 PrepareTKGSource() {
-    cd "${root_dir}/PKGBUILDS/wine-tkg-git/"
-    chmod +x "${root_dir}/PKGBUILDS/wine-tkg-git/non-makepkg-build.sh"
-    "${root_dir}/PKGBUILDS/wine-tkg-git/non-makepkg-build.sh" || true
-    find "${root_dir}/PKGBUILDS/wine-tkg-git/src/wine-mirror-git/" -name \*.orig -type f -delete
+    cd "${root_dir}/wine-tkg-git/wine-tkg-git/"
+    chmod +x "${root_dir}/wine-tkg-git/wine-tkg-git/non-makepkg-build.sh"
+    "${root_dir}/wine-tkg-git/wine-tkg-git/non-makepkg-build.sh" || true
+    find "${root_dir}/wine-tkg-git/wine-tkg-git/src/wine-mirror-git/" -name \*.orig -type f -delete
 }
 CommitTKGSource() {
     cd "$wine_source_dir"
     git -C "$wine_source_dir" rm -rf "$wine_source_dir"/*
-    cp -R "${root_dir}/PKGBUILDS/wine-tkg-git/src/wine-mirror-git/"[!.]* "$wine_source_dir"
+    cp -R "${root_dir}/wine-tkg-git/wine-tkg-git/src/wine-mirror-git/"[!.]* "$wine_source_dir"
     cp -R ""${root_dir}"/"$flavour_patches"patches/" "$wine_source_dir/lutris-patches/"
     if [ "$(ls -R | grep .rej)" ]; then
         echo Rejects were found! Aborting.
