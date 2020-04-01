@@ -110,7 +110,7 @@ runner_upload() {
     fi
     url="https://lutris.nyc3.cdn.digitaloceanspaces.com/runners/${runner}/$filename"
 
-    if [ $(api_check_runner_existence ${runner} $architecture $filename) = false ]; then
+    if [ $(api_check_runner_existence ${runner} $architecture $version) = false ]; then
         host="https://lutris.net"
         upload_url="${host}/api/runners/${runner}/versions"
         echo "Uploading to ${upload_url}"

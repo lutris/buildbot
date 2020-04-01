@@ -22,6 +22,9 @@ if [ $flavour ]; then
 fi
 branch_name=lutris-"$infix""$version"
 wine_source_dir="${root_dir}/wine"
+if [ $disabled_patchset ]; then
+disabled_patchset="-W $disabled_patchset"
+fi
 
 GetSources() {
     if [ ! -d "${root_dir}/wine/" ]; then
@@ -76,7 +79,7 @@ PrepareWineVersion() {
 
 ApplyStagingPatches() {
     if [ $flavour -a -e "${root_dir}/$flavour.override-preset" ]; then
-    override_preset="$(cat "${root_dir}/$flavour.override-preset") -W $disabled_patchset"
+    override_preset="$(cat "${root_dir}/$flavour.override-preset") $disabled_patchset"
     "${root_dir}/wine-staging/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf $override_preset
     else
     "${root_dir}/wine-staging/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf
@@ -107,7 +110,7 @@ ConfigureTKG() {
       sed -i s/WINEVERSION/"v$version"/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     fi
     if [ $disabled_patchset ]; then
-    sed -i s/DISABLED_PATCHSET/-W $disabled_patchset/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
+    sed -i s/DISABLED_PATCHSET/$disabled_patchset/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     else 
     sed -i s/DISABLED_PATCHSET//g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     fi

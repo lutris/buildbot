@@ -36,14 +36,13 @@ InstallDependencies() {
 
 Download() {
     if [ -d "$source_dir" ]; then
-        branch_exists=$(git branch -v | grep -o -E "$branch_name\s+")
         cd $source_dir
-        if [ $branch_exists ]; then
+        if [ $(git branch -v | grep -o "$branch_name ") ]; then
             git branch -m "$branch_name" "$branch_name"-old
         fi
         git fetch $repo_url $branch_name:$branch_name
         git checkout $branch_name
-        if [ $branch_exists ]; then
+        if [ $(git branch -v | grep -o "$branch_name-old ") ]; then
             git branch -D "$branch_name"-old
         fi
     else
@@ -127,7 +126,7 @@ Build() {
 
 Clean() {
     cd ${root_dir}
-    rm -rf ${build_dir} ${lib32} ${lib_dir} ${root_dir}/lib32 ${root_dir}/lib64
+    rm -rf ${build_dir} ${lib32} ${lib_dir} ${root_dir:?}/lib32 ${root_dir:?}/lib64
 }
 
 if [ $1 ]; then

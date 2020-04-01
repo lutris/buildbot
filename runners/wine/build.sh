@@ -92,12 +92,12 @@ DownloadWine() {
         branch_name=${branch_name:-$build_name}
         if [ -d "$source_dir" ]; then
           git -C "$source_dir" clean -dfx
-          if [[ `git -C "$source_dir" branch -v | grep -o -E "$branch_name\s+"` ]]; then
+          if [ $(git -C "$source_dir" branch -v | grep -o -E "$branch_name\s+") ]; then
                 git -C "$source_dir" branch -m "$branch_name" "$branch_name"-old
           fi   
 	  git -C "$source_dir" fetch "$repo_url" "$branch_name":"$branch_name"
 	  git -C "$source_dir" checkout "$branch_name"
-          if [[ `git -C "$source_dir" branch -v | grep -o -E "$branch_name-old\s+"` ]]; then
+          if [ $(git -C "$source_dir" branch -v | grep -o -E "$branch_name-old\s+") ]; then
                 git -C "$source_dir" branch -D "$branch_name"-old
           fi                   
 	else
@@ -251,6 +251,9 @@ Send64BitBuildAndBuild32bit() {
     fi
     if [ "$branch_name" ]; then
         opts="${opts} --branch $branch_name"
+    fi
+    if [ "$CCACHE" ]; then
+        opts="${opts} --useccache"
     fi
 
     echo "Building 32bit wine on 32bit container"
