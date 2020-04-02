@@ -2,7 +2,7 @@
 
 set -e
 
-params=$(getopt -n $0 -o v:r:f:n:s: --long version:,remote:,flavour:,noupload:,staging-override: -- "$@")
+params=$(getopt -n $0 -o v:r:f:n:s:d: --long version:,remote:,flavour:,noupload:,staging-override:,disabled-patchset: -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -11,6 +11,7 @@ while true ; do
         -f|--flavour) flavour=$2; shift 2 ;;
         -n|--noupload) noupload=1; shift ;;
         -s|--staging-override) staging_version_override=$2; shift 2 ;;
+        -d|--disabled-patchset) disabled_patchset=$2; shift 2 ;;
         *) shift; break ;;
     esac
 done
@@ -75,7 +76,7 @@ PrepareWineVersion() {
 
 ApplyStagingPatches() {
     if [ $flavour -a -e "${root_dir}/$flavour.override-preset" ]; then
-    override_preset=$(cat "${root_dir}/$flavour.override-preset")
+    override_preset="$(cat "${root_dir}/$flavour.override-preset") -W $disabled_patchset"
     "${root_dir}/wine-staging/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf $override_preset
     else
     "${root_dir}/wine-staging/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf
@@ -105,6 +106,12 @@ ConfigureTKG() {
     else
       sed -i s/WINEVERSION/"v$version"/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     fi
+    if [ $disabled_patchset ]; then
+    sed -i s/DISABLED_PATCHSET/-W $disabled_patchset/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
+    else 
+    sed -i s/DISABLED_PATCHSET//g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
+    fi
+
 
     cp "${root_dir}"/"$flavour_patches"patches/*.mypatch "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-userpatches/"
 }
