@@ -31,8 +31,8 @@ Build() {
     cd $build_dir
     cmake $source_dir \
         -DCMAKE_BUILD_TYPE=Release
-        -DCMAKE_CXX_COMPILER=clang++-3.8 \
-        -DCMAKE_C_COMPILER=clang-3.8 \
+        -DCMAKE_CXX_COMPILER=clang++-6.0 \
+        -DCMAKE_C_COMPILER=clang-6.0 \
         -DCMAKE_CXX_FLAGS="-O2 -g -stdlib=libc++" \
     make -j$(getconf _NPROCESSORS_ONLN)
 }
