@@ -30,10 +30,10 @@ Build() {
     mkdir -p $build_dir
     cd $build_dir
     cmake $source_dir \
-        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_CXX_COMPILER=clang++-6.0 \
         -DCMAKE_C_COMPILER=clang-6.0 \
-        -DCMAKE_CXX_FLAGS="-O2 -g -stdlib=libc++" \
+        -DCMAKE_CXX_FLAGS="-O2 -g -stdlib=libc++"
     make -j$(getconf _NPROCESSORS_ONLN)
 }
 
