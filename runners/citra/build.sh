@@ -40,7 +40,6 @@ Build() {
 
 Package() {
     mkdir -p $bin_dir
-    mv src/citra/citra ${bin_dir}
     mv src/citra_qt/citra-qt ${bin_dir}
     cd ${root_dir}
     dest_file="${runner_name}-${version}-${arch}.tar.gz"
