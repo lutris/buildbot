@@ -58,7 +58,7 @@ BuildRetroarch() {
     # TODO: Restore files that pushed the package size to be too big
     # - assets/wallpapers
     # - assets/xmb/retroactive
-    cp -a media/assets ${bin_dir}
+    DESTDIR=${bin_dir}/assets make -C media/assets install
     rm -rf ${bin_dir}/assets/.git \
         ${bin_dir}/assets/src \
         ${bin_dir}/assets/switch \
@@ -67,14 +67,13 @@ BuildRetroarch() {
         ${bin_dir}/assets/xmb/retroactive
 
     # autoconfig
-    cp -a media/autoconfig ${bin_dir}
+    DESTDIR=${bin_dir}/autoconfig make -C media/autoconfig install
 
     # Info files
     cp -a ../dist/info ${bin_dir}
 
     # Database
-    mkdir -p ${bin_dir}/database
-    cp -a -t ${bin_dir}/database media/libretrodb/cht media/libretrodb/cursors media/libretrodb/rdb
+    DESTDIR=${bin_dir}/database make -C media/libretrodb install
 }
 
 BuildLibretroCore() {
