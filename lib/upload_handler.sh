@@ -31,7 +31,6 @@ api_check_runner_existence() {
 
     curl \
         --compressed \
-        --false-start \
         --globoff \
         --location \
         --path-as-is \
