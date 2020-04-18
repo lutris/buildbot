@@ -34,7 +34,7 @@ GetSources() {
     version="$(git tag -l | grep -v 9999 | grep -E '^g[0-9]+([.][0-9]+)*$' | \
                 sed 's/^g//' | sort -n -t . -k 1,1 -k 2,2 -k 3,3 -k 4,4 | \
                 tail -n 1)"
-    git checkout --detach refs/tags/"$version"
+    git checkout --detach refs/tags/g"$version"
 }
 
 Build() {
