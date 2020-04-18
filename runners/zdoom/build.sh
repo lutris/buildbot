@@ -50,8 +50,7 @@ Build() {
 Package() {
     cd $build_dir
     mkdir -p ${bin_dir}
-    mv gzdoom gzdoom.pk3 ${bin_dir}
-    mv lights.pk3 brightmaps.pk3 $bin_dir
+    mv gzdoom *.pk3 $bin_dir
     a='' && [ "$(uname -m)" = x86_64 ] && a=64
     cp ${source_dir}/fmodapi44464linux/api/lib/libfmodex"$a"-4.44.64.so $bin_dir
     cd ${bin_dir}
