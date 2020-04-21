@@ -2,49 +2,58 @@ diff --git a/src/winetricks b/src/winetricks
 index 9f1a59c2..c6a29eaa 100755
 --- a/src/winetricks
 +++ b/src/winetricks
-@@ -14953,6 +14953,45 @@ load_openwatcom()
+@@ -11041,6 +11041,54 @@
  
  #----------------------------------------------------------------
  
-+w_metadata powershell apps \
-+    title="Windows Powershell" \
++w_metadata powershell20 dlls \
++    title="Windows Powershell 2.0 (builtin in Windows 7)" \
 +    publisher="Microsoft" \
-+    year="2019" \
 +    media="download" \
-+    file1="PowerShell-6.1.6-win-x86.zip" \
++    file1="WindowsServer2003-KB968930-x64-ENG.exe" \
 +    installed_file1="$W_SYSTEM32_DLLS_WIN/WindowsPowerShell/v1.0/powershell.exe"
 +
-+load_powershell()
++load_powershell20()
 +{
-+    w_package_unsupported_win64
++    w_warn "Installing Powershell. This requires first installing dotnet20sp1 so might take a while";
 +
-+    w_warn "Installing Powershell into $W_SYSTEM32_DLLS_WIN/WindowsPowerShell/v1.0/. Note that some functionality may not work without Windows Management Framework"
++    w_call dotnet20sp1
 +
-+    w_call dotnet462
-+
-+    w_download https://github.com/PowerShell/PowerShell/releases/download/v6.1.6/PowerShell-6.1.6-win-x86.zip 1dc690c9a1091d0ed5b71de903ab3cd7b58ba9638acdfeb9f9fe7031abaf47e9
-+
++    w_download_to pwsh20  https://download.microsoft.com/download/B/D/9/BD9BB1FF-6609-4B10-9334-6D0C58066AA7/WindowsServer2003-KB968930-x64-ENG.exe 9f5d24517f860837daaac062e5bf7e6978ceb94e4e9e8567798df6777b56e4c8
 +    w_override_dlls native powershell.exe
 +
-+    # remove builtin placeholders
-+    rm -f "$W_SYSTEM32_DLLS"/powershell.exe
++#   The installer fails with "Invalid Handle" error if scecli.dll is missing. For now get it from win7sp1 package but if this gives
++#   issues (mixing w2k3 / win7 dlls) then we could also extract it from https://download.microsoft.com/download/3/c/5/3c5c6364-27d3-4e18-bd04-244d0ec09dd4/WindowsServer2003.WindowsXP-KB914961-SP2-x64-ENU.exe
++    helper_win7sp1_x64 wow64_microsoft-windows-s..urationengineclient_31bf3856ad364e35_6.1.7601.17514_none_a088921d241bbb4e/scecli.dll
++    w_try cp "$W_TMP/wow64_microsoft-windows-s..urationengineclient_31bf3856ad364e35_6.1.7601.17514_none_a088921d241bbb4e/scecli.dll" "$W_SYSTEM32_DLLS/scecli.dll"
++
++if [ "$W_ARCH" = "win64" ]; then
++    helper_win7sp1_x64 amd64_microsoft-windows-s..urationengineclient_31bf3856ad364e35_6.1.7601.17514_none_9633e7caefbaf953/scecli.dll
++    w_try cp "$W_TMP/amd64_microsoft-windows-s..urationengineclient_31bf3856ad364e35_6.1.7601.17514_none_9633e7caefbaf953/scecli.dll" "$W_SYSTEM64_DLLS/scecli.dll"
++fi
++
++    w_set_winver win2k3
++
++#   Only supports unattended install because of bug https://bugs.winehq.org/show_bug.cgi?id=16876
++    "$WINE" "${W_CACHE_WIN}/pwsh20/WindowsServer2003-KB968930-x64-ENG.exe" /q /passive /nobackup
++    w_wineserver -w
 +
 +
-+    w_try mkdir -p "$W_SYSTEM32_DLLS"/WindowsPowerShell/v1.0
 +
-+    w_try_7z  "$W_SYSTEM32_DLLS"/WindowsPowerShell/v1.0/ "${W_CACHE}/${W_PACKAGE}/${file1}"
-+    w_try_cd "$W_SYSTEM32_DLLS"/WindowsPowerShell/v1.0
-+    w_try cp -f pwsh.exe powershell.exe
-+    for file in *\\*; do
-+        target=$(printf '%s\n' "$file" | sed 's#\\#/#g')
-+        w_try mkdir -p "${target%/*}"
-+        w_try mv -v "$file" "$target"
-+    done
-+    w_append_path "$W_SYSTEM32_DLLS"/WindowsPowerShell/v1.0
++#   Aftermath: try fixing wrong registry values due to bug https://bugs.winehq.org/show_bug.cgi?id=25740
++    sed -i '/WindowsPowerShell/ s/%SystemRoot%/c:\\\\windows/' "$W_DRIVE_C"/../system.reg # only replace wrong %SystemRoot% in lines containing string "WindowsPOwershell"
++#   That leaves three more lines in system.reg with string %SystemRoot% written by the installer; do we have to replace them as well???
++#   "EventMessageFile"=str(2):"%SystemRoot%\\System32\\spmsg.dll"
++#   "ImagePath"="%SystemRoot%\\system32\\svchost.exe -k WINRM"
++#   "ServiceDll"=str(2):"%SystemRoot%\\system32\\WsmSvc.dll"
++
++    w_set_app_winver powershell.exe win2k3
++
++    w_warn "You can start the powershell with "wine start powershell.exe""
 +}
 +
 +#----------------------------------------------------------------
 +
- w_metadata protectionid apps \
-     title="Protection ID" \
-     publisher="CDKiLLER & TippeX" \
+ w_metadata prntvpt dlls \
+     title="prntvpt.dll" \
+     publisher="Microsoft" \
