@@ -22,10 +22,10 @@ Fetch() {
     version=$(curl https://www.mamedev.org/release.html | grep -oP "(?<=MAME )[.0-9]+(?= Source)")
     branch="mame$(echo $version | tr -d .)"
     git clone -b $branch --depth 1 https://github.com/mamedev/mame.git $source_dir
-    cd ${source_dir}
 }
 
 Build() {
+    cd ${source_dir}
     unset FULLNAME
     make NO_OPENGL=0 REGENIE=1 TOOLS=1 -j8
     if [ "$arch" = "x86_64" ]; then
@@ -34,10 +34,12 @@ Build() {
 }
 
 Package() {
+    cd ${source_dir}
     mkdir -p ${build_dir}
     # Move binaries
     mv castool chdman floptool imgtool jedutil ldresample ldverify mame nltool nlwav pngcmp regrep romcmp split src2html srcclean unidasm $build_dir
     strip ${build_dir}/*
+    mv bgfx ctrlr hash hlsl ini keymaps language plugins roms samples scripts $build_dir
 }
 
 Package() {
