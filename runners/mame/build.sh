@@ -37,7 +37,7 @@ Install() {
     cd ${source_dir}
     mkdir -p ${build_dir}
     # Move binaries
-    mv castool chdman floptool imgtool jedutil ldresample ldverify mame nltool nlwav pngcmp regrep romcmp split src2html srcclean unidasm $build_dir
+    mv castool chdman floptool imgtool jedutil ldresample ldverify mame nltool nlwav pngcmp regrep romcmp split testkeys srcclean unidasm $build_dir
     strip ${build_dir}/*
     mv bgfx ctrlr hash hlsl ini keymaps language plugins roms samples scripts $build_dir
 }
@@ -62,4 +62,5 @@ else
     Build
     Install
     Package
+    Cleanup
 fi
