@@ -11,6 +11,8 @@ root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
+version=$(curl https://www.mamedev.org/release.html | grep -oP "(?<=MAME )[.0-9]+(?= Source)")
+branch="mame$(echo $version | tr -d .)"
 
 InstallDeps() {
     install_deps curl wget unzip debhelper libexpat1-dev libflac-dev libfontconfig1-dev \
@@ -19,8 +21,6 @@ InstallDeps() {
 }
 
 Fetch() {
-    version=$(curl https://www.mamedev.org/release.html | grep -oP "(?<=MAME )[.0-9]+(?= Source)")
-    branch="mame$(echo $version | tr -d .)"
     git clone -b $branch --depth 1 https://github.com/mamedev/mame.git $source_dir
 }
 
