@@ -33,7 +33,7 @@ Build() {
     fi
 }
 
-Package() {
+Install() {
     cd ${source_dir}
     mkdir -p ${build_dir}
     # Move binaries
@@ -47,6 +47,9 @@ Package() {
     dest_file=${runner_name}-${version}-${arch}.tar.gz
     tar czf ${dest_file} ${runner_name}
     runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+}
+
+Cleanup() {
     rm -rf ${build_dir} ${source_dir}
 }
 
@@ -57,8 +60,6 @@ else
     InstallDeps
     Fetch
     Build
+    Install
     Package
-    GetVersion
-    PackageProject
-    UploadPackage
 fi
