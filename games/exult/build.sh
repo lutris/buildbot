@@ -2,12 +2,16 @@
 
 set -e 
 
+lib_path="../../lib/"
+source ${lib_path}upload_handler.sh
+
 version=1.6
 arch="$(uname -m)"
 root_dir=$(pwd)
 source_dir="$root_dir/exult-$version"
 build_dir="${root_dir}/exult-build"
 bin_dir="${root_dir}/exult"
+build_archive="exult-$version-$arch.tar.xz"
 
 Deps() {
     sudo apt-get install -y libglade2-dev libvorbis-dev
@@ -36,7 +40,15 @@ Package() {
 
     cd $root_dir
     cp exult.cfg $bin_dir
-    tar cJf exult-$version-$arch.tar.xz exult
+    tar cJf $build_archive exult
+}
+
+Upload() {
+    spaces_upload $build_archive "games" "exult"
+}
+
+Clean() {
+    rm -rf $source_dir $bin_dir $build_dir *.tar.gz
 }
 
 if [ $1 ]; then
@@ -46,4 +58,6 @@ else
     Fetch
     Build
     Package
+    Upload
+    Clean
 fi
