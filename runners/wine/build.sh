@@ -101,7 +101,7 @@ DownloadWine() {
                 git -C "$source_dir" branch -D "$branch_name"-old
           fi                   
 	else
-            git clone -b "$branch_name" "$repo_url" "$source_dir"
+            git clone --depth 1 -b "$branch_name" "$repo_url" "$source_dir"
 	fi
         return
     fi

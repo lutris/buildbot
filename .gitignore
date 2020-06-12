@@ -6,3 +6,7 @@ runners/wine/build-preparation/wine
 runners/wine/build-preparation/wine-staging
 runners/wine/build-preparation/wine-tkg-git
 runners/wine/build-preparation/community-patches
+runners/wine/wine-src
+runners/wine/wine32
+runners/wine/wine64
+runners/wine/*.tar.gz
