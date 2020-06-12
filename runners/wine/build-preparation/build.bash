@@ -2,33 +2,37 @@
 
 set -e
 
-params=$(getopt -n $0 -o v:r:f:n:s:d: --long version:,remote:,flavour:,noupload:,staging-override:,disabled-patchset: -- "$@")
-eval set -- $params
-while true ; do
-    case "$1" in
-        -v|--version) version=$2; shift 2 ;;
-        -r|--remote) remote=$2; shift 2 ;;
-        -f|--flavour) flavour=$2; shift 2 ;;
-        -n|--noupload) noupload=1; shift ;;
-        -s|--staging-override) staging_version_override=$2; shift 2 ;;
-        -d|--disabled-patchset) disabled_patchset=$2; shift 2 ;;
-        *) shift; break ;;
-    esac
+while getopts "v:r:f:s:d:n" opt; do
+  case $opt in
+    v) version="${OPTARG}" ;;
+    r) remote="${OPTARG}" ;;
+    f) flavour="${OPTARG}" ;;
+    s) staging_version_override=${OPTARG} ;;
+    d) disabled_patchset=${OPTARG} ;;
+    n) noupload=true ;;
+    *) echo "no such action"
+  esac
 done
 
+shift $((OPTIND -1))
+
 root_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-if [ $flavour ]; then
+if [ "$flavour" ]; then
   infix="$flavour-"
 fi
 branch_name=lutris-"$infix""$version"
 wine_source_dir="${root_dir}/wine"
-if [ $disabled_patchset ]; then
-disabled_patchset="-W $disabled_patchset"
+if [ "$disabled_patchset" ]; then
+  disabled_patchset="-W $disabled_patchset"
 fi
 
 GetSources() {
     if [ ! -d "${root_dir}/wine/" ]; then
-      git clone https://github.com/lutris/wine.git "${root_dir}/wine"
+      if [ ! -z "$remote" ]; then
+        git clone "$remote" "${root_dir}/wine"
+      else
+        git clone https://github.com/lutris/wine.git "${root_dir}/wine"
+      fi
     fi
     if [ -d "${root_dir}/wine-staging/" ]; then
       git -C "${root_dir}/wine-staging/" fetch
@@ -51,7 +55,7 @@ PrepareWineVersion() {
     fi
     if [ $(git -C "$wine_source_dir" branch -v | grep -o -E "$branch_name-old\s+") ]; then
         git -C "$wine_source_dir" reset --hard
-        git -C "$wine_source_dir" checkout $branch_name
+        git -C "$wine_source_dir" checkout "$branch_name"
         git -C "$wine_source_dir" branch -D "$branch_name"-old
     fi
     if [ $(git -C "$wine_source_dir" branch -v | grep -o -E "$branch_name\s+") ]; then
@@ -60,16 +64,16 @@ PrepareWineVersion() {
     if [ ! $(git -C "$wine_source_dir" remote -v | grep -m 1 -o winehq-github) ]; then
         git -C "$wine_source_dir" remote add winehq-github https://github.com/wine-mirror/wine.git
     fi
-      git -C "$wine_source_dir" fetch winehq-github master:$branch_name
+      git -C "$wine_source_dir" fetch winehq-github master:"$branch_name"
       git -C "$wine_source_dir" reset --hard
-      git -C "$wine_source_dir" checkout $branch_name
+      git -C "$wine_source_dir" checkout "$branch_name"
       git -C "$wine_source_dir" reset --hard "wine-$version"
     if [ $(git -C "$wine_source_dir" branch -v | grep -o -E "$branch_name-old\s+") ]; then
           git -C "$wine_source_dir" branch -D "$branch_name"-old
     fi
     git -C "$wine_source_dir" clean -df
 
-    if [ $staging_version_override ]; then
+    if [ "$staging_version_override" ]; then
       git -C "${root_dir}/wine-staging/" reset --hard "$staging_version_override"
     else
       git -C "${root_dir}/wine-staging/" reset --hard "v$version"
@@ -78,11 +82,11 @@ PrepareWineVersion() {
 
 
 ApplyStagingPatches() {
-    if [ $flavour -a -e "${root_dir}/$flavour.override-preset" ]; then
-    override_preset="$(cat "${root_dir}/$flavour.override-preset") $disabled_patchset"
-    "${root_dir}/wine-staging/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf $override_preset
+    if [ "$flavour" -a -e "${root_dir}/$flavour.override-preset" ]; then
+      override_preset="$(cat "${root_dir}/$flavour".override-preset) $disabled_patchset"
+      "${root_dir}/wine-staging/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf $override_preset
     else
-    "${root_dir}/wine-staging/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf
+      "${root_dir}/wine-staging/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf
     fi
     cd "$wine_source_dir"
     git add .
@@ -90,33 +94,33 @@ ApplyStagingPatches() {
 }
 
 ConfigureTKG() {
-    if [ $flavour -a -e "${root_dir}/"$infix"wine-tkg.cfg" ]; then
+    if [ "$flavour" -a -e "${root_dir}/${infix}wine-tkg.cfg" ]; then
       flavour_cfg=$infix
     else
       flavour_cfg=
     fi
-    if [ $flavour -a -d "${root_dir}"/"$infix"patches/ ]; then
+    if [ "$flavour" -a -d "${root_dir}"/"$infix"patches/ ]; then
       flavour_patches=$infix
     else
       flavour_patches=
     fi
     git -C "${root_dir}/wine-tkg-git/" clean -df
     sed -i s@"_EXT_CONFIG_PATH=~/.config/frogminer/wine-tkg.cfg"@"_EXT_CONFIG_PATH=${root_dir}/wine-tkg-git/wine-tkg.cfg"@g "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-profiles/advanced-customization.cfg"
-    cp "${root_dir}/"$flavour_cfg"wine-tkg.cfg" "${root_dir}/wine-tkg-git/wine-tkg.cfg"
+    cp "${root_dir}/${flavour_cfg}wine-tkg.cfg" "${root_dir}/wine-tkg-git/wine-tkg.cfg"
 
-    if [ $staging_version_override ]; then
+    if [ "$staging_version_override" ]; then
       sed -i s/WINEVERSION/"$staging_version_override"/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     else
       sed -i s/WINEVERSION/"v$version"/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     fi
-    if [ $disabled_patchset ]; then
-    sed -i s/DISABLED_PATCHSET/$disabled_patchset/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
+    if [ "$disabled_patchset" ]; then
+    sed -i s/DISABLED_PATCHSET/"$disabled_patchset"/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     else 
     sed -i s/DISABLED_PATCHSET//g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     fi
 
 
-    cp "${root_dir}"/"$flavour_patches"patches/*.mypatch "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-userpatches/"
+    cp "${root_dir}/$flavour_patches"patches/*.mypatch "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-userpatches/"
 }
 
 PrepareTKGSource() {
@@ -129,7 +133,7 @@ CommitTKGSource() {
     cd "$wine_source_dir"
     git -C "$wine_source_dir" rm -rf "$wine_source_dir"/*
     cp -R "${root_dir}/wine-tkg-git/wine-tkg-git/src/wine-mirror-git/"[!.]* "$wine_source_dir"
-    cp -R ""${root_dir}"/"$flavour_patches"patches/" "$wine_source_dir/lutris-patches/"
+    cp -R "${root_dir}/${flavour_patches}patches/" "$wine_source_dir/lutris-patches/"
     if [ "$(ls -R | grep .rej)" ]; then
         echo Rejects were found! Aborting.
         exit
