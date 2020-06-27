@@ -55,6 +55,7 @@ libphysfs1                        libphysfs.so.1
 libportaudio2                     libportaudio.so.2
 libsdl2-image-2.0-0               libSDL2_image-2.0.so.0
 libsdl2-mixer-2.0-0               libSDL2_mixer-2.0.so.0
+libsdl2-ttf-2.0-0                 libSDL2_ttf-2.0.so.0
 libsdl-net1.2                     libSDL_net-1.2.so.0
 libsdl-sound1.2                   libSDL_sound-1.0.so.1
 libsdl-ttf2.0-0                   libSDL_ttf-2.0.so.0
