@@ -26,12 +26,6 @@ SetupSSH() {
 
 SetupUserspace() {
     lxc file push -r ../buildbot $container/home/$user/
-
-    #optional - for strider
-    if [ -d "setup-userspace.sh" ]; then
-        lxc file push setup-userspace.sh $container/home/$user/
-        lxc exec $container -- sudo --login --user $user ./setup-userspace.sh
-    fi
 }
 
 SetupHost() {
