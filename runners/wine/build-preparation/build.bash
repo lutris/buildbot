@@ -127,7 +127,7 @@ PrepareTKGSource() {
 }
 CommitTKGSource() {
     cd "$wine_source_dir"
-    git -C "$wine_source_dir" rm -rf "$wine_source_dir"/*
+    git -C "$wine_source_dir" rm --quiet -rf "$wine_source_dir"/*
     cp -R "${root_dir}/wine-tkg-git/wine-tkg-git/src/wine-mirror-git/"[!.]* "$wine_source_dir"
     cp -R ""${root_dir}"/"$flavour_patches"patches/" "$wine_source_dir/lutris-patches/"
     if [ "$(ls -R | grep .rej)" ]; then
