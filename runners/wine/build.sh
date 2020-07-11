@@ -21,7 +21,7 @@ arch=$(uname -m)
 version="1.8"
 configure_opts="--disable-tests --with-x --with-gstreamer"
 
-params=$(getopt -n $0 -o a:b:w:v:p:snd6kfc --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-destination-file,useccache -- "$@")
+params=$(getopt -n $0 -o a:b:w:v:p:snd6kfcm --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-destination-file,useccache,usemingw -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -37,6 +37,7 @@ while true ; do
         -k|--keep) KEEP=1; shift ;;
         -f|--keep-destination-file) KEEP_DEST_FILE=1; shift ;;
         -c|--useccache) CCACHE=1; shift ;;
+        -m|--usemingw) MINGW=1; shift ;;
         *) shift; break ;;
     esac
 done
@@ -194,11 +195,28 @@ BuildWine() {
     fi
 
     if [ $CCACHE ]; then
-        CC="ccache gcc" LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix
-    else
-        LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix
+        export CC="ccache gcc"
+            if [ "$(uname -m)" = "x86_64" ]; then
+                export CROSSCC="ccache x86_64-w64-mingw32-gcc"
+            else
+                export CROSSCC="ccache i686-w64-mingw32-gcc"
+            fi
+        else
+        export CC="gcc"
+            if [ "$(uname -m)" = "x86_64" ]; then
+                export CROSSCC="x86_64-w64-mingw32-gcc"
+            else
+                export CROSSCC="i686-w64-mingw32-gcc" 
+            fi
     fi
-    
+
+    if [ $MINGW ]; then
+        MINGW_STATE="--with-mingw"
+        else
+        MINGW_STATE="--without-mingw"
+    fi
+
+    LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix $MINGW_STATE
     make -j$(getconf _NPROCESSORS_ONLN)
 }
 
