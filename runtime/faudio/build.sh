@@ -18,14 +18,26 @@ lib_dir="$build_dir/lib"
 arch=$(uname -m)
 repo_url="https://github.com/FNA-XNA/FAudio.git"
 
-params=$(getopt -n $0 -o v:r: --long version:,repo: -- "$@")
+params=$(getopt -n $0 -o v:nf: --long version:,noffmpeg: -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
         -v|--version) version=$2; shift 2 ;;
+        -nf|--noffmpeg) NOFFMPEG=1; shift ;;
         *) shift; break ;;
     esac
 done
+
+if [ $arch = "x86_64" ]; then
+    ffmpeg_include=$(readlink -f "../../runtime/ffmpeg/ffmpeg-libs/ffmpeg64/include/")
+elif [ $arch = "i686" ]; then
+    ffmpeg_include=$(readlink -f "../../runtime/ffmpeg/ffmpeg-libs/ffmpeg32/include/")
+else
+    echo "We don't build Faudio on non-x86 systems, aborting."
+    exit
+fi
+
+
 
 InstallDependencies() {
     sudo apt install -y cmake
@@ -34,7 +46,9 @@ InstallDependencies() {
 Download() {
     if [ -d "$source_dir" ]; then
         cd $source_dir
-        git pull  
+        git clean -dfx
+        git fetch
+        git reset --hard  
     else
         git clone $repo_url $source_dir
         cd $source_dir
@@ -51,7 +65,12 @@ Download() {
 BuildFAudio() {
     mkdir -p $build_dir
     cd $build_dir
-    cmake -DCMAKE_INSTALL_PREFIX:PATH="$build_dir" $source_dir
+
+    if [ ! $NOFFMPEG ]; then
+    FFMPEG_STATE="-DFFMPEG=ON -DFFmpeg_INCLUDE_DIR="$ffmpeg_include""
+    fi
+
+    cmake $FFMPEG_STATE -DCMAKE_INSTALL_PREFIX:PATH="$build_dir" $source_dir
     make -j$(getconf _NPROCESSORS_ONLN) install/strip
     rm -rf "$lib_dir/cmake"
 
@@ -67,7 +86,10 @@ Build32bit() {
 
     echo "Building 32bit Faudio"
     opts=""
-    opts="${opts} --version $version"
+    opts="--version $version"
+    if [ $NOFFMPEG ]; then
+        opts="${opts} --noffmpeg"
+    fi
 
     echo "Building 32bit Faudio on 32bit container"
     ssh -t ${buildbot32host} "${root_dir}/build.sh ${opts}"
