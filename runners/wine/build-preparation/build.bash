@@ -21,25 +21,29 @@ if [ $flavour ]; then
   infix="$flavour-"
 fi
 branch_name=lutris-"$infix""$version"
-wine_source_dir="${root_dir}/wine"
+wine_source_dir="${root_dir}/wine-src"
+wine_staging_source_dir="${root_dir}/wine-staging-src"
 if [ $disabled_patchset ]; then
 disabled_patchset="-W $disabled_patchset"
 fi
 
 GetSources() {
-    if [ ! -d "${root_dir}/wine/" ]; then
-      git clone https://github.com/lutris/wine.git "${root_dir}/wine"
+    if [ ! -d "${wine_source_dir}" ]; then
+      git clone https://github.com/lutris/wine.git "${wine_source_dir}"
     fi
-    if [ -d "${root_dir}/wine-staging/" ]; then
-      git -C "${root_dir}/wine-staging/" fetch
-      git -C "${root_dir}/wine-staging/" reset --hard origin/master
+    if [ -d "${wine_staging_source_dir}" ]; then
+      git -C "${wine_staging_source_dir}" fetch
+      git -C "${wine_staging_source_dir}" reset --hard origin/master
     else
-      git clone https://github.com/wine-staging/wine-staging.git "${root_dir}/wine-staging/"
+      git clone https://github.com/wine-staging/wine-staging.git "${wine_staging_source_dir}"
     fi
     if [ -d "${root_dir}/wine-tkg-git/" ]; then
       git -C "${root_dir}/wine-tkg-git/" fetch
+      git -C "${root_dir}/wine-tkg-git/" clean -fx "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-userpatches/" || true
+      rm -rf "${root_dir}/wine-tkg-git/wine-tkg-git/src/" || true
+      git -C "${root_dir}/wine-tkg-git/" rm "${root_dir}/wine-tkg-git/wine-tkg-git/*.mypatch" || true
+      git -C "${root_dir}/wine-tkg-git/" rm "${root_dir}/wine-tkg-git/wine-tkg-git/*.patch" || true
       git -C "${root_dir}/wine-tkg-git/" reset --hard origin/master
-      git -C "${root_dir}/wine-tkg-git/" clean -fx
     else
       git clone https://github.com/Frogging-Family/wine-tkg-git.git "${root_dir}/wine-tkg-git/"
     fi
@@ -70,9 +74,9 @@ PrepareWineVersion() {
     git -C "$wine_source_dir" clean -dfx
 
     if [ $staging_version_override ]; then
-      git -C "${root_dir}/wine-staging/" reset --hard "$staging_version_override"
+      git -C "${wine_staging_source_dir}" reset --hard "$staging_version_override"
     else
-      git -C "${root_dir}/wine-staging/" reset --hard "v$version"
+      git -C "${wine_staging_source_dir}" reset --hard "v$version"
     fi
 }
 
@@ -80,9 +84,9 @@ PrepareWineVersion() {
 ApplyStagingPatches() {
     if [ $flavour -a -e "${root_dir}/$flavour.override-preset" ]; then
     override_preset="$(cat "${root_dir}/$flavour.override-preset") $disabled_patchset"
-    "${root_dir}/wine-staging/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf $override_preset
+    "${wine_staging_source_dir}/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf $override_preset
     else
-    "${root_dir}/wine-staging/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf
+    "${wine_staging_source_dir}/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf
     fi
     cd "$wine_source_dir"
     git add .
@@ -100,7 +104,7 @@ ConfigureTKG() {
     else
       flavour_patches=
     fi
-    git -C "${root_dir}/wine-tkg-git/" clean -dfx
+    git -C "${root_dir}/wine-tkg-git/" clean -fx
     sed -i s@"_EXT_CONFIG_PATH=~/.config/frogminer/wine-tkg.cfg"@"_EXT_CONFIG_PATH=${root_dir}/wine-tkg-git/wine-tkg.cfg"@g "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-profiles/advanced-customization.cfg"
     cp "${root_dir}/"$flavour_cfg"wine-tkg.cfg" "${root_dir}/wine-tkg-git/wine-tkg.cfg"
 
