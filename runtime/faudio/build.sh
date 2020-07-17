@@ -48,7 +48,7 @@ Download() {
         cd $source_dir
         git clean -dfx
         git fetch
-        git reset --hard  
+        git reset --hard origin/master
     else
         git clone $repo_url $source_dir
         cd $source_dir
