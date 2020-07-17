@@ -2,7 +2,7 @@
 
 set -e
 
-params=$(getopt -n $0 -o v:r:f:s:d:n --long version:,remote:,flavour:,staging-override:,disabled-patchset:,noupload -- "$@")
+params=$(getopt -n $0 -o v:r:f:s:d:u:n --long version:,remote:,flavour:,staging-override:,disabled-patchset:,update-number:,noupload -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -11,6 +11,7 @@ while true ; do
         -f|--flavour) flavour=$2; shift 2 ;;
         -s|--staging-override) staging_version_override=$2; shift 2 ;;
         -d|--disabled-patchset) disabled_patchset=$2; shift 2 ;;
+        -u|--update-number) branch_update="-$2"; shift 2 ;;
         -n|--noupload) noupload=1; shift ;;
         *) shift; break ;;
     esac
@@ -20,7 +21,7 @@ root_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 if [ $flavour ]; then
   infix="$flavour-"
 fi
-branch_name=lutris-"$infix""$version"
+branch_name=lutris-"$infix""$version""$branch_update"
 wine_source_dir="${root_dir}/wine-src"
 wine_staging_source_dir="${root_dir}/wine-staging-src"
 if [ $disabled_patchset ]; then
@@ -139,10 +140,10 @@ CommitTKGSource() {
         exit
       else
         git add .
-        git commit -am "lutris-${infix}${version}, generated with Tk-Glitch/PKGBUILDS"
+        git commit -am "${branch_name}, generated with Tk-Glitch/PKGBUILDS"
     fi
     if [ ! $noupload ]; then
-    git -C "$wine_source_dir" push --force origin "lutris-${infix}${version}"
+    git -C "$wine_source_dir" push --force origin ${branch_name}
     fi
 }
 
