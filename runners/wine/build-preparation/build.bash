@@ -2,16 +2,16 @@
 
 set -e
 
-params=$(getopt -n $0 -o v:r:f:n:s:d: --long version:,remote:,flavour:,noupload:,staging-override:,disabled-patchset: -- "$@")
+params=$(getopt -n $0 -o v:r:f:s:d:n --long version:,remote:,flavour:,staging-override:,disabled-patchset:,noupload -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
         -v|--version) version=$2; shift 2 ;;
         -r|--remote) remote=$2; shift 2 ;;
         -f|--flavour) flavour=$2; shift 2 ;;
-        -n|--noupload) noupload=1; shift ;;
         -s|--staging-override) staging_version_override=$2; shift 2 ;;
         -d|--disabled-patchset) disabled_patchset=$2; shift 2 ;;
+        -n|--noupload) noupload=1; shift ;;
         *) shift; break ;;
     esac
 done
@@ -47,7 +47,7 @@ GetSources() {
 
 PrepareWineVersion() {
     if [ "$wine_source_dir" ]; then
-        git -C "$wine_source_dir" clean -fx
+        git -C "$wine_source_dir" clean -dfx
     fi
     if [ $(git -C "$wine_source_dir" branch -v | grep -o -E "$branch_name-old\s+") ]; then
         git -C "$wine_source_dir" reset --hard
@@ -67,7 +67,7 @@ PrepareWineVersion() {
     if [ $(git -C "$wine_source_dir" branch -v | grep -o -E "$branch_name-old\s+") ]; then
           git -C "$wine_source_dir" branch -D "$branch_name"-old
     fi
-    git -C "$wine_source_dir" clean -df
+    git -C "$wine_source_dir" clean -dfx
 
     if [ $staging_version_override ]; then
       git -C "${root_dir}/wine-staging/" reset --hard "$staging_version_override"
@@ -100,7 +100,7 @@ ConfigureTKG() {
     else
       flavour_patches=
     fi
-    git -C "${root_dir}/wine-tkg-git/" clean -df
+    git -C "${root_dir}/wine-tkg-git/" clean -dfx
     sed -i s@"_EXT_CONFIG_PATH=~/.config/frogminer/wine-tkg.cfg"@"_EXT_CONFIG_PATH=${root_dir}/wine-tkg-git/wine-tkg.cfg"@g "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-profiles/advanced-customization.cfg"
     cp "${root_dir}/"$flavour_cfg"wine-tkg.cfg" "${root_dir}/wine-tkg-git/wine-tkg.cfg"
 
