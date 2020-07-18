@@ -359,6 +359,9 @@ Package() {
     rm -rf ${bin_dir}/include
 
     dest_file="wine-${filename_opts}${version}-${arch}.tar.xz"
+    if [ -f ${root_dir}/${dest_file} ]; then
+        rm ${root_dir}/${dest_file}
+    fi
     tar cJf ${dest_file} ${bin_dir}
 }
 
