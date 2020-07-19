@@ -187,11 +187,11 @@ BuildWine() {
     fi
 
     if [ "$(uname -m)" = "x86_64" ]; then
-        export LD_LIBRARY_PATH=$(readlink -f $(runtime_path))/lib64
-        custom_ld_flags="-L$(readlink -f $runtime_path)/lib64 -Wl,-rpath-link,$(readlink -f $runtime_path)/lib64"
+        export LD_LIBRARY_PATH=${runtime_path}/lib64
+        custom_ld_flags="-L${runtime_path}/lib64 -Wl,-rpath-link,${runtime_path}/lib64"
     else
-        export export LD_LIBRARY_PATH=$(readlink -f $(runtime_path))/lib32
-	custom_ld_flags="-L$runtime_path/lib32 -Wl,-rpath-link,$runtime_path/lib32"
+        export LD_LIBRARY_PATH=${runtime_path}/lib32
+        custom_ld_flags="-L${runtime_path}/lib32 -Wl,-rpath-link,$runtime_path/lib32"
     fi
 
     if [ $CCACHE ]; then
