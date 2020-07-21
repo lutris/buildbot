@@ -1596,4 +1596,3 @@ index 44ac8c6d2f..383e6b9b8f 100644
  @ stdcall -private wine_vkGetPhysicalDeviceSurfaceSupportKHR(ptr long int64 ptr)
 -- 
 2.27.0
-
