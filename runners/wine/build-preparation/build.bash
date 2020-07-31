@@ -127,7 +127,7 @@ ConfigureTKG() {
 PrepareTKGSource() {
     cd "${root_dir}/wine-tkg-git/wine-tkg-git/"
     chmod +x "${root_dir}/wine-tkg-git/wine-tkg-git/non-makepkg-build.sh"
-    "${root_dir}/wine-tkg-git/wine-tkg-git/non-makepkg-build.sh" || true
+    "${root_dir}/wine-tkg-git/wine-tkg-git/non-makepkg-build.sh"
     find "${root_dir}/wine-tkg-git/wine-tkg-git/src/wine-mirror-git/" -name \*.orig -type f -delete
 }
 CommitTKGSource() {
