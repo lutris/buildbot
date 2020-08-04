@@ -1,31 +1,28 @@
 #!/bin/bash
+set -x
 
 container=$1
 user='ubuntu'
 
 InstallDependencies() {
-    lxc exec $container -- apt update
-    lxc exec $container -- apt -y full-upgrade
+    sudo lxc exec $container -- apt update
+    sudo lxc exec $container -- apt -y full-upgrade
     # this package is necessary to add repositories using add-apt-repository
-    lxc exec $container -- apt -y install software-properties-common
-    lxc exec $container -- add-apt-repository ppa:cybermax-dexter/sdl2-backport -y
-    lxc exec $container -- add-apt-repository ppa:cybermax-dexter/vkd3d -y
-    # Official LunarG repository, from https://packages.lunarg.com/
-    lxc exec $container -- wget -qO - http://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo apt-key add -
-    lxc exec $container -- wget -qO /etc/apt/sources.list.d/lunarg-vulkan-1.2.131-bionic.list http://packages.lunarg.com/vulkan/1.2.131/lunarg-vulkan-1.2.131-bionic.list
-    lxc exec $container -- apt update
-    lxc exec $container -- apt -y install wget curl build-essential git python openssh-server s3cmd awscli vim zsh fontconfig snapd
-    lxc exec $container -- snap install doctl
+    sudo lxc exec $container -- apt -y install software-properties-common
+    sudo lxc exec $container -- add-apt-repository ppa:cybermax-dexter/sdl2-backport -y
+    sudo lxc exec $container -- apt update
+    sudo lxc exec $container -- apt -y install wget curl build-essential git python openssh-server s3cmd awscli vim zsh fontconfig
+
 }
 
 SetupSSH() {
-    lxc exec $container -- mkdir -p /home/$user/.ssh
-    lxc exec $container -- chown ubuntu /home/$user/.ssh
-    lxc file push ~/.ssh/config $container/home/$user/.ssh/
+    sudo lxc exec $container -- mkdir -p /home/$user/.ssh
+    sudo lxc exec $container -- chown ubuntu /home/$user/.ssh
+    sudo lxc file push ~/.ssh/config $container/home/$user/.ssh/
 }
 
 SetupUserspace() {
-    lxc file push -r ../buildbot $container/home/$user/
+    sudo lxc file push -r ../buildbot $container/home/$user/
 }
 
 SetupHost() {
@@ -36,12 +33,12 @@ SetupHost() {
         other_container="${container%i386}amd64"
         other_hostname="buildbot64"
     fi
-    other_ip=$(lxc list $other_container -c 4 | grep eth0 | cut -d" " -f 2)
+    other_ip=$(sudo lxc list $other_container -c 4 | grep eth0 | cut -d" " -f 2)
     if [[ "$other_ip" = "" ]]; then
         echo "Other container $other_container is not reachable"
         exit 2
     fi
-    lxc exec $container -- bash -c "echo $other_ip   $other_hostname >> /etc/hosts"
+    sudo lxc exec $container -- bash -c "echo $other_ip   $other_hostname >> /etc/hosts"
 }
 
 if [ $2 ]; then
