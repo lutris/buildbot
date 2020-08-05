@@ -331,10 +331,11 @@ Package() {
 
     # Clean up wine build
     find ${bin_dir}/bin -type f -exec strip {} \;
-    find ${bin_dir}/lib -name "*.so" -exec strip {} \;
-    if [ -d ${bin_dir}/lib64 ]; then
-        find ${bin_dir}/lib64 -name "*.so" -exec strip {} \;
-    fi
+    for _f in "$bin_dir"/{bin,lib,lib64}/{wine/*,*}; do
+        if [[ "$_f" = *.so ]] || [[ "$_f" = *.dll ]]; then
+            strip --strip-unneeded "$_f"
+        fi
+    done
     #copy sdl2, faudio, vkd3d, and ffmpeg libraries
     cp -R $runtime_path/lib32/* ${bin_dir}/lib/
 
