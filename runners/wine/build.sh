@@ -18,10 +18,10 @@ runner_name=$(get_runner)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-version="1.8"
+version="5.0"
 configure_opts="--disable-tests --with-x --with-gstreamer"
 
-params=$(getopt -n $0 -o a:b:w:v:p:snd6kfcm --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-destination-file,useccache,usemingw -- "$@")
+params=$(getopt -n $0 -o a:b:w:v:p:snd6kfcm --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-upload-file,useccache,usemingw -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -35,7 +35,7 @@ while true ; do
         -d|--dependencies) INSTALL_DEPS=1; shift ;;
         -6|--64bit) WOW64=1; shift ;;
         -k|--keep) KEEP=1; shift ;;
-        -f|--keep-destination-file) KEEP_DEST_FILE=1; shift ;;
+        -f|--keep-upload-file) KEEP_UPLOAD_FILE=1; shift ;;
         -c|--useccache) CCACHE=1; shift ;;
         -m|--usemingw) MINGW=1; shift ;;
         *) shift; break ;;
@@ -56,6 +56,8 @@ fi
 
 bin_dir="${filename_opts}${version}-${arch}"
 wine32_archive="${bin_dir}-32bit.tar.gz"
+dest_file="${bin_dir}-build.tar.gz"
+upload_file="wine-${filename_opts}${version}-${arch}.tar.xz"
 
 InstallDependencies() {
     sudo apt install -y autoconf bison ccache debhelper desktop-file-utils docbook-to-man \
@@ -220,7 +222,6 @@ Send64BitBuildAndBuild32bit() {
 
     # Package the 64bit build (in a wine64 folder)
     echo "Sending the 64bit build to the 32bit container"
-    dest_file="${bin_dir}-build.tar.gz"
     mv wine wine64
     tar czf ${dest_file} wine64
     scp ${dest_file} ${buildbot32host}:${root_dir}
@@ -235,8 +236,8 @@ Send64BitBuildAndBuild32bit() {
     if [ $KEEP ]; then
         opts="${opts} --keep"
     fi
-    if [ $KEEP_DEST_FILE ]; then
-        opts="${opts} --keep-destination-file"
+    if [ $KEEP_UPLOAD_FILE ]; then
+        opts="${opts} --keep-upload-file"
     fi
     if [ $NOUPLOAD ]; then
         opts="${opts} --noupload"
@@ -348,11 +349,10 @@ Package() {
 
     rm -rf ${bin_dir}/include
 
-    dest_file="wine-${filename_opts}${version}-${arch}.tar.xz"
-    if [ -f ${root_dir}/${dest_file} ]; then
-        rm ${root_dir}/${dest_file}
+    if [ -f ${root_dir}/${upload_file} ]; then
+        rm ${root_dir}/${upload_file}
     fi
-    tar cJf ${dest_file} ${bin_dir}
+    tar cJf ${upload_file} ${bin_dir}
 }
 
 UploadRunner() {
@@ -362,14 +362,25 @@ UploadRunner() {
     fi
 }
 
-Clean() {
+PostClean() {
     if [ ! $KEEP ]; then
         cd ${root_dir}
-        rm -rf ${build_dir} ${bin_dir} ${wine32_archive}
-      if [ ! $KEEP_DEST_FILE ]; then
-        rm -rf ${dest_file}
+        rm -rf ${build_dir} ${bin_dir} ${wine32_archive} ${dest_file}
+      if [ ! $KEEP_UPLOAD_FILE ]; then
+        rm -rf ${upload_file}
       fi
     fi
+    echo "Cleaned up."
+}
+
+trap TrapClean ERR INT
+
+TrapClean() {
+    if [ ! $KEEP ]; then
+        cd ${root_dir}
+        rm -rf ${build_dir} ${bin_dir} ${wine32_archive} ${dest_file} ${upload_file}
+    fi
+    echo "Build failed, cleaned up."
 }
 
 if [ $1 ]; then
@@ -378,5 +389,5 @@ else
     Build
     Package
     UploadRunner
-    Clean
+    PostClean
 fi
