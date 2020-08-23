@@ -2,16 +2,17 @@
 
 set -e
 
-params=$(getopt -n $0 -o v:r:f:n:s:d: --long version:,remote:,flavour:,noupload:,staging-override:,disabled-patchset: -- "$@")
+params=$(getopt -n $0 -o v:r:f:s:d:u:n --long version:,remote:,flavour:,staging-override:,disabled-patchset:,update-number:,noupload -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
         -v|--version) version=$2; shift 2 ;;
         -r|--remote) remote=$2; shift 2 ;;
         -f|--flavour) flavour=$2; shift 2 ;;
-        -n|--noupload) noupload=1; shift ;;
         -s|--staging-override) staging_version_override=$2; shift 2 ;;
         -d|--disabled-patchset) disabled_patchset=$2; shift 2 ;;
+        -u|--update-number) branch_update="-$2"; shift 2 ;;
+        -n|--noupload) noupload=1; shift ;;
         *) shift; break ;;
     esac
 done
@@ -20,26 +21,30 @@ root_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 if [ $flavour ]; then
   infix="$flavour-"
 fi
-branch_name=lutris-"$infix""$version"
-wine_source_dir="${root_dir}/wine"
+branch_name=lutris-"$infix""$version""$branch_update"
+wine_source_dir="${root_dir}/wine-src"
+wine_staging_source_dir="${root_dir}/wine-staging-src"
 if [ $disabled_patchset ]; then
 disabled_patchset="-W $disabled_patchset"
 fi
 
 GetSources() {
-    if [ ! -d "${root_dir}/wine/" ]; then
-      git clone https://github.com/lutris/wine.git "${root_dir}/wine"
+    if [ ! -d "${wine_source_dir}" ]; then
+      git clone https://github.com/lutris/wine.git "${wine_source_dir}"
     fi
-    if [ -d "${root_dir}/wine-staging/" ]; then
-      git -C "${root_dir}/wine-staging/" fetch
-      git -C "${root_dir}/wine-staging/" reset --hard origin/master
+    if [ -d "${wine_staging_source_dir}" ]; then
+      git -C "${wine_staging_source_dir}" fetch
+      git -C "${wine_staging_source_dir}" reset --hard origin/master
     else
-      git clone https://github.com/wine-staging/wine-staging.git "${root_dir}/wine-staging/"
+      git clone https://github.com/wine-staging/wine-staging.git "${wine_staging_source_dir}"
     fi
     if [ -d "${root_dir}/wine-tkg-git/" ]; then
       git -C "${root_dir}/wine-tkg-git/" fetch
+      git -C "${root_dir}/wine-tkg-git/" clean -fx "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-userpatches/" || true
+      rm -rf "${root_dir}/wine-tkg-git/wine-tkg-git/src/" || true
+      git -C "${root_dir}/wine-tkg-git/" rm "${root_dir}/wine-tkg-git/wine-tkg-git/*.mypatch" || true
+      git -C "${root_dir}/wine-tkg-git/" rm "${root_dir}/wine-tkg-git/wine-tkg-git/*.patch" || true
       git -C "${root_dir}/wine-tkg-git/" reset --hard origin/master
-      git -C "${root_dir}/wine-tkg-git/" clean -fx
     else
       git clone https://github.com/Frogging-Family/wine-tkg-git.git "${root_dir}/wine-tkg-git/"
     fi
@@ -47,7 +52,7 @@ GetSources() {
 
 PrepareWineVersion() {
     if [ "$wine_source_dir" ]; then
-        git -C "$wine_source_dir" clean -fx
+        git -C "$wine_source_dir" clean -dfx
     fi
     if [ $(git -C "$wine_source_dir" branch -v | grep -o -E "$branch_name-old\s+") ]; then
         git -C "$wine_source_dir" reset --hard
@@ -67,12 +72,12 @@ PrepareWineVersion() {
     if [ $(git -C "$wine_source_dir" branch -v | grep -o -E "$branch_name-old\s+") ]; then
           git -C "$wine_source_dir" branch -D "$branch_name"-old
     fi
-    git -C "$wine_source_dir" clean -df
+    git -C "$wine_source_dir" clean -dfx
 
     if [ $staging_version_override ]; then
-      git -C "${root_dir}/wine-staging/" reset --hard "$staging_version_override"
+      git -C "${wine_staging_source_dir}" reset --hard "$staging_version_override"
     else
-      git -C "${root_dir}/wine-staging/" reset --hard "v$version"
+      git -C "${wine_staging_source_dir}" reset --hard "v$version"
     fi
 }
 
@@ -80,9 +85,9 @@ PrepareWineVersion() {
 ApplyStagingPatches() {
     if [ $flavour -a -e "${root_dir}/$flavour.override-preset" ]; then
     override_preset="$(cat "${root_dir}/$flavour.override-preset") $disabled_patchset"
-    "${root_dir}/wine-staging/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf $override_preset
+    "${wine_staging_source_dir}/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf $override_preset
     else
-    "${root_dir}/wine-staging/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf
+    "${wine_staging_source_dir}/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf
     fi
     cd "$wine_source_dir"
     git add .
@@ -100,7 +105,7 @@ ConfigureTKG() {
     else
       flavour_patches=
     fi
-    git -C "${root_dir}/wine-tkg-git/" clean -df
+    git -C "${root_dir}/wine-tkg-git/" clean -fx
     sed -i s@"_EXT_CONFIG_PATH=~/.config/frogminer/wine-tkg.cfg"@"_EXT_CONFIG_PATH=${root_dir}/wine-tkg-git/wine-tkg.cfg"@g "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-profiles/advanced-customization.cfg"
     cp "${root_dir}/"$flavour_cfg"wine-tkg.cfg" "${root_dir}/wine-tkg-git/wine-tkg.cfg"
 
@@ -122,12 +127,12 @@ ConfigureTKG() {
 PrepareTKGSource() {
     cd "${root_dir}/wine-tkg-git/wine-tkg-git/"
     chmod +x "${root_dir}/wine-tkg-git/wine-tkg-git/non-makepkg-build.sh"
-    "${root_dir}/wine-tkg-git/wine-tkg-git/non-makepkg-build.sh" || true
+    "${root_dir}/wine-tkg-git/wine-tkg-git/non-makepkg-build.sh"
     find "${root_dir}/wine-tkg-git/wine-tkg-git/src/wine-mirror-git/" -name \*.orig -type f -delete
 }
 CommitTKGSource() {
     cd "$wine_source_dir"
-    git -C "$wine_source_dir" rm -rf "$wine_source_dir"/*
+    git -C "$wine_source_dir" rm --quiet -rf "$wine_source_dir"/*
     cp -R "${root_dir}/wine-tkg-git/wine-tkg-git/src/wine-mirror-git/"[!.]* "$wine_source_dir"
     cp -R ""${root_dir}"/"$flavour_patches"patches/" "$wine_source_dir/lutris-patches/"
     if [ "$(ls -R | grep .rej)" ]; then
@@ -135,10 +140,10 @@ CommitTKGSource() {
         exit
       else
         git add .
-        git commit -am "lutris-${infix}${version}, generated with Tk-Glitch/PKGBUILDS"
+        git commit -am "${branch_name}, generated with Tk-Glitch/PKGBUILDS"
     fi
     if [ ! $noupload ]; then
-    git -C "$wine_source_dir" push --force origin "lutris-${infix}${version}"
+    git -C "$wine_source_dir" push --force origin ${branch_name}
     fi
 }
 

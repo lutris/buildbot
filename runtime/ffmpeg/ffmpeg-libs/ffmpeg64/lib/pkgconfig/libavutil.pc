@@ -1,0 +1,14 @@
+prefix=/home/ubuntu/buildbot/runtime/ffmpeg/ffmpeg-build
+exec_prefix=${prefix}
+libdir=/home/ubuntu/buildbot/runtime/ffmpeg/ffmpeg-build/lib
+includedir=/home/ubuntu/buildbot/runtime/ffmpeg/ffmpeg-build/include
+
+Name: libavutil
+Description: FFmpeg utility library
+Version: 56.51.100
+Requires: 
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavutil 
+Libs.private: -pthread -lm
+Cflags: -I${includedir}

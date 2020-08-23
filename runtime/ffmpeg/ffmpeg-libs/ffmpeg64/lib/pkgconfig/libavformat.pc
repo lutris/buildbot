@@ -1,0 +1,14 @@
+prefix=/home/ubuntu/buildbot/runtime/ffmpeg/ffmpeg-build
+exec_prefix=${prefix}
+libdir=/home/ubuntu/buildbot/runtime/ffmpeg/ffmpeg-build/lib
+includedir=/home/ubuntu/buildbot/runtime/ffmpeg/ffmpeg-build/include
+
+Name: libavformat
+Description: FFmpeg container format library
+Version: 58.45.100
+Requires: 
+Requires.private: libavcodec >= 58.91.100, libavutil >= 56.51.100
+Conflicts:
+Libs: -L${libdir}  -lavformat 
+Libs.private: -lm
+Cflags: -I${includedir}

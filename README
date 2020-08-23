@@ -17,32 +17,34 @@ ubuntu@buildbot32.
 
 To create the containers, first make sure you have the client installed::
 
-    sudo apt install lxd lxd-client
+    On Ubuntu: sudo apt install lxd lxd-client
+    On Arch Linux: sudo pacman -S lxd
 
-Also make sure to add your current user to the lxc group::
+Then, enable and start the lxd service::
 
-    sudo usermod -G lxd myusername
-    newgrp lxd
+    sudo systemctl enable lxd.service
+    sudo systemctl start lxd.service
 
 If this is a new lxd installation, prepare the host environment:
 
-    cat buildbot/preseed | lxd init --preseed
+    cat buildbot/preseed | sudo lxd init --preseed
 
 alternatively to manually set all lxd options (not recommended) use:
 
-    lxd init
+    sudo lxd init
 
+Note: On Arch Linux, you may need to enable support for unprivileged containers first before proceeding (https://wiki.archlinux.org/index.php/Linux_Containers#Enable_support_to_run_unprivileged_containers).
 You can create the containers with a command such as::
 
-    lxc launch images:ubuntu/bionic/amd64 buildbot-bionic-amd64
+    sudo lxc launch images:ubuntu/bionic/amd64 buildbot-bionic-amd64
 
 or for the 32bit container::
 
-    lxc launch images:ubuntu/bionic/i386 buildbot-bionic-i386
+    sudo lxc launch images:ubuntu/bionic/i386 buildbot-bionic-i386
 
 To set up the container, you can enter it with the following command::
 
-    lxc exec <container name> bash
+    sudo lxc exec <container name> bash
 
 On each container, set a passwd for your ubuntu user::
 
@@ -59,12 +61,12 @@ Exit both containers, then run setup.sh to setup ssh config files on the host an
     cd buildbot
     ./setup.sh buildbot-bionic-amd64 buildbot-bionic-i386
 
-Run the container setup script on each container:
+Run the container setup script for each container (under host machine):
 
     ./setup-container.sh buildbot-bionic-amd64
     ./setup-container.sh buildbot-bionic-i386
 
-Perform the following so that each container can communicate with eachother and are build ready:
+Perform the following so that each container can communicate with eachother and are build ready (do not set passphrase):
 
     ssh buildbot-bionic-amd64
     chown -R ubuntu:ubuntu ~/.ssh/config

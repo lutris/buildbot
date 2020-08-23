@@ -2,6 +2,6 @@
 .doctl_cdn_id
 ssh/buildbot32/*
 ssh/buildbot64/*
-runners/wine/build-preparation/wine
-runners/wine/build-preparation/wine-staging
+runners/wine/build-preparation/wine-src
+runners/wine/build-preparation/wine-staging-src
 runners/wine/build-preparation/wine-tkg-git

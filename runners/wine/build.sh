@@ -18,10 +18,10 @@ runner_name=$(get_runner)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-version="1.8"
+version="5.0"
 configure_opts="--disable-tests --with-x --with-gstreamer"
 
-params=$(getopt -n $0 -o a:b:w:v:p:snd6kfc --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-destination-file,useccache -- "$@")
+params=$(getopt -n $0 -o a:b:w:v:p:snd6kfcm --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-upload-file,useccache,usemingw -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -35,8 +35,9 @@ while true ; do
         -d|--dependencies) INSTALL_DEPS=1; shift ;;
         -6|--64bit) WOW64=1; shift ;;
         -k|--keep) KEEP=1; shift ;;
-        -f|--keep-destination-file) KEEP_DEST_FILE=1; shift ;;
+        -f|--keep-upload-file) KEEP_UPLOAD_FILE=1; shift ;;
         -c|--useccache) CCACHE=1; shift ;;
+        -m|--usemingw) MINGW=1; shift ;;
         *) shift; break ;;
     esac
 done
@@ -55,34 +56,22 @@ fi
 
 bin_dir="${filename_opts}${version}-${arch}"
 wine32_archive="${bin_dir}-32bit.tar.gz"
+dest_file="${bin_dir}-build.tar.gz"
+upload_file="wine-${filename_opts}${version}-${arch}.tar.xz"
 
 InstallDependencies() {
     sudo apt install -y autoconf bison ccache debhelper desktop-file-utils docbook-to-man \
         docbook-utils docbook-xsl flex fontforge gawk gettext libacl1-dev \
-        libasound2-dev libcapi20-dev libcloog-ppl1 libcups2-dev libdbus-1-dev \
-        libgif-dev libglu1-mesa-dev libgphoto2-dev libgsm1-dev libgtk-3-dev \
-        libkrb5-dev liblcms2-dev libldap2-dev libmpg123-dev libncurses5-dev \
-        libopenal-dev libosmesa6-dev libpcap-dev libpulse-dev libsane-dev \
+        libasound2-dev libcloog-ppl1 libcups2-dev libdbus-1-dev \
+        libgcrypt-dev libgif-dev libglu1-mesa-dev libgsm1-dev libgtk-3-dev \
+        liblcms2-dev libldap2-dev libmpg123-dev libncurses5-dev \
+        libopenal-dev libosmesa6-dev libpcap-dev libpulse-dev \
         libssl-dev libtiff5-dev libudev-dev libv4l-dev libva-dev libxslt1-dev libxt-dev \
-        ocl-icd-opencl-dev oss4-dev prelink sharutils unixodbc-dev valgrind
-    release=$(lsb_release -rs)
-    if [ "$release" = "18.04" ]; then
-        sudo apt install -y linux-libc-dev libkdb5-9 libppl14 libcolord2 libvulkan-dev \
-            libgnutls28-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev gcc-4.8 \
-            libpng-dev libkadm5clnt-mit11 libkadm5srv-mit11 libsdl2-dev libavcodec-dev \
+        ocl-icd-opencl-dev prelink valgrind linux-libc-dev libppl14 libcolord2 libvulkan-dev \
+        libgnutls28-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev \
+        libpng-dev libsdl2-dev libavcodec-dev \
 	    libavutil-dev libswresample-dev libavcodec58 libswresample3 libavutil56 libfaudio0 libfaudio-dev \
-            libvkd3d1 libvkd3d-dev libvkd3d-utils1 libvkd3d-shader1 vkd3d-demos libvulkan1
-    elif [ "$release" = "16.04" ]; then #note: 16.04 does not have FAudio packages or capability due to ffmpeg being too old
-        sudo apt install -y libtxc-dxtn-s2tc-dev linux-libc-dev libkdb5-8 libppl13v5 libcolord2 libvulkan-dev \
-            libesd0-dev libgnutls-dev libgstreamer-plugins-base0.10-dev gcc-4.7 \
-            libgstreamer-plugins-base1.0-dev libgstreamer0.10-dev libpng12-dev \
-            libkadm5clnt-mit9 libkadm5srv-mit9
-    else
-        sudo apt install -y libtxc-dxtn-dev linux-kernel-headers libkdb5-7 libppl13 libcolord1 \
-            libesd0-dev libgnutls-dev libgstreamer-plugins-base0.10-dev gcc-4.7 \
-            libgstreamer-plugins-base1.0-dev libgstreamer0.10-dev libpng12-dev \
-            libkadm5clnt-mit9 libkadm5srv-mit9
-    fi
+        libvkd3d1 libvkd3d-dev libvkd3d-utils1 libvkd3d-shader1 vkd3d-demos libvulkan1
 }
 
 DownloadWine() {
@@ -186,19 +175,36 @@ BuildWine() {
     fi
 
     if [ "$(uname -m)" = "x86_64" ]; then
-        export LD_LIBRARY_PATH=$(readlink -f $(runtime_path))/lib64
-        custom_ld_flags="-L$(readlink -f $runtime_path)/lib64 -Wl,-rpath-link,$(readlink -f $runtime_path)/lib64"
+        export LD_LIBRARY_PATH=${runtime_path}/lib64
+        custom_ld_flags="-L${runtime_path}/lib64 -Wl,-rpath-link,${runtime_path}/lib64"
     else
-        export export LD_LIBRARY_PATH=$(readlink -f $(runtime_path))/lib32
-	custom_ld_flags="-L$runtime_path/lib32 -Wl,-rpath-link,$runtime_path/lib32"
+        export LD_LIBRARY_PATH=${runtime_path}/lib32
+        custom_ld_flags="-L${runtime_path}/lib32 -Wl,-rpath-link,$runtime_path/lib32"
     fi
 
     if [ $CCACHE ]; then
-        CC="ccache gcc" LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix
-    else
-        LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix
+        export CC="ccache gcc"
+            if [ "$(uname -m)" = "x86_64" ]; then
+                export CROSSCC="ccache x86_64-w64-mingw32-gcc"
+            else
+                export CROSSCC="ccache i686-w64-mingw32-gcc"
+            fi
+        else
+        export CC="gcc"
+            if [ "$(uname -m)" = "x86_64" ]; then
+                export CROSSCC="x86_64-w64-mingw32-gcc"
+            else
+                export CROSSCC="i686-w64-mingw32-gcc" 
+            fi
     fi
-    
+
+    if [ $MINGW ]; then
+        MINGW_STATE="--with-mingw"
+        else
+        MINGW_STATE="--without-mingw"
+    fi
+
+    LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix $MINGW_STATE
     make -j$(getconf _NPROCESSORS_ONLN)
 }
 
@@ -216,7 +222,6 @@ Send64BitBuildAndBuild32bit() {
 
     # Package the 64bit build (in a wine64 folder)
     echo "Sending the 64bit build to the 32bit container"
-    dest_file="${bin_dir}-build.tar.gz"
     mv wine wine64
     tar czf ${dest_file} wine64
     scp ${dest_file} ${buildbot32host}:${root_dir}
@@ -231,8 +236,8 @@ Send64BitBuildAndBuild32bit() {
     if [ $KEEP ]; then
         opts="${opts} --keep"
     fi
-    if [ $KEEP_DEST_FILE ]; then
-        opts="${opts} --keep-destination-file"
+    if [ $KEEP_UPLOAD_FILE ]; then
+        opts="${opts} --keep-upload-file"
     fi
     if [ $NOUPLOAD ]; then
         opts="${opts} --noupload"
@@ -254,6 +259,9 @@ Send64BitBuildAndBuild32bit() {
     fi
     if [ "$CCACHE" ]; then
         opts="${opts} --useccache"
+    fi
+    if [ "$MINGW" ]; then
+        opts="${opts} --usemingw"
     fi
 
     echo "Building 32bit wine on 32bit container"
@@ -327,10 +335,11 @@ Package() {
 
     # Clean up wine build
     find ${bin_dir}/bin -type f -exec strip {} \;
-    find ${bin_dir}/lib -name "*.so" -exec strip {} \;
-    if [ -d ${bin_dir}/lib64 ]; then
-        find ${bin_dir}/lib64 -name "*.so" -exec strip {} \;
-    fi
+    for _f in "$bin_dir"/{bin,lib,lib64}/{wine/*,*}; do
+        if [[ "$_f" = *.so ]] || [[ "$_f" = *.dll ]]; then
+            strip --strip-unneeded "$_f"
+        fi
+    done
     #copy sdl2, faudio, vkd3d, and ffmpeg libraries
     cp -R $runtime_path/lib32/* ${bin_dir}/lib/
 
@@ -340,8 +349,10 @@ Package() {
 
     rm -rf ${bin_dir}/include
 
-    dest_file="wine-${filename_opts}${version}-${arch}.tar.xz"
-    tar cJf ${dest_file} ${bin_dir}
+    if [ -f ${root_dir}/${upload_file} ]; then
+        rm ${root_dir}/${upload_file}
+    fi
+    tar cJf ${upload_file} ${bin_dir}
 }
 
 UploadRunner() {
@@ -351,14 +362,25 @@ UploadRunner() {
     fi
 }
 
-Clean() {
+PostClean() {
     if [ ! $KEEP ]; then
         cd ${root_dir}
-        rm -rf ${build_dir} ${bin_dir} ${wine32_archive}
-      if [ ! $KEEP_DEST_FILE ]; then
-        rm -rf ${dest_file}
+        rm -rf ${build_dir} ${bin_dir} ${wine32_archive} ${dest_file}
+      if [ ! $KEEP_UPLOAD_FILE ]; then
+        rm -rf ${upload_file}
       fi
     fi
+    echo "Cleaned up."
+}
+
+trap TrapClean ERR INT
+
+TrapClean() {
+    if [ ! $KEEP ]; then
+        cd ${root_dir}
+        rm -rf ${build_dir} ${bin_dir} ${wine32_archive} ${dest_file} ${upload_file}
+    fi
+    echo "Build failed, cleaned up."
 }
 
 if [ $1 ]; then
@@ -367,5 +389,5 @@ else
     Build
     Package
     UploadRunner
-    Clean
+    PostClean
 fi

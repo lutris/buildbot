@@ -1,0 +1,14 @@
+prefix=/home/ubuntu/buildbot/runtime/ffmpeg/ffmpeg-build
+exec_prefix=${prefix}
+libdir=/home/ubuntu/buildbot/runtime/ffmpeg/ffmpeg-build/lib
+includedir=/home/ubuntu/buildbot/runtime/ffmpeg/ffmpeg-build/include
+
+Name: libavfilter
+Description: FFmpeg audio/video filtering library
+Version: 7.85.100
+Requires: 
+Requires.private: libavutil >= 56.51.100
+Conflicts:
+Libs: -L${libdir}  -lavfilter 
+Libs.private: -pthread -lm
+Cflags: -I${includedir}

@@ -16,8 +16,8 @@ else
 	LX32="$1"
 fi
 
-IP32=$(lxc list | grep $LX32 | cut -d " " -f7)
-IP64=$(lxc list | grep $LX64 | cut -d " " -f6)
+IP32=$(sudo lxc list | grep $LX32 | cut -d " " -f7)
+IP64=$(sudo lxc list | grep $LX64 | cut -d " " -f6)
 
 cat > sshconfig <<EOF
 
