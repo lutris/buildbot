@@ -2,26 +2,20 @@
 
 set -e
 
-lib_path="../../lib/"
+lib_path="./lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
-runner_name=$(get_runner)
+runner_name="pcsx2"
 root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
 log_file="${root_dir}/${runner_name}.log"
+artifact_dir="${root_dir}/artifacts/"
 arch=$(uname -m)
-version="1.5.0-dev-$(date +%Y%m)"
-
-InstallBuildDependencies() {
-    deps="cmake wx3.0-headers libaio-dev libasound2-dev libbz2-dev libgl1-mesa-dev \
-        libglu1-mesa-dev libgtk2.0-dev libpng-dev libpng++-dev libpulse-dev libsdl2-dev \
-        libsoundtouch-dev libwxbase3.0-dev libwxgtk3.0-dev libx11-dev portaudio19-dev zlib1g-dev"
-    install_deps $deps
-}
+version="1.7.0-dev-$(date +%Y%m)"
 
 GetSources() {
     clone https://github.com/PCSX2/pcsx2.git $source_dir
@@ -40,29 +34,14 @@ Build() {
 
 Package() {
     cd $root_dir
-    rm -rf ${bin_dir}
-    mv ${source_dir}/bin ${bin_dir}
+    mkdir -p $bin_dir
+    mv ${source_dir}/bin/* ${bin_dir}
     dest_file="${runner_name}-${version}-${arch}.tar.gz"
     tar czf ${dest_file} ${runner_name}
+    mkdir -p $artifact_dir
+    cp $dest_file $artifact_dir
 }
 
-Upload() {
-    cd $root_dir
-    dest_file="${runner_name}-${version}-${arch}.tar.gz"
-    runner_upload ${runner_name} ${version} ${arch} ${dest_file}
-}
-
-Cleanup() {
-    rm -rf ${source_dir} ${build_dir} ${bin_dir}
-}
-
-if [ $1 ]; then
-    $1
-else
-    InstallBuildDependencies
-    GetSources
-    Build
-    Package
-    Upload
-    Cleanup
-fi
+GetSources
+Build
+Package
