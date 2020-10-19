@@ -1,19 +1,19 @@
 #!/bin/bash
 
 set -e
-lib_path="../../lib/"
-
+lib_path="./lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
-runner_name=$(get_runner)
+runner_name="scummvm"
 root_dir="$(pwd)"
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
+artifact_dir="${root_dir}/artifacts/"
 arch="$(uname -m)"
 version="2.2.0"
 
+cd $root_dir
 src_dir="scummvm-${version}"
 src_archive="${src_dir}.tar.xz"
 src_url="http://www.scummvm.org/frs/scummvm/${version}/${src_archive}"
@@ -31,5 +31,4 @@ make install
 cd ..
 dest_file=${runner_name}-${version}-${arch}.tar.gz
 tar czf ${dest_file} ${runner_name}
-runner_upload ${runner_name} ${version} ${arch} ${dest_file}
-rm -rf ${build_dir} ${source_dir}
+cp $dest_file $artifact_dir
