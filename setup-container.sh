@@ -10,9 +10,9 @@ InstallDependencies() {
     # this package is necessary to add repositories using add-apt-repository
     sudo lxc exec $container -- apt -y install software-properties-common
     sudo lxc exec $container -- add-apt-repository ppa:cybermax-dexter/sdl2-backport -y
+    sudo lxc exec $container -- add-apt-repository ppa:cybermax-dexter/vkd3d -y
     sudo lxc exec $container -- apt update
     sudo lxc exec $container -- apt -y install wget curl build-essential git python openssh-server s3cmd awscli vim zsh fontconfig
-
 }
 
 SetupSSH() {
