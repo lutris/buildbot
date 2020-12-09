@@ -1,4 +1,4 @@
-From a8bc67fac33665d72e1555264cd546180be80dc2 Mon Sep 17 00:00:00 2001
+From e08728da51e86ca47d6435024f7e3ac50b4f0940 Mon Sep 17 00:00:00 2001
 From: Brendan Shanks <bshanks@codeweavers.com>
 Date: Tue, 22 Oct 2019 16:27:51 -0700
 Subject: [PATCH] HACK: ntdll: Run WT_EXECUTEINWAITTHREAD wait callbacks
@@ -11,24 +11,33 @@ conditions.
 Use a process-wide critical section to serialize these callbacks.
 
 Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=47843
-Signed-off-by: Brendan Shanks <bshanks@codeweavers.com>
 ---
- dlls/ntdll/threadpool.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ dlls/ntdll/threadpool.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/dlls/ntdll/threadpool.c b/dlls/ntdll/threadpool.c
-index 639e032f62..d199f876b2 100644
+index 1d64bd82bf4..bb344606fac 100644
 --- a/dlls/ntdll/threadpool.c
 +++ b/dlls/ntdll/threadpool.c
-@@ -83,6 +83,7 @@ struct wait_work_item
-     LONG DeleteCount;
+@@ -81,6 +81,17 @@ struct wait_work_item
      int CallbackInProgress;
  };
-+static RTL_CRITICAL_SECTION wait_thread_executeinwaitthread_cs = {(void *)(ULONG_PTR)-1, -1, 0, 0, 0, 0};
  
++static RTL_CRITICAL_SECTION_DEBUG wait_thread_executeinwaitthread_cs_debug;
++
++static RTL_CRITICAL_SECTION wait_thread_executeinwaitthread_cs = {&wait_thread_executeinwaitthread_cs_debug, -1, 0, 0, 0, 0};
++
++static RTL_CRITICAL_SECTION_DEBUG wait_thread_executeinwaitthread_cs_debug =
++{
++    0, 0, &wait_thread_executeinwaitthread_cs,
++    { &wait_thread_executeinwaitthread_cs_debug.ProcessLocksList, &wait_thread_executeinwaitthread_cs_debug.ProcessLocksList },
++      0, 0, { (DWORD_PTR)(__FILE__ ": wait_thread_executeinwaitthread_cs") }
++};
++
  struct timer_queue;
  struct queue_timer
-@@ -527,7 +528,20 @@ static DWORD CALLBACK wait_thread_proc(LPVOID Arg)
+ {
+@@ -598,7 +609,20 @@ static DWORD CALLBACK wait_thread_proc(LPVOID Arg)
                  TRACE( "Work has been canceled.\n" );
                  break;
              }
@@ -39,16 +48,13 @@ index 639e032f62..d199f876b2 100644
 +             * Use a critical section to ensure these callbacks run serially.
 +             */
 +            if (wait_work_item->Flags & WT_EXECUTEINWAITTHREAD)
-+                enter_critical_section(&wait_thread_executeinwaitthread_cs);
++                RtlEnterCriticalSection(&wait_thread_executeinwaitthread_cs);
 +
              wait_work_item->Callback( wait_work_item->Context, TimerOrWaitFired );
 +
 +            if (wait_work_item->Flags & WT_EXECUTEINWAITTHREAD)
-+                leave_critical_section(&wait_thread_executeinwaitthread_cs);
++                RtlLeaveCriticalSection(&wait_thread_executeinwaitthread_cs);
 +
-             interlocked_xchg( &wait_work_item->CallbackInProgress, FALSE );
+             InterlockedExchange( &wait_work_item->CallbackInProgress, FALSE );
  
              if (wait_work_item->Flags & WT_EXECUTEONLYONCE)
--- 
-2.17.1
-
