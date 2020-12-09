@@ -18,29 +18,20 @@ lib_dir="$build_dir/lib"
 arch=$(uname -m)
 repo_url="https://github.com/FNA-XNA/FAudio.git"
 
-params=$(getopt -n $0 -o v:nf: --long version:,noffmpeg: -- "$@")
+params=$(getopt -n $0 -o v:ng: --long version:,nogs: -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
         -v|--version) version=$2; shift 2 ;;
-        -nf|--noffmpeg) NOFFMPEG=1; shift ;;
+        -ng|--nogs) NOGS=1; shift ;;
         *) shift; break ;;
     esac
 done
 
-if [ $arch = "x86_64" ]; then
-    ffmpeg_include=$(readlink -f "../../runtime/ffmpeg/ffmpeg-libs/ffmpeg64/include/")
-elif [ $arch = "i686" ]; then
-    ffmpeg_include=$(readlink -f "../../runtime/ffmpeg/ffmpeg-libs/ffmpeg32/include/")
-else
-    echo "We don't build Faudio on non-x86 systems, aborting."
-    exit
-fi
-
-
-
 InstallDependencies() {
-    sudo apt install -y cmake
+    sudo apt install -y cmake libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
+        gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x \
+        gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
 }
 
 Download() {
@@ -66,11 +57,11 @@ BuildFAudio() {
     mkdir -p $build_dir
     cd $build_dir
 
-    if [ ! $NOFFMPEG ]; then
-    FFMPEG_STATE="-DFFMPEG=ON -DFFmpeg_INCLUDE_DIR="$ffmpeg_include""
+    if [ ! $NOGS ]; then
+    GS_STATE="-DGSTREAMER=ON"
     fi
 
-    cmake $FFMPEG_STATE -DCMAKE_INSTALL_PREFIX:PATH="$build_dir" $source_dir
+    cmake $GS_STATE -DCMAKE_INSTALL_PREFIX:PATH="$build_dir" $source_dir
     make -j$(getconf _NPROCESSORS_ONLN) install/strip
     rm -rf "$lib_dir/cmake"
 
@@ -87,8 +78,8 @@ Build32bit() {
     echo "Building 32bit Faudio"
     opts=""
     opts="--version $version"
-    if [ $NOFFMPEG ]; then
-        opts="${opts} --noffmpeg"
+    if [ $NOGS ]; then
+        opts="${opts} --nogs"
     fi
 
     echo "Building 32bit Faudio on 32bit container"
