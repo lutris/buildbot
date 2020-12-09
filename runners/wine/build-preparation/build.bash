@@ -24,9 +24,6 @@ fi
 branch_name=lutris-"$infix""$version""$branch_update"
 wine_source_dir="${root_dir}/wine-src"
 wine_staging_source_dir="${root_dir}/wine-staging-src"
-if [ $disabled_patchset ]; then
-disabled_patchset="-W $disabled_patchset"
-fi
 
 GetSources() {
     if [ ! -d "${wine_source_dir}" ]; then
@@ -114,8 +111,8 @@ ConfigureTKG() {
     else
       sed -i s/WINEVERSION/"v$version"/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     fi
-    if [ $disabled_patchset ]; then
-    sed -i s/DISABLED_PATCHSET/$disabled_patchset/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
+    if [ "${disabled_patchset}" ]; then
+    sed -i s/DISABLED_PATCHSET/"${disabled_patchset}"/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     else 
     sed -i s/DISABLED_PATCHSET//g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     fi
