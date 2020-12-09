@@ -33,7 +33,6 @@ alternatively to manually set all lxd options (not recommended) use:
 
     sudo lxd init
 
-Note: On Arch Linux, you may need to enable support for unprivileged containers first before proceeding (https://wiki.archlinux.org/index.php/Linux_Containers#Enable_support_to_run_unprivileged_containers).
 You can create the containers with a command such as::
 
     sudo lxc launch images:ubuntu/bionic/amd64 buildbot-bionic-amd64
