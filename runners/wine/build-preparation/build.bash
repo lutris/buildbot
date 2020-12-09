@@ -2,7 +2,7 @@
 
 set -e
 
-params=$(getopt -n $0 -o v:r:f:s:d:u:n --long version:,remote:,flavour:,staging-override:,disabled-patchset:,update-number:,noupload -- "$@")
+params=$(getopt -n $0 -o v:r:f:s:d:u:t:n --long version:,remote:,flavour:,staging-override:,disabled-patchset:,update-number:,staging-version:,noupload -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -12,6 +12,7 @@ while true ; do
         -s|--staging-override) staging_version_override=$2; shift 2 ;;
         -d|--disabled-patchset) disabled_patchset=$2; shift 2 ;;
         -u|--update-number) branch_update="-$2"; shift 2 ;;
+        -t|--staging-version) staging_version="v$2"; shift 2 ;;
         -n|--noupload) noupload=1; shift ;;
         *) shift; break ;;
     esac
@@ -20,6 +21,9 @@ done
 root_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 if [ $flavour ]; then
   infix="$flavour-"
+fi
+if [ ! $staging_version ]; then
+  staging_version="v$version"
 fi
 branch_name=lutris-"$infix""$version""$branch_update"
 wine_source_dir="${root_dir}/wine-src"
@@ -74,7 +78,7 @@ PrepareWineVersion() {
     if [ $staging_version_override ]; then
       git -C "${wine_staging_source_dir}" reset --hard "$staging_version_override"
     else
-      git -C "${wine_staging_source_dir}" reset --hard "v$version"
+      git -C "${wine_staging_source_dir}" reset --hard "$staging_version"
     fi
 }
 
@@ -109,7 +113,7 @@ ConfigureTKG() {
     if [ $staging_version_override ]; then
       sed -i s/WINEVERSION/"$staging_version_override"/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     else
-      sed -i s/WINEVERSION/"v$version"/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
+      sed -i s/WINEVERSION/"$staging_version"/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     fi
     if [ "${disabled_patchset}" ]; then
     sed -i s/DISABLED_PATCHSET/"${disabled_patchset}"/g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
