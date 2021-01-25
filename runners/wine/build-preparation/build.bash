@@ -121,8 +121,9 @@ ConfigureTKG() {
     sed -i s/DISABLED_PATCHSET//g "${root_dir}/wine-tkg-git/wine-tkg.cfg"
     fi
 
-
-    cp "${root_dir}"/"$flavour_patches"patches/*.mypatch "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-userpatches/"
+    if [ "$(ls -A "${root_dir}"/"$flavour_patches"patches/ )" ]; then
+      cp "${root_dir}"/"$flavour_patches"patches/*.mypatch "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-userpatches/"
+    fi
 }
 
 PrepareTKGSource() {
