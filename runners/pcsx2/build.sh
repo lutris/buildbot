@@ -15,10 +15,10 @@ bin_dir="${root_dir}/${runner_name}"
 log_file="${root_dir}/${runner_name}.log"
 artifact_dir="${root_dir}/artifacts/"
 arch=$(uname -m)
-version="1.7.0-dev-$(date +%Y%m)"
+version="1.6.0"
 
 GetSources() {
-    clone https://github.com/PCSX2/pcsx2.git $source_dir
+    clone https://github.com/PCSX2/pcsx2.git $source_dir true v1.6.0
 }
 
 Build() {
