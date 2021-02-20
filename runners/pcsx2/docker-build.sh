@@ -1,3 +1,4 @@
+
 cp -a ../../lib .
 docker build -t pcsx2build .
 docker run \

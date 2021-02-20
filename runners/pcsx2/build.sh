@@ -27,6 +27,7 @@ Build() {
     cd $build_dir
     cmake \
         -DCMAKE_BUILD_TYPE=Release \
+        -DENABLE_TESTS=0 \
         ${source_dir} 2>&1 | tee -a $log_file
     make -j$(getconf _NPROCESSORS_ONLN)
     make install
