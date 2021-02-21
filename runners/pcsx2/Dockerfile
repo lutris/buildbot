@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y git cmake wx3.0-headers coreutils \
         libsoundtouch-dev libwxbase3.0-dev libwxgtk3.0-dev libx11-dev \
         portaudio19-dev zlib1g-dev liblzma-dev libsamplerate0-dev \
         libpcap0.8-dev libwxgtk3.0-gtk3-dev libxml2-dev locales \
-        libcg libglew-dev libsparsehash-dev libfmt-dev
+        libcg libglew-dev libsparsehash-dev libfmt-dev sudo libcap2-bin
 
 RUN mkdir /build
 WORKDIR /build
