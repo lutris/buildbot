@@ -12,7 +12,7 @@ InstallDependencies() {
     sudo lxc exec $container -- add-apt-repository ppa:cybermax-dexter/sdl2-backport -y
     sudo lxc exec $container -- add-apt-repository ppa:cybermax-dexter/vkd3d -y
     sudo lxc exec $container -- apt update
-    sudo lxc exec $container -- apt -y install wget curl build-essential git python openssh-server s3cmd awscli vim zsh fontconfig
+    sudo lxc exec $container -- apt -y install wget curl build-essential git python openssh-server s3cmd awscli vim zsh fontconfig sshpass
 }
 
 SetupSSH() {
