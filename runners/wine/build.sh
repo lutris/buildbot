@@ -347,6 +347,7 @@ Package() {
     cp -R $runtime_path/lib32/* ${bin_dir}/lib/
 
     if [ "$(uname -m)" = "x86_64" ]; then
+        mkdir -p ${bin_dir}/lib64/
         cp -R $runtime_path/lib64/* ${bin_dir}/lib64/
     fi
 
