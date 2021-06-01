@@ -108,8 +108,14 @@ i386:
 	ssh ubuntu@buildbot-bionic-i386
 	./build.sh --as lutris --version 4.16 --with https://github.com/lutris/wine --branch lutris-ge-4.16 --noupload --keep
 
-Note #1: If you are running a build for the first time, you will also want to use the -d option to install build dependencies  
+Note #1: If you are running a build for the first time, you will also want to use the -d option to install build dependencies
 Note #2: x86_64 build utilizes the i386 lxd container and is built with 32 bit included, you do not need to run both. i386 is for an i386-only build.
 
-If you plan to publish runners and runtimes to Digital Ocean, don't forget to
-copy the configuration files in ~/.aws/credentials and ~/.s3cfg
+Uploads
+-------
+
+Runner uploads are limited to Lutris staff members who have access to our Digital Ocean CDN.
+
+awscli, s3cmd and doctl are required to upload files. All required tools will be installed with the setup-buildbot.sh script.
+
+Then configure your credential files in ~/.aws/credentials and ~/.s3cfg
