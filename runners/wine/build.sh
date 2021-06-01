@@ -86,12 +86,12 @@ DownloadWine() {
           git -C "$source_dir" clean -dfx
           if [ $(git -C "$source_dir" branch -v | grep -o -E "$branch_name\s+") ]; then
                 git -C "$source_dir" branch -m "$branch_name" "$branch_name"-old
-          fi   
+          fi
 	  git -C "$source_dir" fetch "$repo_url" "$branch_name":"$branch_name"
 	  git -C "$source_dir" checkout "$branch_name"
           if [ $(git -C "$source_dir" branch -v | grep -o -E "$branch_name-old\s+") ]; then
                 git -C "$source_dir" branch -D "$branch_name"-old
-          fi                   
+          fi
 	else
             git clone -b "$branch_name" "$repo_url" "$source_dir"
 	fi
@@ -197,7 +197,7 @@ BuildWine() {
             if [ "$(uname -m)" = "x86_64" ]; then
                 export CROSSCC="x86_64-w64-mingw32-gcc"
             else
-                export CROSSCC="i686-w64-mingw32-gcc" 
+                export CROSSCC="i686-w64-mingw32-gcc"
             fi
     fi
 
