@@ -82,23 +82,9 @@ BuildRetroarch() {
 
 BuildLibretroCore() {
     core="$1"
-    is_hw=0
     cd ${source_dir}
-    if [ "$core" = "mednafen_psx_hw" ]; then
-        core="mednafen_psx"
-        is_hw=1
-        core_dir="libretro-$core"
-        cd $core_dir
-        sed -ri "s/(HAVE_OPENGL ?= ?)0/\11/" Makefile
-        make clean
-        make
-        cp mednafen_psx_hw_libretro.so ${cores_dir}
-        git reset --hard
-        cd ..
-    else
-        SINGLE_CORE=$core FORCE=YES NOCLEAN=1 SHALLOW_CLONE=1 EXIT_ON_ERROR=1 ./libretro-buildbot-recipe.sh recipes/linux/cores-linux-${buildbotarch}-generic
-        ./libretro-install.sh ${cores_dir}
-    fi
+    SINGLE_CORE=$core FORCE=YES NOCLEAN=1 SHALLOW_CLONE=1 EXIT_ON_ERROR=1 ./libretro-buildbot-recipe.sh recipes/linux/cores-linux-${buildbotarch}-generic
+    ./libretro-install.sh ${cores_dir}
 }
 
 PackageRetroarch() {
