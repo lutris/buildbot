@@ -1,7 +1,6 @@
 #!/bin/bash
 
-set -e
-set -x
+trap TrapClean ERR INT
 
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd ${root_dir}
@@ -78,6 +77,7 @@ InstallDependencies() {
 }
 
 DownloadWine() {
+    trap TrapClean ERR INT
     # If a git repo as been specified use this instead and return
     if [[ $repo_url ]]; then
         # The branch name defaults to the build name
@@ -125,6 +125,7 @@ DownloadWine() {
 }
 
 DownloadWineStaging() {
+    trap TrapClean ERR INT
     local ignore_errors
     if [ $STAGING ]; then
         echo "Adding Wine Staging patches"
@@ -149,6 +150,7 @@ DownloadWineStaging() {
 }
 
 ApplyPatch() {
+    trap TrapClean ERR INT
     cd ${root_dir}
     patch_path=$(realpath $patch)
     if [ ! -f $patch_path ]; then
@@ -162,6 +164,7 @@ ApplyPatch() {
 
 
 BuildWine() {
+    trap TrapClean ERR INT
     prefix=${root_dir}/${bin_dir}
     mkdir -p $build_dir
     cd $build_dir
@@ -209,9 +212,11 @@ BuildWine() {
 
     LDFLAGS="$custom_ld_flags" $source_dir/configure ${configure_opts} --prefix=$prefix $MINGW_STATE
     make -j$(getconf _NPROCESSORS_ONLN)
+    
 }
 
 BuildFinalWow64Build() {
+    trap TrapClean ERR INT
     cd ${root_dir}
     # Extract the wine build received from the 32bit container
     tar xzf $wine32_archive
@@ -220,6 +225,7 @@ BuildFinalWow64Build() {
 }
 
 Send64BitBuildAndBuild32bit() {
+    trap TrapClean ERR INT
     # Build the 64bit version of wine, send it to the 32bit container then exit
     cd ${root_dir}
 
@@ -275,6 +281,7 @@ Send64BitBuildAndBuild32bit() {
 }
 
 Combine64and32bitBuilds() {
+    trap TrapClean ERR INT
     cd ${root_dir}
     # Extract the 64bit build of Wine received from the buildbot64 container
     wine64build_archive="${filename_opts}${version}-x86_64-build.tar.gz"
@@ -301,6 +308,7 @@ Combine64and32bitBuilds() {
 }
 
 Build() {
+    trap TrapClean ERR INT
     if [ -f ${wine32_archive} ]; then
         # The 64bit container has received the 32bit build
         BuildFinalWow64Build
@@ -334,13 +342,19 @@ Build() {
 }
 
 Package() {
+    trap TrapClean ERR INT
     cd ${root_dir}
 
     # Clean up wine build
     find ${bin_dir}/bin -type f -exec strip {} \;
     for _f in "$bin_dir"/{bin,lib,lib64}/{wine/*,*}; do
         if [[ "$_f" = *.so ]] || [[ "$_f" = *.dll ]]; then
-            strip --strip-unneeded "$_f"
+            strip --strip-unneeded "$_f" || true
+        fi
+    done
+    for _f in "$bin_dir"/{bin,lib,lib64}/{wine/{x86_64-unix,x86_64-windows,i386-unix,i386-windows}/*,*}; do
+        if [[ "$_f" = *.so ]] || [[ "$_f" = *.dll ]]; then
+            strip --strip-unneeded "$_f" || true
         fi
     done
     #copy sdl2, faudio, vkd3d, and ffmpeg libraries
@@ -360,6 +374,7 @@ Package() {
 }
 
 UploadRunner() {
+    trap TrapClean ERR INT
     if [ ! $NOUPLOAD ]; then
         cd ${root_dir}
         runner_upload ${runner_name} ${filename_opts}${version} ${arch} ${dest_file}
@@ -377,14 +392,13 @@ PostClean() {
     echo "Cleaned up."
 }
 
-trap TrapClean ERR INT
-
 TrapClean() {
     if [ ! $KEEP ]; then
         cd ${root_dir}
         rm -rf ${build_dir} ${bin_dir} ${wine32_archive} ${dest_file} ${upload_file}
     fi
-    echo "Build failed, cleaned up."
+    printf "Build failed, cleaned up.\n"
+    exit
 }
 
 if [ $1 ]; then
