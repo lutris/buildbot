@@ -6,7 +6,7 @@ user='ubuntu'
 
 InstallDependencies() {
     sudo lxc file push setup-buildbot.sh $container/home/$user/
-    sudo lxc exec $container -- $container/home/$user/setup-buildbot.sh
+    sudo lxc exec $container -- sudo bash -c /home/$user/setup-buildbot.sh
 }
 
 SetupSSH() {
