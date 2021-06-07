@@ -43,8 +43,7 @@ GetSources() {
       git -C "${root_dir}/wine-tkg-git/" fetch
       git -C "${root_dir}/wine-tkg-git/" clean -fx "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-userpatches/" || true
       rm -rf "${root_dir}/wine-tkg-git/wine-tkg-git/src/" || true
-      git -C "${root_dir}/wine-tkg-git/" rm "${root_dir}/wine-tkg-git/wine-tkg-git/*.mypatch" || true
-      git -C "${root_dir}/wine-tkg-git/" rm "${root_dir}/wine-tkg-git/wine-tkg-git/*.patch" || true
+      git -C "${root_dir}/wine-tkg-git/" rm "${root_dir}/wine-tkg-git/wine-tkg-git/*.{mypatch,myrevert,patch}" || true
       git -C "${root_dir}/wine-tkg-git/" reset --hard origin/master
     else
       git clone https://github.com/Frogging-Family/wine-tkg-git.git "${root_dir}/wine-tkg-git/"
@@ -122,7 +121,7 @@ ConfigureTKG() {
     fi
 
     if [ "$(ls -A "${root_dir}"/"$flavour_patches"patches/ )" ]; then
-      cp "${root_dir}"/"$flavour_patches"patches/*.mypatch "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-userpatches/"
+      cp "${root_dir}"/"$flavour_patches"patches/*.{mypatch,myrevert} "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-userpatches/"
     fi
 }
 
