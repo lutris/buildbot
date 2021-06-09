@@ -19,12 +19,24 @@ while true ; do
 done
 
 root_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 if [ $flavour ]; then
   infix="$flavour-"
 fi
+
 if [ ! $staging_version ]; then
   staging_version="v$version"
 fi
+
+if [ $flavour ]; then
+  prefix_override_preset=$flavour
+else
+  prefix_override_preset="wine"
+fi
+if [ -e "${root_dir}/$prefix_override_preset.override-preset" ]; then
+disabled_patchset="$(cat "${root_dir}/$prefix_override_preset.override-preset") $disabled_patchset"
+fi
+
 branch_name=lutris-"$infix""$version""$branch_update"
 wine_source_dir="${root_dir}/wine-src"
 wine_staging_source_dir="${root_dir}/wine-staging-src"
@@ -83,12 +95,12 @@ PrepareWineVersion() {
 
 
 ApplyStagingPatches() {
-    if [ $flavour -a -e "${root_dir}/$flavour.override-preset" ]; then
-    override_preset="$(cat "${root_dir}/$flavour.override-preset") $disabled_patchset"
-    "${wine_staging_source_dir}/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf $override_preset
+    if [ $disabled_patchset ]; then
+      "${wine_staging_source_dir}/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf $override_preset
     else
-    "${wine_staging_source_dir}/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf
+        "${wine_staging_source_dir}/patches/patchinstall.sh" DESTDIR="$wine_source_dir" --all --no-autoconf
     fi
+
     cd "$wine_source_dir"
     git add .
     git commit -am "Add Staging patches"
