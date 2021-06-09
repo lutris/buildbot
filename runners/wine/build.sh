@@ -273,6 +273,9 @@ Send64BitBuildAndBuild32bit() {
     if [ "$MINGW" ]; then
         opts="${opts} --usemingw"
     fi
+    if [ "$NOSTRIP" ]; then
+        opts="${opts} --nostrip"
+    fi
 
     echo "Building 32bit wine on 32bit container"
     ssh -t ${buildbot32host} "${root_dir}/build.sh -v ${version} ${opts} --64bit"
