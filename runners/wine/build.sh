@@ -20,7 +20,7 @@ arch=$(uname -m)
 version="5.0"
 configure_opts="--disable-tests --with-x --with-gstreamer"
 
-params=$(getopt -n $0 -o a:b:w:v:p:snd6kfcm --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-upload-file,useccache,usemingw -- "$@")
+params=$(getopt -n $0 -o a:b:w:v:p:snd6kfcmt --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-upload-file,useccache,usemingw,nostrip -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -37,6 +37,7 @@ while true ; do
         -f|--keep-upload-file) KEEP_UPLOAD_FILE=1; shift ;;
         -c|--useccache) CCACHE=1; shift ;;
         -m|--usemingw) MINGW=1; shift ;;
+        -t|--nostrip) NOSTRIP=1; shift ;;
         *) shift; break ;;
     esac
 done
@@ -346,17 +347,20 @@ Package() {
     cd ${root_dir}
 
     # Clean up wine build
-    find ${bin_dir}/bin -type f -exec strip {} \;
-    for _f in "$bin_dir"/{bin,lib,lib64}/{wine/*,*}; do
-        if [[ "$_f" = *.so ]] || [[ "$_f" = *.dll ]]; then
-            strip --strip-unneeded "$_f" || true
-        fi
-    done
-    for _f in "$bin_dir"/{bin,lib,lib64}/{wine/{x86_64-unix,x86_64-windows,i386-unix,i386-windows}/*,*}; do
-        if [[ "$_f" = *.so ]] || [[ "$_f" = *.dll ]]; then
-            strip --strip-unneeded "$_f" || true
-        fi
-    done
+    if [ ! $NOSTRIP ]; then
+        find ${bin_dir}/bin -type f -exec strip {} \;
+        for _f in "$bin_dir"/{bin,lib,lib64}/{wine/*,*}; do
+            if [[ "$_f" = *.so ]] || [[ "$_f" = *.dll ]]; then
+                strip --strip-unneeded "$_f" || true
+            fi
+        done
+        for _f in "$bin_dir"/{bin,lib,lib64}/{wine/{x86_64-unix,x86_64-windows,i386-unix,i386-windows}/*,*}; do
+            if [[ "$_f" = *.so ]] || [[ "$_f" = *.dll ]]; then
+                strip --strip-unneeded "$_f" || true
+            fi
+        done
+    fi
+
     #copy sdl2, faudio, vkd3d, and ffmpeg libraries
     cp -R $runtime_path/lib32/* ${bin_dir}/lib/
 
