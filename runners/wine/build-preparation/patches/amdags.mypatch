@@ -809,7 +809,7 @@ index 00000000000..9c3e37e52e5
 +
 +///
 +/// This method can be used to determine the total number of asynchronous shader compile jobs that are either
-+/// queued for waiting for compilation or being compiled by the driver?s asynchronous compilation threads.
++/// queued for waiting for compilation or being compiled by the driver’s asynchronous compilation threads.
 +/// This method can be called at any during the lifetime of the driver.
 +///
 +/// \param [in] context                             Pointer to a context.
@@ -1377,7 +1377,7 @@ new file mode 100644
 index 00000000000..382447089bc
 --- /dev/null
 +++ b/dlls/amd_ags_x64/amd_ags_x64_main.c
-@@ -0,0 +1,193 @@
+@@ -0,0 +1,191 @@
 +#include "config.h"
 +
 +#include <stdarg.h>
@@ -1562,8 +1562,6 @@ index 00000000000..382447089bc
 +
 +    switch (reason)
 +    {
-+        case DLL_WINE_PREATTACH:
-+            return FALSE; /* Prefer native. */
 +        case DLL_PROCESS_ATTACH:
 +            DisableThreadLibraryCalls(instance);
 +            break;
@@ -1590,7 +1588,7 @@ index 7545260d1de..aa7127e2ede 100644
  IMPORTS   = vulkan-1
  IMPORTLIB = amd_ags_x64
  
-+EXTRADLLFLAGS = -mno-cygwin
++EXTRADLLFLAGS = -mno-cygwin -Wb,--prefer-native
 +
  C_SRCS = \
  	amd_ags_x64_main.c
@@ -2623,8 +2621,8 @@ index b647f912aa7..c39adb53678 100644
  
  ///
  /// This method can be used to determine the total number of asynchronous shader compile jobs that are either
--/// queued for waiting for compilation or being compiled by the driver?s asynchronous compilation threads.
-+/// queued for waiting for compilation or being compiled by the driver�?s asynchronous compilation threads.
+-/// queued for waiting for compilation or being compiled by the driver’s asynchronous compilation threads.
++/// queued for waiting for compilation or being compiled by the driverÂ’s asynchronous compilation threads.
  /// This method can be called at any during the lifetime of the driver.
  ///
  /// \param [in] context                             Pointer to a context.

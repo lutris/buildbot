@@ -25,7 +25,7 @@ index 3921fa96444..5416ea19a9f 100644
 @@ -1,7 +1,7 @@
  MODULE    = wineboot.exe
  APPMODE   = -mconsole
- IMPORTS   = uuid advapi32 ws2_32
+ IMPORTS   = uuid advapi32 ws2_32 kernelbase
 -DELAYIMPORTS = shell32 shlwapi version user32 setupapi newdev wininet
 +DELAYIMPORTS = shell32 shlwapi version user32 setupapi newdev wininet bcrypt
  

@@ -1,8 +1,20 @@
+From 4f63e4de99846c03c538114253b3b4df1f5a2839 Mon Sep 17 00:00:00 2001
+From: Brendan Shanks <bshanks@codeweavers.com>
+Date: Mon, 23 Sep 2019 08:56:04 -0500
+Subject: [PATCH] ntdll: Always add a tail to heap allocations.
+
+Fixes the Rockstar Games Launcher installer (and possibly other
+NSIS-based installers) from crashing due to passing a too-small buffer
+to GetWindowInfo().
+---
+ dlls/ntdll/heap.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
 diff --git a/dlls/ntdll/heap.c b/dlls/ntdll/heap.c
-index 6344157f384..6fefe5d6d80 100644
+index a423fde6cee..0c5b089b2da 100644
 --- a/dlls/ntdll/heap.c
 +++ b/dlls/ntdll/heap.c
-@@ -118,9 +118,8 @@ C_ASSERT( sizeof(ARENA_LARGE) % LARGE_ALIGNMENT == 0 );
+@@ -111,9 +111,8 @@ C_ASSERT( sizeof(ARENA_LARGE) % LARGE_ALIGNMENT == 0 );
  #define HEAP_MIN_SHRINK_SIZE  (HEAP_MIN_DATA_SIZE+sizeof(ARENA_FREE))
  /* minimum size to start allocating large blocks */
  #define HEAP_MIN_LARGE_BLOCK_SIZE  0x7f000
@@ -14,7 +26,7 @@ index 6344157f384..6fefe5d6d80 100644
  
  /* size of the blocks on the free lists */
  #define HEAP_FREELIST_SIZE(index) \
-@@ -800,7 +799,7 @@ static void HEAP_ShrinkBlock(SUBHEAP *subheap, ARENA_INUSE *pArena, SIZE_T size)
+@@ -782,7 +781,7 @@ static void HEAP_ShrinkBlock(SUBHEAP *subheap, ARENA_INUSE *pArena, SIZE_T size)
  static void *allocate_large_block( HEAP *heap, DWORD flags, SIZE_T size )
  {
      ARENA_LARGE *arena;
@@ -23,7 +35,7 @@ index 6344157f384..6fefe5d6d80 100644
      LPVOID address = NULL;
  
      if (block_size < size) return NULL;  /* overflow */
-@@ -1814,7 +1813,7 @@ void * WINAPI DECLSPEC_HOTPATCH RtlAllocateHeap( HANDLE heap, ULONG flags, SIZE_
+@@ -1786,7 +1785,7 @@ void * WINAPI DECLSPEC_HOTPATCH RtlAllocateHeap( HANDLE heap, ULONG flags, SIZE_
      if (!heapPtr) return NULL;
      flags &= HEAP_GENERATE_EXCEPTIONS | HEAP_NO_SERIALIZE | HEAP_ZERO_MEMORY;
      flags |= heapPtr->flags;
@@ -32,7 +44,7 @@ index 6344157f384..6fefe5d6d80 100644
      if (rounded_size < size)  /* overflow */
      {
          if (flags & HEAP_GENERATE_EXCEPTIONS) RtlRaiseStatus( STATUS_NO_MEMORY );
-@@ -1968,7 +1967,7 @@ PVOID WINAPI RtlReAllocateHeap( HANDLE heap, ULONG flags, PVOID ptr, SIZE_T size
+@@ -1940,7 +1939,7 @@ PVOID WINAPI RtlReAllocateHeap( HANDLE heap, ULONG flags, PVOID ptr, SIZE_T size
      flags |= heapPtr->flags;
      if (!(flags & HEAP_NO_SERIALIZE)) RtlEnterCriticalSection( &heapPtr->critSection );
  
