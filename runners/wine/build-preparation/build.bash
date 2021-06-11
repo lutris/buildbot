@@ -133,7 +133,7 @@ ConfigureTKG() {
     fi
 
     if [ "$(ls -A "${root_dir}"/"$flavour_patches"patches/ )" ]; then
-      cp "${root_dir}"/"$flavour_patches"patches/*.{mypatch,myrevert} "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-userpatches/"
+      cp "${root_dir}"/"$flavour_patches"patches/*.{mypatch,myrevert} "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-userpatches/" || true
     fi
 }
 
