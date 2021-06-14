@@ -18,7 +18,7 @@ source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
 version="5.0"
-configure_opts="--disable-tests --with-x --with-gstreamer"
+configure_opts="--disable-tests --with-x --with-gstreamer --with-wayland"
 
 params=$(getopt -n $0 -o a:b:w:v:p:snd6kfcmt --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,64bit,keep,keep-upload-file,useccache,usemingw,nostrip -- "$@")
 eval set -- $params
