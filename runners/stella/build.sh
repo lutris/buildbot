@@ -10,7 +10,7 @@ runner_name=$(get_runner)
 root_dir=$(pwd)
 bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-version="4.6.7"
+version="6.5.3"
 
 src_dir="${runner_name}-${version}"
 src_archive="${src_dir}-src.tar.gz"
