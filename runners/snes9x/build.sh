@@ -11,7 +11,7 @@ root_dir=$(pwd)
 build_dir="${root_dir}/${runner_name}"
 source_dir="${root_dir}/${runner_name}-src"
 arch=$(uname -m)
-version="1.53"
+version="1.60"
 
 repo_url="https://github.com/snes9xgit/snes9x.git"
 deps="autoconf libtool gettext libglib2.0-dev intltool libgtk2.0-dev libxml2-dev libsdl1.2-dev"
