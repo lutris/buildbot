@@ -1,0 +1,296 @@
+From 069d7765305ec3a944ca20eff5f745787b979cf2 Mon Sep 17 00:00:00 2001
+From: Georg Lehmann <dadschoorse@gmail.com>
+Date: Mon, 31 May 2021 23:03:45 +0200
+Subject: [PATCH 1/4] winex11.drv: Only return vulkan functions if the host
+ function is available.
+
+Signed-off-by: Georg Lehmann <dadschoorse@gmail.com>
+---
+ dlls/winex11.drv/vulkan.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/dlls/winex11.drv/vulkan.c b/dlls/winex11.drv/vulkan.c
+index bdc287afeea..1bbdba2ce1d 100644
+--- a/dlls/winex11.drv/vulkan.c
++++ b/dlls/winex11.drv/vulkan.c
+@@ -435,12 +435,25 @@ static VkResult X11DRV_vkGetDeviceGroupSurfacePresentModesKHR(VkDevice device,
+     return pvkGetDeviceGroupSurfacePresentModesKHR(device, x11_surface->surface, flags);
+ }
+ 
++static const char *wine_vk_native_fn_name(const char *name)
++{
++    if (!strcmp(name, "vkCreateWin32SurfaceKHR"))
++        return "vkCreateXlibSurfaceKHR";
++    if (!strcmp(name, "vkGetPhysicalDeviceWin32PresentationSupportKHR"))
++        return "vkGetPhysicalDeviceXlibPresentationSupportKHR";
++
++    return name;
++}
++
+ static void *X11DRV_vkGetDeviceProcAddr(VkDevice device, const char *name)
+ {
+     void *proc_addr;
+ 
+     TRACE("%p, %s\n", device, debugstr_a(name));
+ 
++    if (!pvkGetDeviceProcAddr(device, wine_vk_native_fn_name(name)))
++        return NULL;
++
+     if ((proc_addr = X11DRV_get_vk_device_proc_addr(name)))
+         return proc_addr;
+ 
+@@ -453,6 +466,9 @@ static void *X11DRV_vkGetInstanceProcAddr(VkInstance instance, const char *name)
+ 
+     TRACE("%p, %s\n", instance, debugstr_a(name));
+ 
++    if (!pvkGetInstanceProcAddr(instance, wine_vk_native_fn_name(name)))
++        return NULL;
++
+     if ((proc_addr = X11DRV_get_vk_instance_proc_addr(instance, name)))
+         return proc_addr;
+ 
+-- 
+2.32.0
+
+From 53fea1d442c47488b590cbd6f40161634f0c4816 Mon Sep 17 00:00:00 2001
+From: Georg Lehmann <dadschoorse@gmail.com>
+Date: Mon, 31 May 2021 23:04:28 +0200
+Subject: [PATCH 2/4] winemac.drv: Only return vulkan functions if the host
+ function is available.
+
+Signed-off-by: Georg Lehmann <dadschoorse@gmail.com>
+---
+ dlls/winemac.drv/vulkan.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/dlls/winemac.drv/vulkan.c b/dlls/winemac.drv/vulkan.c
+index 21ebcc56519..2bd17a10021 100644
+--- a/dlls/winemac.drv/vulkan.c
++++ b/dlls/winemac.drv/vulkan.c
+@@ -420,12 +420,37 @@ static VkResult macdrv_vkEnumerateInstanceExtensionProperties(const char *layer_
+     return res;
+ }
+ 
++static const char *wine_vk_native_fn_name(const char *name)
++{
++    if (pvkCreateMetalSurfaceEXT)
++    {
++        if (!strcmp(name, "vkCreateWin32SurfaceKHR"))
++            return "vkCreateMetalSurfaceEXT";
++        // we just need something where non-NULL is returned if the correct extension is enabled.
++        if (!strcmp(name, "vkGetPhysicalDeviceWin32PresentationSupportKHR"))
++            return "vkCreateMetalSurfaceEXT";
++    }
++    else
++    {
++        if (!strcmp(name, "vkCreateWin32SurfaceKHR"))
++            return "vkCreateMacOSSurfaceMVK";
++        // we just need something where non-NULL is returned if the correct extension is enabled.
++        if (!strcmp(name, "vkGetPhysicalDeviceWin32PresentationSupportKHR"))
++            return "vkCreateMacOSSurfaceMVK";
++    }
++
++    return name;
++}
++
+ static void *macdrv_vkGetDeviceProcAddr(VkDevice device, const char *name)
+ {
+     void *proc_addr;
+ 
+     TRACE("%p, %s\n", device, debugstr_a(name));
+ 
++    if (!pvkGetDeviceProcAddr(device, wine_vk_native_fn_name(name)))
++        return NULL;
++
+     if ((proc_addr = macdrv_get_vk_device_proc_addr(name)))
+         return proc_addr;
+ 
+@@ -438,6 +463,9 @@ static void *macdrv_vkGetInstanceProcAddr(VkInstance instance, const char *name)
+ 
+     TRACE("%p, %s\n", instance, debugstr_a(name));
+ 
++    if (!pvkGetInstanceProcAddr(instance, wine_vk_native_fn_name(name)))
++        return NULL;
++
+     if ((proc_addr = macdrv_get_vk_instance_proc_addr(instance, name)))
+         return proc_addr;
+ 
+-- 
+2.32.0
+
+From 1c86da3885b12ffcff49bc2c52c2e3df287a4d36 Mon Sep 17 00:00:00 2001
+From: Georg Lehmann <dadschoorse@gmail.com>
+Date: Mon, 31 May 2021 18:06:11 +0200
+Subject: [PATCH 3/4] winevulkan: Introduce
+ wine_vk_is_available_instance_function.
+
+Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=49542
+Signed-off-by: Georg Lehmann <dadschoorse@gmail.com>
+---
+ dlls/winevulkan/loader.c         | 6 ++++++
+ dlls/winevulkan/make_vulkan      | 4 ++++
+ dlls/winevulkan/vulkan.c         | 5 +++++
+ dlls/winevulkan/vulkan_private.h | 2 ++
+ 4 files changed, 17 insertions(+)
+
+diff --git a/dlls/winevulkan/loader.c b/dlls/winevulkan/loader.c
+index 6bc32620bba..4857a0adc7a 100644
+--- a/dlls/winevulkan/loader.c
++++ b/dlls/winevulkan/loader.c
+@@ -116,6 +116,9 @@ PFN_vkVoidFunction WINAPI vkGetInstanceProcAddr(VkInstance instance, const char
+         return NULL;
+     }
+ 
++    if (!unix_funcs->p_is_available_instance_function(instance, name))
++        return NULL;
++
+     func = wine_vk_get_instance_proc_addr(name);
+     if (func) return func;
+ 
+@@ -175,6 +178,9 @@ void * WINAPI vk_icdGetPhysicalDeviceProcAddr(VkInstance instance, const char *n
+ {
+     TRACE("%p, %s\n", instance, debugstr_a(name));
+ 
++    if (!unix_funcs->p_is_available_instance_function(instance, name))
++        return NULL;
++
+     return wine_vk_get_phys_dev_proc_addr(name);
+ }
+ 
+diff --git a/dlls/winevulkan/make_vulkan b/dlls/winevulkan/make_vulkan
+index e8534cbd5f5..ec2049c85eb 100755
+--- a/dlls/winevulkan/make_vulkan
++++ b/dlls/winevulkan/make_vulkan
+@@ -2776,6 +2776,7 @@ class VkGenerator(object):
+                 continue
+ 
+             f.write("    &{1}{0},\n".format(vk_func.name, prefix))
++        f.write("    &wine_vk_is_available_instance_function,\n")
+         f.write("};\n")
+ 
+     def generate_thunks_h(self, f, prefix):
+@@ -2976,6 +2977,9 @@ class VkGenerator(object):
+                 continue
+ 
+             f.write("    {0};\n".format(vk_func.pfn(conv=False, call_conv="WINAPI")))
++        f.write("\n")
++        f.write("    /* winevulkan specific functions */\n")
++        f.write("    BOOL (WINAPI *p_is_available_instance_function)(VkInstance, const char *);\n")
+         f.write("};\n\n")
+ 
+         f.write("#endif /* __WINE_VULKAN_LOADER_THUNKS_H */\n")
+diff --git a/dlls/winevulkan/vulkan.c b/dlls/winevulkan/vulkan.c
+index fb0ffbdfe6c..3658a4378cb 100644
+--- a/dlls/winevulkan/vulkan.c
++++ b/dlls/winevulkan/vulkan.c
+@@ -1605,3 +1605,8 @@ void WINAPI wine_vkDestroyDebugReportCallbackEXT(
+ 
+     free(object);
+ }
++
++BOOL WINAPI wine_vk_is_available_instance_function(VkInstance instance, const char *name)
++{
++    return !!vk_funcs->p_vkGetInstanceProcAddr(instance->instance, name);
++}
+diff --git a/dlls/winevulkan/vulkan_private.h b/dlls/winevulkan/vulkan_private.h
+index 83dc90ca15e..ce83b2b7032 100644
+--- a/dlls/winevulkan/vulkan_private.h
++++ b/dlls/winevulkan/vulkan_private.h
+@@ -212,4 +212,6 @@ uint64_t wine_vk_unwrap_handle(VkObjectType type, uint64_t handle) DECLSPEC_HIDD
+ 
+ extern const struct unix_funcs loader_funcs;
+ 
++BOOL WINAPI wine_vk_is_available_instance_function(VkInstance instance, const char *name) DECLSPEC_HIDDEN;
++
+ #endif /* __WINE_VULKAN_PRIVATE_H */
+-- 
+2.32.0
+
+From 67e6c24185189fea9d38a0fa6641aae10645157c Mon Sep 17 00:00:00 2001
+From: Georg Lehmann <dadschoorse@gmail.com>
+Date: Mon, 31 May 2021 18:31:39 +0200
+Subject: [PATCH 4/4] winevulkan: Introduce
+ wine_vk_is_available_device_function.
+
+Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=51360
+Signed-off-by: Georg Lehmann <dadschoorse@gmail.com>
+---
+ dlls/winevulkan/loader.c         | 12 +++++++++---
+ dlls/winevulkan/make_vulkan      |  2 ++
+ dlls/winevulkan/vulkan.c         |  8 ++++++++
+ dlls/winevulkan/vulkan_private.h |  1 +
+ 4 files changed, 20 insertions(+), 3 deletions(-)
+
+diff --git a/dlls/winevulkan/loader.c b/dlls/winevulkan/loader.c
+index 4857a0adc7a..1f39373698f 100644
+--- a/dlls/winevulkan/loader.c
++++ b/dlls/winevulkan/loader.c
+@@ -147,9 +147,15 @@ PFN_vkVoidFunction WINAPI vkGetDeviceProcAddr(VkDevice device, const char *name)
+      * vkCommandBuffer or vkQueue.
+      * Loader takes care of filtering of extensions which are enabled or not.
+      */
+-    func = wine_vk_get_device_proc_addr(name);
+-    if (func)
+-        return func;
++    if (unix_funcs->p_is_available_device_function(device, name, FALSE))
++    {
++        func = wine_vk_get_device_proc_addr(name);
++        if (func)
++            return func;
++    }
++
++    if (!unix_funcs->p_is_available_device_function(device, name, TRUE))
++        return NULL;
+ 
+     /* vkGetDeviceProcAddr was intended for loading device and subdevice functions.
+      * idTech 6 titles such as Doom and Wolfenstein II, however use it also for
+diff --git a/dlls/winevulkan/make_vulkan b/dlls/winevulkan/make_vulkan
+index ec2049c85eb..362948cb990 100755
+--- a/dlls/winevulkan/make_vulkan
++++ b/dlls/winevulkan/make_vulkan
+@@ -2777,6 +2777,7 @@ class VkGenerator(object):
+ 
+             f.write("    &{1}{0},\n".format(vk_func.name, prefix))
+         f.write("    &wine_vk_is_available_instance_function,\n")
++        f.write("    &wine_vk_is_available_device_function,\n")
+         f.write("};\n")
+ 
+     def generate_thunks_h(self, f, prefix):
+@@ -2980,6 +2981,7 @@ class VkGenerator(object):
+         f.write("\n")
+         f.write("    /* winevulkan specific functions */\n")
+         f.write("    BOOL (WINAPI *p_is_available_instance_function)(VkInstance, const char *);\n")
++        f.write("    BOOL (WINAPI *p_is_available_device_function)(VkDevice, const char *, BOOL);\n")
+         f.write("};\n\n")
+ 
+         f.write("#endif /* __WINE_VULKAN_LOADER_THUNKS_H */\n")
+diff --git a/dlls/winevulkan/vulkan.c b/dlls/winevulkan/vulkan.c
+index 3658a4378cb..39261f1a1b3 100644
+--- a/dlls/winevulkan/vulkan.c
++++ b/dlls/winevulkan/vulkan.c
+@@ -1610,3 +1610,11 @@ BOOL WINAPI wine_vk_is_available_instance_function(VkInstance instance, const ch
+ {
+     return !!vk_funcs->p_vkGetInstanceProcAddr(instance->instance, name);
+ }
++
++BOOL WINAPI wine_vk_is_available_device_function(VkDevice device, const char *name, BOOL check_instance)
++{
++    if (check_instance)
++        return wine_vk_is_available_instance_function(device->phys_dev->instance, name);
++
++    return !!vk_funcs->p_vkGetDeviceProcAddr(device->device, name);
++}
+diff --git a/dlls/winevulkan/vulkan_private.h b/dlls/winevulkan/vulkan_private.h
+index ce83b2b7032..040aca86756 100644
+--- a/dlls/winevulkan/vulkan_private.h
++++ b/dlls/winevulkan/vulkan_private.h
+@@ -213,5 +213,6 @@ uint64_t wine_vk_unwrap_handle(VkObjectType type, uint64_t handle) DECLSPEC_HIDD
+ extern const struct unix_funcs loader_funcs;
+ 
+ BOOL WINAPI wine_vk_is_available_instance_function(VkInstance instance, const char *name) DECLSPEC_HIDDEN;
++BOOL WINAPI wine_vk_is_available_device_function(VkDevice device, const char *name, BOOL check_instance) DECLSPEC_HIDDEN;
+ 
+ #endif /* __WINE_VULKAN_PRIVATE_H */
+-- 
+2.32.0
+

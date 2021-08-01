@@ -1,1 +1,1 @@
--W winex11-_NET_ACTIVE_WINDOW -W winex11-WM_WINDOWPOSCHANGING -W winemenubuilder-integration -W ntdll-NtAlertThreadByThreadId -W imm32-com-initialization
+-W winex11-_NET_ACTIVE_WINDOW -W winex11-WM_WINDOWPOSCHANGING -W winemenubuilder-integration -W imm32-com-initialization
