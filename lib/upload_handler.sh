@@ -94,11 +94,11 @@ runner_upload() {
     fi
 
     token_path="~/.lutris_token"
-    if [ ! -f $token_path ]; then
+    access_token=$(cat $token_path)
+    if [[ ! $access_token ]]; then
         echo "You are not authenticated, runner won't upload"
         return
     fi
-    access_token=$(cat $token_path)
 
     if [ $(s3cmd_check_existence $filename "runners" ${runner}) ]; then
         file_exists=yes
