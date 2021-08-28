@@ -40,6 +40,7 @@ Install() {
     mv castool chdman floptool imgtool jedutil ldresample ldverify mame nltool nlwav pngcmp regrep romcmp split testkeys srcclean unidasm $build_dir
     strip ${build_dir}/*
     mv bgfx ctrlr hash hlsl ini keymaps language plugins roms samples scripts $build_dir
+    cp -a ${root_dir}/shaders ${build_dir}
 }
 
 Package() {
