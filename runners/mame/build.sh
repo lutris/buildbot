@@ -16,8 +16,8 @@ branch="mame$(echo $version | tr -d .)"
 
 InstallDeps() {
     install_deps curl wget unzip debhelper libexpat1-dev libflac-dev libfontconfig1-dev \
-        libjpeg8-dev libportmidi-dev qtbase5-dev qt5-default libsdl2-ttf-dev libsdl2-dev \
-        libxinerama-dev subversion python-dev zlib1g-dev gcc-5
+        libjpeg8-dev libportmidi-dev qtbase5-dev libsdl2-ttf-dev libsdl2-dev \
+        libxinerama-dev subversion python-dev zlib1g-dev
 }
 
 Fetch() {
