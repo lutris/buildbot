@@ -28,9 +28,6 @@ Build() {
     cd ${source_dir}
     unset FULLNAME
     make NO_OPENGL=0 REGENIE=1 TOOLS=1 -j8
-    if [ "$arch" = "x86_64" ]; then
-        mv mame64 mame
-    fi
 }
 
 Install() {
