@@ -93,7 +93,7 @@ runner_upload() {
         architecture="armv7"
     fi
 
-    token_path="~/.lutris_token"
+    token_path="/home/$USER/.lutris_token"
     access_token=$(cat $token_path)
     if [[ ! "$access_token" ]]; then
         echo "You are not authenticated, runner won't upload"
@@ -128,7 +128,7 @@ runtime_upload() {
     name=$1
     filename=$2
 
-    token_path="~/.lutris_token"
+    token_path="/home/$USER/.lutris_token"
     if [ ! -f $token_path ]; then
         echo "You are not authenticated, runner won't upload"
         return
