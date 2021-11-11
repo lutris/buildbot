@@ -24,12 +24,12 @@ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60 --slave /usr/b
 #Install MinGW
 cd ~
 if [ "$(uname -m)" = "x86_64" ]; then
-    wget https://github.com/lutris/mostlyportable-gcc/releases/download/mingw-11.1.1/mingw-mostlyportable-11.1.1-64.tar.xz
+    wget https://github.com/lutris/mostlyportable-gcc/releases/download/mingw-11.2.1/mingw-mostlyportable-11.2.1-64.tar.xz
     tar xf ~/mingw-mostlyportable-11.1.1-64.tar.xz
     mv ~/mingw-mostlyportable-11.1.1-64 /opt/mingw-mostlyportable
     rm ~/mingw-mostlyportable-11.1.1-64.tar.xz
 else
-    wget https://github.com/lutris/mostlyportable-gcc/releases/download/mingw-11.1.1/mingw-mostlyportable-11.1.1-32.tar.xz
+    wget https://github.com/lutris/mostlyportable-gcc/releases/download/mingw-11.2.1/mingw-mostlyportable-11.2.1-32.tar.xz
     tar xf ~/mingw-mostlyportable-11.1.1-32.tar.xz
     mv ~/mingw-mostlyportable-11.1.1-32 /opt/mingw-mostlyportable
     rm ~/mingw-mostlyportable-11.1.1-32.tar.xz
