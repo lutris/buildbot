@@ -22,11 +22,11 @@ index 88b70464f5c..be598dac7d4 100644
 @@ -1,6 +1,6 @@
  MODULE    = wininet.dll
  IMPORTLIB = wininet
--IMPORTS   = mpr shlwapi shell32 user32 ws2_32 advapi32
-+IMPORTS   = ole32 mpr shlwapi shell32 user32 ws2_32 advapi32
+-IMPORTS   = $(ZLIB_PE_LIBS) mpr shlwapi shell32 user32 ws2_32 advapi32
++IMPORTS   = $(ZLIB_PE_LIBS) ole32 mpr shlwapi shell32 user32 ws2_32 advapi32
+ EXTRAINCL = $(ZLIB_PE_CFLAGS)
  DELAYIMPORTS = secur32 crypt32 cryptui dhcpcsvc iphlpapi
  
- EXTRADLLFLAGS = -mno-cygwin
 diff --git a/dlls/wininet/internet.c b/dlls/wininet/internet.c
 index fb02488934d..4df9edff4bc 100644
 --- a/dlls/wininet/internet.c

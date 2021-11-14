@@ -428,7 +428,7 @@ index c8bb3fd9bf0..bb0559578e9 100644
 --- a/loader/wine.inf.in
 +++ b/loader/wine.inf.in
 @@ -4324,6 +4324,8 @@
- HKCU,Software\Wine\AppDefaults\ShadowOfWar.exe\DllOverrides,"amd_ags_x64",,""
+ HKCU,Software\Wine\AppDefaults\BlackOps3.exe\DllOverrides,"atiadlxx",,"builtin"
  HKCU,Software\Wine\AppDefaults\DIRT5.exe\DllOverrides,"atiadlxx",,"builtin"
  HKCU,Software\Wine\AppDefaults\LauncherPatcher.exe,"Version",,"win7"
 +HKCU,Software\Wine\AppDefaults\Sims3Launcher.exe\MSHTML\MainThreadHack

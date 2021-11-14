@@ -155,3 +155,4 @@ index a625f000254..be27b00cfd0 100644
          stream->post_src = gst_element_get_static_pad(vconv2, "src");
          stream->flip = flip;
          stream->box = videobox;
+
