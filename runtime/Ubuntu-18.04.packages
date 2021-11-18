@@ -26,7 +26,7 @@ libgdk-pixbuf2.0-0                libgdk_pixbuf-2.0.so.0
 libgif7                           libgif.so.7
 libglew2.0                        libGLEW.so.2.0
 libgloox15                        libgloox.so.15
-libgnutls30                       libgnutls.so.30 libnettle.so.6 libhogweed.so.4 libgmp.so.10 libtasn1.so.6 libidn.so.11
+libgnutls30                       libgnutls.so.30 libnettle.so.6 libhogweed.so.4 libgmp.so.10 libtasn1.so.6 libidn2.so.0
 libgomp1                          libgomp.so.1
 libgraphite2-3                    libgraphite2.so.3
 libharfbuzz0b                     libharfbuzz.so.0
@@ -84,3 +84,12 @@ libxml2                           libxml2.so.2
 libxslt1.1                        libxslt.so.1 libexslt.so.0
 libzzip-0-13                      libzzip-0.so.13
 zlib1g                            libz.so.1
+
+libcurl4                          libcurl.so.4
+libnghttp2                        libnghttp2.so.14
+libpcre3                          libpcre.so.3
+libpsl5                           libpsl.so.5
+libssl1.1                         libcrypto.so.1.1 libssl.so.1.1
+libunistring2                     libunistring.so.2
+libuuid1                          libuuid.so.1
+librtmp1                          librtmp.so.1
