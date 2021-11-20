@@ -57,7 +57,7 @@ libpangocairo-1.0-0               libpangocairo-1.0.so.0
 libpangoft2-1.0-0                 libpangoft2-1.0.so.0
 libphysfs1                        libphysfs.so.1
 libportaudio2                     libportaudio.so.2
-libpulse0                         libpulse-simple.so.0 libpulse.so.0 /usr/lib/i386-linux-gnu/pulseaudio/libpulsecommon-8.0.so /usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-8.0.so
+libpulse0                         libpulse-simple.so.0 libpulse.so.0 /usr/lib/i386-linux-gnu/pulseaudio/libpulsecommon-11.1.so /usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-11.1.so
 libsdl2-image-2.0-0               libSDL2_image-2.0.so.0
 libsdl2-mixer-2.0-0               libSDL2_mixer-2.0.so.0
 libsdl2-ttf-2.0-0                 libSDL2_ttf-2.0.so.0
@@ -85,7 +85,7 @@ libxslt1.1                        libxslt.so.1 libexslt.so.0
 libzzip-0-13                      libzzip-0.so.13
 zlib1g                            libz.so.1
 libcurl4                          libcurl.so.4
-libnghttp2                        libnghttp2.so.14
+libnghttp2-14                     libnghttp2.so.14
 libpcre3                          libpcre.so.3
 libpsl5                           libpsl.so.5
 libssl1.1                         libcrypto.so.1.1 libssl.so.1.1
