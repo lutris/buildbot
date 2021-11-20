@@ -84,7 +84,6 @@ libxml2                           libxml2.so.2
 libxslt1.1                        libxslt.so.1 libexslt.so.0
 libzzip-0-13                      libzzip-0.so.13
 zlib1g                            libz.so.1
-
 libcurl4                          libcurl.so.4
 libnghttp2                        libnghttp2.so.14
 libpcre3                          libpcre.so.3
