@@ -31,7 +31,7 @@ done
 
 core="$1"
 
-clone git://github.com/libretro/libretro-super.git $source_dir
+clone https://github.com/libretro/libretro-super.git $source_dir
 cd "${source_dir}"
 
 mkdir -p ${bin_dir}
