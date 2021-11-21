@@ -48,7 +48,7 @@ BuildRetroarch() {
     ./libretro-fetch.sh retroarch
     cd ${source_dir}/retroarch
     git checkout "v$retroarch_version"
-    ./configure --disable-ffmpeg --disable-qt
+    ./configure --disable-ffmpeg --disable-qt --disable-caca --disable-cg
     make -j$cpus
     strip retroarch
     cp retroarch $bin_dir
