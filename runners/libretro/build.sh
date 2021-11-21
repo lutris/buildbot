@@ -38,8 +38,8 @@ mkdir -p ${bin_dir}
 
 InstallDeps() {
     deps="build-essential libxkbcommon-dev zlib1g-dev libfreetype6-dev \
-        libegl1-mesa-dev libgbm-dev libavcodec-dev \
-        libsdl2-dev libsdl-image1.2-dev libxml2-dev"
+        libegl1-mesa-dev libgbm-dev libavcodec-dev libsdl2-dev \
+        libxml2-dev"
     install_deps $deps
 }
 
