@@ -19,11 +19,12 @@ if [ "$arch" == "x86_64"]; then
     buildbotarch="x64"
 fi
 
-params=$(getopt -n $0 -o d --long dependencies -- "$@")
+params=$(getopt -n $0 -o dn --long dependencies,noupload -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
         -d|--dependencies) INSTALL_DEPS=1; shift ;;
+        -n|--noupload) NOUPLOAD=1; shift ;;
         *) shift; break ;;
     esac
 done
@@ -90,7 +91,9 @@ PackageRetroarch() {
     cd $root_dir
     archive="retroarch-${retroarch_version}-${arch}.tar.xz"
     tar cJf $archive retroarch
-    runner_upload ${runner_name} "retroarch-${retroarch_version}" ${arch} ${archive}
+    if [ ! $NOUPLOAD ]; then
+        runner_upload ${runner_name} "retroarch-${retroarch_version}" ${arch} ${archive}
+    fi
     rm -rf retroarch
 }
 
@@ -102,7 +105,9 @@ PackageCore() {
     tar cJf ../${archive} ${core_file}
     rm $core_file
     cd $root_dir
-    runner_upload ${runner_name} ${core} ${arch} $archive
+    if [ ! $NOUPLOAD ]; then
+        runner_upload ${runner_name} ${core} ${arch} $archive
+    fi
 }
 
 if [ $INSTALL_DEPS ]; then
