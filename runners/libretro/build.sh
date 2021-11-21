@@ -91,6 +91,7 @@ PackageRetroarch() {
     archive="retroarch-${retroarch_version}-${arch}.tar.xz"
     tar cJf $archive retroarch
     runner_upload ${runner_name} "retroarch-${retroarch_version}" ${arch} ${archive}
+    rm -rf retroarch
 }
 
 PackageCore() {
