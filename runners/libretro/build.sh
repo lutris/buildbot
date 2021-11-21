@@ -89,17 +89,17 @@ BuildLibretroCore() {
 
 PackageRetroarch() {
     cd $root_dir
-    archive="retroarch-${retroarch_version}-${arch}.tar.gz"
-    tar czf $archive retroarch
+    archive="retroarch-${retroarch_version}-${arch}.tar.xz"
+    tar cJf $archive retroarch
     runner_upload ${runner_name} "retroarch-${retroarch_version}" ${arch} ${archive}
 }
 
 PackageCore() {
     core=$1
     cd ${cores_dir}
-    archive="libretro-${core}-${arch}.tar.gz"
+    archive="libretro-${core}-${arch}.tar.xz"
     core_file="${core}_libretro.so"
-    tar czf ../${archive} ${core_file}
+    tar cJf ../${archive} ${core_file}
     rm $core_file
     cd $root_dir
     runner_upload ${runner_name} ${core} ${arch} $archive
