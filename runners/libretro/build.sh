@@ -8,7 +8,6 @@ source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
-retroarch_version="1.9.7"
 root_dir="$(pwd)"
 source_dir="${root_dir}/libretro-super"
 bin_dir="${root_dir}/retroarch"
@@ -47,7 +46,8 @@ BuildRetroarch() {
     cd ${source_dir}
     ./libretro-fetch.sh retroarch
     cd ${source_dir}/retroarch
-    git checkout "v$retroarch_version"
+    retroarch_version=$(git describe --tags `git rev-list --tags --max-count=1`)
+    git checkout $retroarch_version
     ./configure --disable-ffmpeg --disable-qt --disable-caca --disable-cg
     make -j$cpus
     strip retroarch
