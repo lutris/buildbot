@@ -52,7 +52,6 @@ BuildRetroarch() {
     make -j$cpus
     strip retroarch
     cp retroarch $bin_dir
-    cp tools/cg2glsl.py ${bin_dir}/retroarch-cg2glsl
 
     # Assets
     # TODO: Restore files that pushed the package size to be too big
