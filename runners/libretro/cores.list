@@ -10,13 +10,13 @@ crocods
 desmume
 dinothawr
 dolphin
-dosbox
-easyrpg
+dosbox_core
 ecwolf
-fbalpha
+fbalpha2012
 fbalpha2012_cps1
 fbalpha2012_cps2
 fceumm
+flycast
 fmsx
 fuse
 gambatte
@@ -24,8 +24,6 @@ gearboy
 genesis_plus_gx
 handy
 hatari
-hbmame
-mame
 mednafen_gba
 mednafen_ngp
 mednafen_pce_fast
@@ -38,7 +36,7 @@ mednafen_wswan
 melonds
 mesen
 mgba
-mupen64plus
+mupen64plus_next
 nekop2
 nestopia
 np2kai
@@ -51,8 +49,6 @@ ppsspp
 prosystem
 px68k
 race
-redream
-reicast
 snes9x
 stella
 tic80
