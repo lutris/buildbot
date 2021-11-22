@@ -15,7 +15,7 @@ cores_dir="${root_dir}/cores"
 cpus=$(getconf _NPROCESSORS_ONLN)
 arch=$(uname -m)
 buildbotarch="x86"
-if [ "$arch" == "x86_64"]; then
+if [ "$arch" == "x86_64" ]; then
     buildbotarch="x64"
 fi
 
