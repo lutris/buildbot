@@ -12,12 +12,12 @@ add-apt-repository ppa:cybermax-dexter/sdl2-backport -y
 # for vkd3d support
 add-apt-repository ppa:cybermax-dexter/vkd3d -y
 
-# for gcc 11
+# for gcc 11 and 10
 add-apt-repository ppa:ubuntu-toolchain-r/test -y
 
 apt update
 
-apt -y install wget curl build-essential git python openssh-server s3cmd awscli vim zsh fontconfig sshpass gcc-11 g++-11
+apt -y install wget curl build-essential git python openssh-server s3cmd awscli vim nano fontconfig sshpass gcc-10 g++-10 gcc-11 g++-11
 
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60 --slave /usr/bin/g++ g++ /usr/bin/g++-11
 
