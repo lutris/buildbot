@@ -38,8 +38,8 @@ mkdir -p ${bin_dir}
 
 InstallDeps() {
     deps="build-essential cmake libxkbcommon-dev zlib1g-dev libfreetype6-dev \
-        libegl1-mesa-dev libgbm-dev libavcodec-dev libsdl2-dev \
-        libxml2-dev"
+        libegl1-mesa-dev libgbm-dev libavcodec-dev libsdl2-dev libpcap-dev \
+        libxml2-dev unzip nasm"
     install_deps $deps
 }
 
