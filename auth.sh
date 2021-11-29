@@ -20,5 +20,5 @@ if [[ "$access_token" == *"Unable"* ]]; then
     echo "Auth failed:" $access_token
 else
     echo "Login successful"
-    echo $access_token > .lutris_token
+    echo $access_token > ~/.lutris_token
 fi

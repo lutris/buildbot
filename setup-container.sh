@@ -16,7 +16,7 @@ SetupSSH() {
 }
 
 SetupUserspace() {
-    sudo lxc exec $container -- git clone https://github.com/tannisroot/buildbot.git /home/$user/buildbot
+    sudo lxc exec $container -- git clone https://github.com/lutris/buildbot.git /home/$user/buildbot
     sudo lxc exec $container -- chown -R ubuntu:ubuntu /home/$user/buildbot
 }
 

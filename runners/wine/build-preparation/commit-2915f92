@@ -1,0 +1,49 @@
+From 2915f92bb388c6f347efcb3d0f7079d1fa05cc6a Mon Sep 17 00:00:00 2001
+From: Tk-Glitch <ti3nou@gmail.com>
+Date: Thu, 13 Nov 2021 14:50:18 +0100
+Subject: Hotfixer: Allow to rollback to non-PE FAudio using
+ `_non_pe_faudio="true"`
+
+
+diff --git a/wine-tkg-git/wine-tkg-patches/hotfixes/hotfixer b/wine-tkg-git/wine-tkg-patches/hotfixes/hotfixer
+index c2cd4ac..76113d9 100755
+--- a/wine-tkg-git/wine-tkg-patches/hotfixes/hotfixer
++++ b/wine-tkg-git/wine-tkg-patches/hotfixes/hotfixer
+@@ -524,6 +524,15 @@ else
+   fi
+ fi
+ 
++# Test - Rollback to non-PE FAudio
++if [ "$_non_pe_faudio" = "true" ]; then
++  warning "Rolling back to non-PE FAudio"
++  _hotfix_mainlinereverts+=(da89825f98e4f0cb3875735345a455512b36b665 babaf916ab12c7a9128409f717878919ccc5826b 22c26a2dde318b5b370fc269cab871e5a8bc4231 d8be85863fedf6982944d06ebd1ce5904cb3d4e1 6b45777121fcd50d9b7d5b649c6710063b549892)
++  if [ "$_use_staging" = "true" ] && ( cd "${srcdir}"/"${_stgsrcdir}" && git merge-base --is-ancestor 6fd31b354c7693c85e62113f3db0cf6488c63c15 HEAD ); then
++    _hotfixes+=("$_where"/wine-tkg-patches/hotfixes/non-PE-FAudio/6fd31b3)
++  fi
++fi
++
+ # Disable vr support patchset for 5.20-6.12
+ if ( cd "${srcdir}"/"${_winesrcdir}" && ! git merge-base --is-ancestor 12d33d21d33788fd46898ea42e9592d33b6e7c8e HEAD ); then
+   _steamvr_support="false"
+diff --git a/wine-tkg-git/wine-tkg-patches/hotfixes/non-PE-FAudio/6fd31b3.mystagingrevert b/wine-tkg-git/wine-tkg-patches/hotfixes/non-PE-FAudio/6fd31b3.mystagingrevert
+new file mode 100644
+index 0000000..7097e16
+--- /dev/null
++++ b/wine-tkg-git/wine-tkg-patches/hotfixes/non-PE-FAudio/6fd31b3.mystagingrevert
+@@ -0,0 +1,16 @@
++diff --git a/patches/xactengine-initial/0001-x3daudio1_7-Create-import-library.patch b/patches/xactengine-initial/0001-x3daudio1_7-Create-import-library.patch
++index 0c84c6f85..bf00b0bdf 100644
++--- a/patches/xactengine-initial/0001-x3daudio1_7-Create-import-library.patch
+++++ b/patches/xactengine-initial/0001-x3daudio1_7-Create-import-library.patch
++@@ -16,8 +16,8 @@ index 267a93fd6da..5438bc6d801 100644
++  MODULE    = x3daudio1_7.dll
++ +IMPORTLIB = x3daudio1_7
++  PARENTSRC = ../xaudio2_7
++- EXTRALIBS = $(FAUDIO_LIBS)
++- EXTRAINCL = $(FAUDIO_CFLAGS)
+++ IMPORTS   = $(FAUDIO_PE_LIBS)
+++ EXTRAINCL = $(FAUDIO_PE_CFLAGS)
++ -- 
++-2.28.0
+++2.33.0
++ 

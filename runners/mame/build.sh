@@ -15,9 +15,9 @@ version=$(curl https://www.mamedev.org/release.html | grep -oP "(?<=MAME )[.0-9]
 branch="mame$(echo $version | tr -d .)"
 
 InstallDeps() {
-    install_deps curl wget unzip debhelper libexpat1-dev libflac-dev libfontconfig1-dev \
-        libjpeg8-dev libportmidi-dev qtbase5-dev qt5-default libsdl2-ttf-dev libsdl2-dev \
-        libxinerama-dev subversion python-dev zlib1g-dev gcc-5
+    install_deps curl wget unzip libexpat1-dev libflac-dev libfontconfig1-dev \
+        libjpeg8-dev libportmidi-dev qtbase5-dev libsdl2-ttf-dev libsdl2-dev \
+        libxinerama-dev zlib1g-dev
 }
 
 Fetch() {
@@ -28,9 +28,6 @@ Build() {
     cd ${source_dir}
     unset FULLNAME
     make NO_OPENGL=0 REGENIE=1 TOOLS=1 -j8
-    if [ "$arch" = "x86_64" ]; then
-        mv mame64 mame
-    fi
 }
 
 Install() {
@@ -40,6 +37,7 @@ Install() {
     mv castool chdman floptool imgtool jedutil ldresample ldverify mame nltool nlwav pngcmp regrep romcmp split testkeys srcclean unidasm $build_dir
     strip ${build_dir}/*
     mv bgfx ctrlr hash hlsl ini keymaps language plugins roms samples scripts $build_dir
+    cp -a ${root_dir}/shaders ${build_dir}
 }
 
 Package() {
