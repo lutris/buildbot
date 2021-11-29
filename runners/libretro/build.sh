@@ -8,7 +8,6 @@ source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
-retroarch_version="1.9.7"
 root_dir="$(pwd)"
 source_dir="${root_dir}/libretro-super"
 bin_dir="${root_dir}/retroarch"
@@ -16,30 +15,31 @@ cores_dir="${root_dir}/cores"
 cpus=$(getconf _NPROCESSORS_ONLN)
 arch=$(uname -m)
 buildbotarch="x86"
-if [ "$arch" == "x86_64"]; then
+if [ "$arch" == "x86_64" ]; then
     buildbotarch="x64"
 fi
 
-params=$(getopt -n $0 -o d --long dependencies -- "$@")
+params=$(getopt -n $0 -o dn --long dependencies,noupload -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
         -d|--dependencies) INSTALL_DEPS=1; shift ;;
+        -n|--noupload) NOUPLOAD=1; shift ;;
         *) shift; break ;;
     esac
 done
 
 core="$1"
 
-clone git://github.com/libretro/libretro-super.git $source_dir
+clone https://github.com/libretro/libretro-super.git $source_dir
 cd "${source_dir}"
 
 mkdir -p ${bin_dir}
 
 InstallDeps() {
-    deps="build-essential libxkbcommon-dev zlib1g-dev libfreetype6-dev \
-        libegl1-mesa-dev libgbm-dev nvidia-cg-toolkit nvidia-cg-dev libavcodec-dev \
-        libsdl2-dev libsdl-image1.2-dev libxml2-dev"
+    deps="build-essential cmake libxkbcommon-dev zlib1g-dev libfreetype6-dev \
+        libegl1-mesa-dev libgbm-dev libavcodec-dev libsdl2-dev libpcap-dev \
+        libxml2-dev unzip nasm"
     install_deps $deps
 }
 
@@ -47,12 +47,12 @@ BuildRetroarch() {
     cd ${source_dir}
     ./libretro-fetch.sh retroarch
     cd ${source_dir}/retroarch
-    git checkout "v$retroarch_version"
-    ./configure --disable-ffmpeg --disable-qt
+    retroarch_version=$(git describe --tags `git rev-list --tags --max-count=1`)
+    git checkout $retroarch_version
+    ./configure --disable-ffmpeg --disable-qt --disable-caca --disable-cg
     make -j$cpus
     strip retroarch
     cp retroarch $bin_dir
-    cp tools/cg2glsl.py ${bin_dir}/retroarch-cg2glsl
 
     # Assets
     # TODO: Restore files that pushed the package size to be too big
@@ -89,20 +89,25 @@ BuildLibretroCore() {
 
 PackageRetroarch() {
     cd $root_dir
-    archive="retroarch-${retroarch_version}-${arch}.tar.gz"
-    tar czf $archive retroarch
-    runner_upload ${runner_name} "retroarch-${retroarch_version}" ${arch} ${archive}
+    archive="retroarch-${retroarch_version}-${arch}.tar.xz"
+    tar cJf $archive retroarch
+    if [ ! $NOUPLOAD ]; then
+        runner_upload ${runner_name} "retroarch-${retroarch_version}" ${arch} ${archive}
+    fi
+    rm -rf retroarch
 }
 
 PackageCore() {
     core=$1
     cd ${cores_dir}
-    archive="libretro-${core}-${arch}.tar.gz"
+    archive="libretro-${core}-${arch}.tar.xz"
     core_file="${core}_libretro.so"
-    tar czf ../${archive} ${core_file}
+    tar cJf ../${archive} ${core_file}
     rm $core_file
     cd $root_dir
-    runner_upload ${runner_name} ${core} ${arch} $archive
+    if [ ! $NOUPLOAD ]; then
+        runner_upload ${runner_name} ${core} ${arch} $archive
+    fi
 }
 
 if [ $INSTALL_DEPS ]; then

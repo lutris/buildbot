@@ -1,0 +1,239 @@
+From 033a41dd6067922f689338a6e0f0ac57b9aff8e3 Mon Sep 17 00:00:00 2001
+From: Torge Matthies <openglfreak@googlemail.com>
+Date: Sat, 13 Mar 2021 02:53:21 +0100
+Subject: [PATCH] wineboot: Generate ProductId from host's machine id.
+
+Looks for both the systemd and the dbus machine-id files.
+
+Signed-off-by: Torge Matthies <openglfreak@googlemail.com>
+---
+I could have used CryptStringToBinaryA for the hex->bin conversion, but
+that would add another import to wineboot.
+This was requested by Alexandr Oleynikov from the Lutris project back in
+September 2020.
+
+ loader/wine.inf.in            |   2 -
+ programs/wineboot/Makefile.in |   2 +-
+ programs/wineboot/wineboot.c  | 162 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 163 insertions(+), 3 deletions(-)
+
+diff --git a/loader/wine.inf.in b/loader/wine.inf.in
+index 4cef944fb88..38bdcca7b6e 100644
+--- a/loader/wine.inf.in
++++ b/loader/wine.inf.in
+@@ -535,7 +535,6 @@ HKCU,%CurrentVersion%\Run,,16
+ HKCU,%CurrentVersionNT%\Winlogon,,16
+ HKLM,%CurrentVersion%,"CommonFilesDir",,"%16427%"
+ HKLM,%CurrentVersion%,"FirstInstallDateTime",1,21,81,7c,23
+-HKLM,%CurrentVersion%,"ProductId",,"12345-oem-0000001-54321"
+ HKLM,%CurrentVersion%,"ProgramFilesDir",,"%16422%"
+ HKLM,%CurrentVersion%,"ProgramFilesPath",0x20000,"%%ProgramFiles%%"
+ HKLM,%CurrentVersion%,"RegisteredOrganization",2,""
+@@ -559,7 +558,6 @@ HKLM,%CurrentVersion%\Setup\WindowsFeatures\WindowsMediaVersion,,,"12.0.7601.188
+ HKLM,%CurrentVersion%\Shell Extensions\Approved,,16
+ HKLM,%CurrentVersion%\Uninstall,,16
+ HKLM,%CurrentVersionNT%,"InstallDate",0x10003,1273299354
+-HKLM,%CurrentVersionNT%,"ProductId",,"12345-oem-0000001-54321"
+ HKLM,%CurrentVersionNT%,"RegisteredOrganization",2,""
+ HKLM,%CurrentVersionNT%,"RegisteredOwner",2,""
+ HKLM,%CurrentVersionNT%,"SystemRoot",,"%10%"
+diff --git a/programs/wineboot/Makefile.in b/programs/wineboot/Makefile.in
+index 2552f69990a..0e7fe444ecb 100644
+--- a/programs/wineboot/Makefile.in
++++ b/programs/wineboot/Makefile.in
+@@ -1,6 +1,6 @@
+ MODULE    = wineboot.exe
+ IMPORTS   = uuid advapi32 ws2_32 kernelbase
+-DELAYIMPORTS = shell32 shlwapi version user32 setupapi newdev wininet
++DELAYIMPORTS = shell32 shlwapi version user32 setupapi newdev wininet bcrypt
+ 
+ EXTRADLLFLAGS = -mno-cygwin
+ 
+diff --git a/programs/wineboot/wineboot.c b/programs/wineboot/wineboot.c
+index 9427448b612..aa02179fb22 100644
+--- a/programs/wineboot/wineboot.c
++++ b/programs/wineboot/wineboot.c
+@@ -71,6 +71,7 @@
+ #include <wine/svcctl.h>
+ #include <wine/asm.h>
+ #include <wine/debug.h>
++#include <bcrypt.h>
+ 
+ #include <shlobj.h>
+ #include <shobjidl.h>
+@@ -749,6 +750,164 @@ static void create_hardware_registry_keys(void)
+ }
+ 
+ 
++static unsigned char decodehex( char c )
++{
++    if (c >= '0' && c <= '9')
++        return c - '0';
++    else if (c >= 'A' && c <= 'F')
++        return c - 'A' + 10;
++    else if (c >= 'a' && c <= 'f')
++        return c - 'a' + 10;
++    return 0xFF;
++}
++
++static void get_machineid( BYTE *buf )
++{
++    static const char sd_machineid_path[] = "\\??\\unix\\/etc/machine-id";
++    static const char dbus_machineid_path[] = "\\??\\unix\\/var/lib/dbus/machine-id";
++    HANDLE file;
++    char buffer[34];
++    BOOL status;
++    DWORD bytes_read;
++    int i;
++
++    file = CreateFileA( sd_machineid_path, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL );
++    if (file == INVALID_HANDLE_VALUE)
++        file = CreateFileA( dbus_machineid_path, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL );
++    if (file == INVALID_HANDLE_VALUE)
++    {
++        WARN( "Could not open machine id file: error %d\n", GetLastError() );
++        goto error;
++    }
++
++    status = ReadFile( file, buffer, 34, &bytes_read, NULL );
++    CloseHandle( file );
++    if (!status)
++    {
++        WARN( "Could not read machine id file: error %d\n", GetLastError() );
++        goto error;
++    }
++
++    if (!(bytes_read == 32 || (bytes_read == 33 && buffer[32] == '\n')))
++    {
++        WARN( "Wrong machine id file size: %d != 32 or 33\n", bytes_read );
++        goto error;
++    }
++
++    for (i = 0; i < 16; i++)
++    {
++        unsigned char high_nibble, low_nibble;
++
++        high_nibble = decodehex( buffer[i * 2] );
++        low_nibble = decodehex( buffer[i * 2 + 1] );
++        if (high_nibble == 0xFF || low_nibble == 0xFF)
++        {
++            WARN( "Failed to decode machine id byte %d\n", i );
++            goto error;
++        }
++        buf[i] = (high_nibble << 4) | low_nibble;
++    }
++
++    return;
++error:
++    RtlZeroMemory( buf, 16 );
++}
++
++#define MACHINEID_HASH_SALT "WINESALT"
++#define MACHINEID_HASH_SALT_SIZE (sizeof(MACHINEID_HASH_SALT) - 1)
++#define MACHINEID_HASH_ALG BCRYPT_SHA1_ALGORITHM
++#define MACHINEID_HASH_ALG_SIZE 20
++
++static void get_hashed_machineid( BYTE *buf )
++{
++    BYTE input[16 + MACHINEID_HASH_SALT_SIZE];
++    BCRYPT_ALG_HANDLE alg;
++    NTSTATUS status;
++    BYTE hash[MACHINEID_HASH_ALG_SIZE];
++    int i;
++
++    get_machineid( input );
++    RtlCopyMemory( &input[sizeof(input) - MACHINEID_HASH_SALT_SIZE], MACHINEID_HASH_SALT, MACHINEID_HASH_SALT_SIZE );
++
++    if (!NT_SUCCESS(status = BCryptOpenAlgorithmProvider( &alg, MACHINEID_HASH_ALG, NULL, 0 )))
++    {
++        WARN( "Couldn't open crypto provider for machine id hashing: error %u\n", status );
++        goto error;
++    }
++
++    status = BCryptHash( alg, NULL, 0, input, sizeof(input), hash, sizeof(hash) );
++    BCryptCloseAlgorithmProvider( alg, 0 );
++    if (!NT_SUCCESS(status))
++    {
++        WARN( "Couldn't hash machine id: error %u\n", status );
++        goto error;
++    }
++
++    for (i = 8; i < ARRAY_SIZE(hash); i++)
++        hash[i % 8] ^= hash[i];
++
++    RtlCopyMemory( buf, hash, 8 );
++    return;
++error:
++    RtlZeroMemory( buf, 8 );
++}
++
++static void get_productid( WCHAR *buf )
++{
++    BYTE machineid[8];
++    DWORD mid_lodword, mid_hidword;
++    unsigned int c, e;
++    unsigned int tmp, check_digit;
++
++    /* get hashed machine id */
++    get_hashed_machineid( machineid );
++
++    /* compute C and E values from hashed machine id */
++    mid_lodword = (machineid[3] << 24U) | (machineid[2] << 16U) | (machineid[1] << 8U) | machineid[0];
++    mid_hidword = (machineid[7] << 24U) | (machineid[6] << 16U) | (machineid[5] << 8U) | machineid[4];
++    c = (unsigned int)(mid_lodword * 999999ULL / 0xFFFFFFFF);
++    e = (unsigned int)(mid_hidword *    999ULL / 0xFFFFFFFF);
++
++    /* compute check digit for C value */
++    tmp = c;
++    check_digit = tmp % 10;
++    tmp = tmp / 10;
++    check_digit += tmp % 10;
++    tmp = tmp / 10;
++    check_digit += tmp % 10;
++    tmp = tmp / 10;
++    check_digit += tmp % 10;
++    tmp = tmp / 10;
++    check_digit += tmp % 10;
++    tmp = tmp / 10;
++    check_digit += tmp;
++    check_digit = 7 - check_digit % 7;
++
++    /* create product id from parts */
++    swprintf( buf, 24, L"12345-OEM-%06u%u-00%03u", c, check_digit, e );
++}
++
++/* create the volatile software registry keys */
++static void create_software_registry_keys(void)
++{
++    WCHAR productid[24];
++    HKEY cv_key;
++
++    get_productid( productid );
++
++    if (!RegCreateKeyW( HKEY_LOCAL_MACHINE, L"Software\\Microsoft\\Windows NT\\CurrentVersion", &cv_key ))
++    {
++        set_reg_value( cv_key, L"ProductId", productid );
++        RegCloseKey( cv_key );
++    }
++
++    if (!RegCreateKeyW( HKEY_LOCAL_MACHINE, L"Software\\Microsoft\\Windows\\CurrentVersion", &cv_key ))
++    {
++        set_reg_value( cv_key, L"ProductId", productid );
++        RegCloseKey( cv_key );
++    }
++}
++
+ /* create the DynData registry keys */
+ static void create_dynamic_registry_keys(void)
+ {
+@@ -1693,6 +1854,7 @@ int __cdecl main( int argc, char *argv[] )
+     create_user_shared_data(tsc_frequency);
+     create_hypervisor_shared_data(tsc_frequency);
+     create_hardware_registry_keys(tsc_frequency);
++    create_software_registry_keys();
+     create_dynamic_registry_keys();
+     create_environment_registry_keys();
+     create_computer_name_keys();
+-- 
+2.30.2
+
