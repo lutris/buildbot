@@ -18,7 +18,7 @@ InstallBuildDependencies() {
 }
 
 GetStableRelease() {
-    version='2.4'
+    version='3.5'
     src_archive="${runner_name}-${version}.tar.gz"
     src_url="http://sourceforge.net/projects/vice-emu/files/releases/${src_archive}/download"
     wget ${src_url} -O ${src_archive}
