@@ -13,7 +13,9 @@ function clone {
         echo "Updating sources"
         cd ${source_dir}
         git checkout master
-        git pull
+        git clean -dfx
+        git reset --hard
+        git pull origin master
         cd ..
     else
         echo "Cloning sources"

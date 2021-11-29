@@ -6,7 +6,7 @@ spaces_upload() {
     subtype=$3
     if [ $subtype ]; then
         subtype="/$subtype"
-    fi 
+    fi
 
     aws s3 --endpoint-url=https://nyc3.digitaloceanspaces.com cp ${filename} s3://lutris/${type}$subtype/${filename}
     s3cmd setacl s3://lutris/${type}$subtype/${filename} --acl-public
@@ -14,7 +14,7 @@ spaces_upload() {
 
 s3cmd_check_existence() {
     filename=$1
-    type=$2  
+    type=$2
     subtype=$3
     if [ $subtype ]; then
         subtype="/$subtype"
@@ -51,11 +51,11 @@ api_check_runner_existence() {
 doctl_purge_cdn() {
     PATH=$PATH:/snap/bin
     filename=$1
-    type=$2   
+    type=$2
     subtype=$3
     if [ $subtype ]; then
         subtype="/$subtype"
-    fi  
+    fi
 
     case README in
         "$(ls ../. | grep -o README)")
@@ -75,7 +75,7 @@ doctl_purge_cdn() {
         echo $id_input >> $doctl_cdn_id_path
         echo "CDN ID $id_input is cached into $doctl_cdn_id_path"
     fi
-    
+
     doctl_cdn_id=$(cat $doctl_cdn_id_path)
 
     doctl compute cdn flush $doctl_cdn_id --files ${type}$subtype/${filename}
@@ -93,13 +93,13 @@ runner_upload() {
         architecture="armv7"
     fi
 
-    token_path="../../.lutris_token"
-    if [ ! -f $token_path ]; then
+    token_path="/home/$USER/.lutris_token"
+    access_token=$(cat $token_path)
+    if [[ ! "$access_token" ]]; then
         echo "You are not authenticated, runner won't upload"
         return
     fi
-    access_token=$(cat $token_path)
-    
+
     if [ $(s3cmd_check_existence $filename "runners" ${runner}) ]; then
         file_exists=yes
     fi
@@ -128,7 +128,7 @@ runtime_upload() {
     name=$1
     filename=$2
 
-    token_path="../.lutris_token"
+    token_path="/home/$USER/.lutris_token"
     if [ ! -f $token_path ]; then
         echo "You are not authenticated, runner won't upload"
         return

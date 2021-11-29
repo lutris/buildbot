@@ -17,6 +17,8 @@ libfaad2                          libfaad.so.2
 libfluidsynth1                    libfluidsynth.so.1
 libfribidi0                       libfribidi.so.0
 libfuse2                          libfuse.so.2
+libfontconfig1                    libfontconfig.so.1
+libfreetype6                      libfreetype.so.6
 libgcrypt20                       libgcrypt.so.20
 libgpg-error0                     libgpg-error.so.0
 libgtk2.0-0                       libgdk-x11-2.0.so.0
@@ -24,6 +26,7 @@ libgdk-pixbuf2.0-0                libgdk_pixbuf-2.0.so.0
 libgif7                           libgif.so.7
 libglew2.0                        libGLEW.so.2.0
 libgloox15                        libgloox.so.15
+libgnutls30                       libgnutls.so.30 libnettle.so.6 libhogweed.so.4 libgmp.so.10 libtasn1.so.6 libidn2.so.0
 libgomp1                          libgomp.so.1
 libgraphite2-3                    libgraphite2.so.3
 libharfbuzz0b                     libharfbuzz.so.0
@@ -32,6 +35,7 @@ libirrlicht1.8                    libIrrlicht.so.1.8
 libjansson4                       libjansson.so.4
 libjbig0                          libjbig.so.0
 libjson-c3                        libjson-c.so.3
+libldap-2.4-2                     libldap_r-2.4.so.2 liblber-2.4.so.2 libsasl2.so.2 libgssapi.so.3 libheimntlm.so.0 libkrb5.so.26 libasn1.so.8 libcom_err.so.2 libhcrypto.so.4 libroken.so.18 libwind.so.0 libheimbase.so.1 libhx509.so.5
 libleveldb1v5                     libleveldb.so.1
 liblua5.1-0                       liblua5.1.so.0
 liblua5.2-0                       liblua5.2.so.0
@@ -46,13 +50,14 @@ libncurses5                       libncurses.so.5
 libncursesw5                      libncursesw.so.5
 libnih1                           libnih.so.1
 libnih-dbus1                      libnih-dbus.so.1
-#libopenjpeg5                      libopenjpeg.so.5
+libjpeg8                          libjpeg.so.8
 libreadline7                      libhistory.so.7 libreadline.so.7
 libpango-1.0-0                    libpango-1.0.so.0
 libpangocairo-1.0-0               libpangocairo-1.0.so.0
 libpangoft2-1.0-0                 libpangoft2-1.0.so.0
 libphysfs1                        libphysfs.so.1
 libportaudio2                     libportaudio.so.2
+libpulse0                         libpulse-simple.so.0 libpulse.so.0 /usr/lib/i386-linux-gnu/pulseaudio/libpulsecommon-11.1.so /usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-11.1.so
 libsdl2-image-2.0-0               libSDL2_image-2.0.so.0
 libsdl2-mixer-2.0-0               libSDL2_mixer-2.0.so.0
 libsdl2-ttf-2.0-0                 libSDL2_ttf-2.0.so.0
@@ -79,3 +84,11 @@ libxml2                           libxml2.so.2
 libxslt1.1                        libxslt.so.1 libexslt.so.0
 libzzip-0-13                      libzzip-0.so.13
 zlib1g                            libz.so.1
+libcurl4                          libcurl.so.4
+libnghttp2-14                     libnghttp2.so.14
+libpcre3                          libpcre.so.3
+libpsl5                           libpsl.so.5
+libssl1.1                         libcrypto.so.1.1 libssl.so.1.1
+libunistring2                     libunistring.so.2
+libuuid1                          libuuid.so.1
+librtmp1                          librtmp.so.1
