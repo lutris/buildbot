@@ -1,0 +1,438 @@
+diff --git a/dlls/actxprxy/Makefile.in b/dlls/actxprxy/Makefile.in
+index 0517a4d6867..876ed847c86 100644
+--- a/dlls/actxprxy/Makefile.in
++++ b/dlls/actxprxy/Makefile.in
+@@ -13,6 +13,7 @@ IDL_SRCS = \
+ 	actxprxy_hlink.idl \
+ 	actxprxy_htiface.idl \
+ 	actxprxy_htiframe.idl \
++	actxprxy_mshtml.idl \
+ 	actxprxy_objsafe.idl \
+ 	actxprxy_ocmm.idl \
+ 	actxprxy_servprov.idl \
+diff --git a/dlls/actxprxy/actxprxy_mshtml.idl b/dlls/actxprxy/actxprxy_mshtml.idl
+new file mode 100644
+index 00000000000..6f4a7ca9fd0
+--- /dev/null
++++ b/dlls/actxprxy/actxprxy_mshtml.idl
+@@ -0,0 +1,35 @@
++/*
++ * Copyright 2009 Alexandre Julliard
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
++ */
++
++/* just a wrapper for mshtmhst.idl */
++
++#pragma makedep proxy
++#pragma makedep register
++
++#define NO_MSHTML_IMPORT
++
++#include "mshtml.idl"
++#include "mshtmhst.idl"
++#include "shdeprecated.idl"
++#include "docobjectservice.idl"
++
++[
++    threading(both),
++    uuid(b8da6310-e19b-11d0-933c-00a0c90dcaa9)  /* IActiveScriptStats */
++]
++coclass PSFactoryBuffer { interface IFactoryBuffer; }
+diff --git a/dlls/mshtml/htmldoc.c b/dlls/mshtml/htmldoc.c
+index 9faf987d7b9..d73d15d87b5 100644
+--- a/dlls/mshtml/htmldoc.c
++++ b/dlls/mshtml/htmldoc.c
+@@ -5954,16 +5954,115 @@ static dispex_static_data_t HTMLDocumentObj_dispex = {
+     HTMLDocumentObj_iface_tids
+ };
+ 
++/* TRUE if we create a dedicated thread for all HTML documents */
++static BOOL gecko_main_thread_config;
++
++static LONG gecko_main_thread;
++static HWND gecko_main_thread_hwnd;
++static HANDLE gecko_main_thread_event;
++
++static DWORD WINAPI gecko_main_thread_proc(void *arg)
++{
++    MSG msg;
++
++    TRACE("\n");
++
++    CoInitialize(NULL);
++
++    gecko_main_thread_hwnd = get_thread_hwnd();
++    if(!gecko_main_thread_hwnd) {
++        ERR("Could not create thread window\n");
++        SetEvent(gecko_main_thread_event);
++        CoUninitialize();
++        return 0;
++    }
++
++    gecko_main_thread = GetCurrentThreadId();
++    SetEvent(gecko_main_thread_event);
++
++    while(GetMessageW(&msg, NULL, 0, 0)) {
++        DispatchMessageW(&msg);
++        TranslateMessage(&msg);
++    }
++
++    CoUninitialize();
++    return 0;
++}
++
++static BOOL WINAPI read_thread_config(INIT_ONCE *once, void *param, void **context)
++{
++    char buffer[MAX_PATH * 2], buffer2[MAX_PATH * 2];
++    DWORD len;
++    HKEY key;
++
++    len = GetModuleFileNameA(0, buffer, MAX_PATH);
++    if (len && len < MAX_PATH)
++    {
++        char *p, *appname = buffer;
++
++        if ((p = strrchr(appname, '/')))
++            appname = p + 1;
++
++        if ((p = strrchr(appname, '\\')))
++            appname = p + 1;
++
++        strcat(appname, "\\MSHTML\\MainThreadHack");
++        strcpy(buffer2, "Software\\Wine\\AppDefaults\\");
++        strcat(buffer2, appname);
++
++        if (!RegOpenKeyA(HKEY_CURRENT_USER, buffer2, &key))
++        {
++            RegCloseKey(key);
++            FIXME("CXHACK: Using separated main thread.\n");
++            gecko_main_thread_config = TRUE;
++        }
++    }
++
++    return TRUE;
++}
++
+ static HRESULT create_document_object(BOOL is_mhtml, IUnknown *outer, REFIID riid, void **ppv)
+ {
+     HTMLDocumentObj *doc;
+     HRESULT hres;
+ 
++    static INIT_ONCE init_once = INIT_ONCE_STATIC_INIT;
++
+     if(outer && !IsEqualGUID(&IID_IUnknown, riid)) {
+         *ppv = NULL;
+         return E_INVALIDARG;
+     }
+ 
++    /* CXHACK 15579 */
++    InitOnceExecuteOnce(&init_once, read_thread_config, NULL, NULL);
++    if(gecko_main_thread_config && !gecko_main_thread) {
++        HANDLE thread, event;
++
++        event = CreateEventW(NULL, TRUE, FALSE, NULL);
++        if(InterlockedCompareExchangePointer(&gecko_main_thread_event, event, NULL))
++            CloseHandle(event);
++
++        thread = CreateThread(NULL, 0, gecko_main_thread_proc, NULL, 0, NULL);
++        if(thread) {
++            WaitForSingleObject(gecko_main_thread_event, INFINITE);
++            CloseHandle(thread);
++        }else {
++            ERR("Could not create a thread\n");
++        }
++    }
++
++    if(!gecko_main_thread) {
++        gecko_main_thread = GetCurrentThreadId();
++        gecko_main_thread_hwnd = get_thread_hwnd();
++    }else if(GetCurrentThreadId() != gecko_main_thread) {
++        FIXME("CXHACK: Creating HTMLDocument outside Gecko main thread\n");
++        if(!gecko_main_thread_config) {
++            FIXME("CXHACK: Dedicated main thread not configured\n");
++            FIXME("CXHACK: Create HKCU\\Software\\Wine\\AppDefaults\\<app>\\MSHTML\\MainThreadHack key\n");
++        }
++        return create_marshaled_doc(gecko_main_thread_hwnd, riid, ppv);
++    }
++
+     /* ensure that security manager is initialized */
+     if(!get_security_manager())
+         return E_OUTOFMEMORY;
+diff --git a/dlls/mshtml/mshtml_private.h b/dlls/mshtml/mshtml_private.h
+index c1e7e78253d..b8c7b6b57c0 100644
+--- a/dlls/mshtml/mshtml_private.h
++++ b/dlls/mshtml/mshtml_private.h
+@@ -915,6 +915,7 @@ HRESULT MHTMLDocument_Create(IUnknown*,REFIID,void**) DECLSPEC_HIDDEN;
+ HRESULT HTMLLoadOptions_Create(IUnknown*,REFIID,void**) DECLSPEC_HIDDEN;
+ HRESULT create_document_node(nsIDOMHTMLDocument*,GeckoBrowser*,HTMLInnerWindow*,
+                              compat_mode_t,HTMLDocumentNode**) DECLSPEC_HIDDEN;
++HRESULT create_marshaled_doc(HWND,REFIID,void**) DECLSPEC_HIDDEN;
+ 
+ HRESULT create_outer_window(GeckoBrowser*,mozIDOMWindowProxy*,HTMLOuterWindow*,HTMLOuterWindow**) DECLSPEC_HIDDEN;
+ HRESULT update_window_doc(HTMLInnerWindow*) DECLSPEC_HIDDEN;
+diff --git a/dlls/mshtml/task.c b/dlls/mshtml/task.c
+index 67b7633a5b4..1e29b16e294 100644
+--- a/dlls/mshtml/task.c
++++ b/dlls/mshtml/task.c
+@@ -33,6 +33,7 @@
+ WINE_DEFAULT_DEBUG_CHANNEL(mshtml);
+ 
+ #define WM_PROCESSTASK 0x8008
++#define WM_CREATEDOC   0x8018
+ #define TIMER_ID 0x3000
+ 
+ typedef struct {
+@@ -309,6 +310,13 @@ static LRESULT process_timer(void)
+     return 0;
+ }
+ 
++typedef struct {
++    IUnknown *unk;
++    IID iid;
++    IStream *stream;
++    HRESULT hres;
++} create_doc_params_t;
++
+ static LRESULT WINAPI hidden_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+ {
+     switch(msg) {
+@@ -325,6 +333,20 @@ static LRESULT WINAPI hidden_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
+         return 0;
+     case WM_TIMER:
+         return process_timer();
++    case WM_CREATEDOC: {
++        create_doc_params_t *params = (create_doc_params_t*)lParam;
++        IUnknown *unk;
++
++        TRACE("WM_CREATEDOC %p\n", params);
++
++        params->hres = HTMLDocument_Create(NULL, &params->iid, (void**)&unk);
++        if(FAILED(params->hres))
++            return 0;
++
++        params->hres = CoMarshalInterface(params->stream, &params->iid, unk, MSHCTX_INPROC, NULL, MSHLFLAGS_NORMAL);
++        IUnknown_Release(unk);
++        return 0;
++    }
+     }
+ 
+     if(msg > WM_USER)
+@@ -367,6 +389,35 @@ HWND get_thread_hwnd(void)
+     return thread_data->thread_hwnd;
+ }
+ 
++HRESULT create_marshaled_doc(HWND main_thread_hwnd, REFIID riid, void **ppv)
++{
++    create_doc_params_t params = {NULL, *riid, NULL, E_FAIL};
++    LARGE_INTEGER zero;
++    BOOL res;
++    HRESULT hres;
++
++    hres = CreateStreamOnHGlobal(NULL, TRUE, &params.stream);
++    if(FAILED(hres))
++        return hres;
++
++    res = SendMessageW(main_thread_hwnd, WM_CREATEDOC, 0, (LPARAM)&params);
++    TRACE("SendMessage ret %x\n", res);
++    if(FAILED(params.hres)) {
++        WARN("EM_CREATEDOC failed: %08x\n", params.hres);
++        IStream_Release(params.stream);
++        return hres;
++    }
++
++    zero.QuadPart = 0;
++    hres = IStream_Seek(params.stream, zero, STREAM_SEEK_SET, NULL);
++    if(SUCCEEDED(hres))
++        hres = CoUnmarshalInterface(params.stream, riid, ppv);
++    IStream_Release(params.stream);
++    if(FAILED(hres))
++        WARN("CoUnmarshalInterface failed: %08x\n", hres);
++    return hres;
++}
++
+ thread_data_t *get_thread_data(BOOL create)
+ {
+     thread_data_t *thread_data;
+diff --git a/include/docobjectservice.idl b/include/docobjectservice.idl
+index 4e931351b49..cfa007c75eb 100644
+--- a/include/docobjectservice.idl
++++ b/include/docobjectservice.idl
+@@ -17,23 +17,25 @@
+  */
+ 
+ import "objidl.idl";
++#ifndef NO_MSHTML_IMPORT
+ import "mshtml.idl";
++#endif
+ 
+ [
+-    local,
++ /* local, CXHACK 15579 */
+     object,
+     uuid(3050f801-98b5-11cf-bb82-00aa00bdce0b)
+ ]
+ interface IDocObjectService : IUnknown
+ {
+     HRESULT FireBeforeNavigate2(
+-            [in] IDispatch *pDispatch,
+-            [in] LPCWSTR lpszUrl,
++            [in, optional] IDispatch *pDispatch,
++            [in, string, unique] LPCWSTR lpszUrl,
+             [in] DWORD dwFlags,
+-            [in] LPCWSTR lpszFrameName,
+-            [in] BYTE *pPostData,
++            [in, string, unique] LPCWSTR lpszFrameName,
++            [in, unique, size_is(cbPostData)] BYTE *pPostData,
+             [in] DWORD cbPostData,
+-            [in] LPCWSTR lpszHeaders,
++            [in, string, unique] LPCWSTR lpszHeaders,
+             [in] BOOL fPlayNavSound,
+             [out] BOOL *pfCancel);
+ 
+diff --git a/include/mshtmhst.idl b/include/mshtmhst.idl
+index 81b16ed5d62..dfd5c645df8 100644
+--- a/include/mshtmhst.idl
++++ b/include/mshtmhst.idl
+@@ -149,7 +149,7 @@ typedef enum tagDOCHOSTUIFLAG
+     object,
+     uuid(BD3F23C0-D43E-11CF-893B-00AA00BDCE1A),
+     pointer_default(unique),
+-    local
++ /* local, CXHACK 15579 */
+ ]
+ interface IDocHostUIHandler : IUnknown
+ {
+@@ -223,7 +223,7 @@ cpp_quote("DEFINE_GUID(CGID_DocHostCommandHandler,0xf38bc242,0xb950,0x11d1,0x89,
+     object,
+     uuid(3050F6D0-98b5-11CF-BB82-00AA00BDCE0B),
+     pointer_default(unique),
+-    local
++ /* local, CXHACK 15579 */
+ ]
+ interface IDocHostUIHandler2 : IDocHostUIHandler
+ {
+@@ -239,7 +239,7 @@ interface IDocHostUIHandler2 : IDocHostUIHandler
+     object,
+     uuid(3050f3f0-98b5-11cf-bb82-00aa00bdce0b),
+     pointer_default(unique),
+-    local
++ /* local, CXHACK 15579 */
+ ]
+ interface ICustomDoc : IUnknown
+ {
+diff --git a/include/mshtml.idl b/include/mshtml.idl
+index ef496b840ea..e3cdc343e6a 100644
+--- a/include/mshtml.idl
++++ b/include/mshtml.idl
+@@ -29547,7 +29547,11 @@ interface IElementBehaviorFactory : IUnknown
+ 
+ } /* library MSHTML */
+ 
++#ifdef MSHTML_MARSHALING_HACK
++#define IOleCommandTarget IUnknown
++#else
+ interface IOleCommandTarget;
++#endif
+ 
+ /*****************************************************************************
+  *    IHTMLPrivateWindow interface
+@@ -29555,7 +29559,7 @@ interface IOleCommandTarget;
+ [
+     object,
+     uuid(3050f6dc-98b5-11cf-bb82-00aa00bdce0b),
+-    local
++ /* local, CXHACK 15579 */
+ ]
+ interface IHTMLPrivateWindow : IUnknown
+ {
+@@ -29564,7 +29568,7 @@ interface IHTMLPrivateWindow : IUnknown
+     HRESULT SetPICSTarget(IOleCommandTarget *cmdtrg);
+     HRESULT PICSComplete(int arg);
+     HRESULT FindWindowByName(LPCWSTR name, IHTMLWindow2 **ret);
+-    HRESULT GetAddressBarUrl(BSTR *url);
++    HRESULT GetAddressBarUrl([out, retval] BSTR *url);
+ }
+ 
+ /*****************************************************************************
+@@ -29573,7 +29577,7 @@ interface IHTMLPrivateWindow : IUnknown
+ [
+     object,
+     uuid(3050f804-98b5-11cf-bb82-00aa00bdce0b),
+-    local
++ /* local, CXHACK 15579 */
+ ]
+ interface IWebBrowserPriv : IUnknown
+ {
+@@ -29588,7 +29592,7 @@ interface IWebBrowserPriv : IUnknown
+ [
+     object,
+     uuid(3ed72303-6ffc-4214-ba90-faf1862dec8a),
+-    local
++ /* local, CXHACK 15579 */
+ ]
+ interface IWebBrowserPriv2IE8 : IUnknown
+ {
+@@ -29610,7 +29614,7 @@ interface IWebBrowserPriv2IE8 : IUnknown
+ [
+     object,
+     uuid(3ed72303-6ffc-4214-ba90-faf1862dec8a),
+-    local
++ /* local, CXHACK 15579 */
+ ]
+ interface IWebBrowserPriv2IE9 : IUnknown
+ {
+@@ -29618,3 +29622,7 @@ interface IWebBrowserPriv2IE9 : IUnknown
+             VARIANT *headers, IBindCtx *bind_ctx, LPOLESTR url_fragment, DWORD unused);
+     /* Probably more */
+ }
++
++#ifdef MSHTML_MARSHALING_HACK
++#undef IOleCommandTarget
++#endif
+diff --git a/include/shdeprecated.idl b/include/shdeprecated.idl
+index c8bb3fd9bf0..bb0559578e9 100644
+--- a/include/shdeprecated.idl
++++ b/include/shdeprecated.idl
+@@ -186,7 +186,7 @@ cpp_quote("#define HLNF_ALLOW_AUTONAVIGATE          0x20000000")
+ cpp_quote("#define HLNF_NEWWINDOWSMANAGED           0x80000000")
+ 
+ [
+-    local,
++ /* local, CXHACK 15579 */
+     object,
+     uuid(02ba3b52-0547-11d1-b833-00c04fc9b31f)
+ ]
+@@ -220,7 +220,7 @@ interface IBrowserService : IUnknown
+ 
+     HRESULT IEGetDisplayName(
+         [in] PCIDLIST_ABSOLUTE pidl,
+-        [out, size_is(INTERNET_MAX_URL_LENGTH)] LPWSTR pwszName,
++        [out, size_is(300)] LPWSTR pwszName,
+         [in] UINT uFlags);
+ 
+     HRESULT IEParseDisplayName(
+
+--- a/loader/wine.inf.in
++++ b/loader/wine.inf.in
+@@ -4324,6 +4324,8 @@
+ HKCU,Software\Wine\AppDefaults\BlackOps3.exe\DllOverrides,"atiadlxx",,"builtin"
+ HKCU,Software\Wine\AppDefaults\DIRT5.exe\DllOverrides,"atiadlxx",,"builtin"
+ HKCU,Software\Wine\AppDefaults\LauncherPatcher.exe,"Version",,"win7"
++HKCU,Software\Wine\AppDefaults\Sims3Launcher.exe\MSHTML\MainThreadHack
++HKCU,Software\Wine\AppDefaults\Sims3LauncherW.exe\MSHTML\MainThreadHack
+ ;;Likely want *80 and *90 too, but those require removing Wine's manifest files.
+ HKCU,Software\Wine\DllOverrides,"atl100",0x2,"native,builtin"
+ HKCU,Software\Wine\DllOverrides,"msvcp100",0x2,"native,builtin"

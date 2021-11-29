@@ -13,7 +13,7 @@ source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-version="1.3.0"
+version="1.11"
 
 deps="cmake libsdl2-dev"
 install_deps $deps

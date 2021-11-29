@@ -1,0 +1,10 @@
+--- a/loader/wine.inf.in
++++ b/loader/wine.inf.in
+@@ -4354,6 +4354,7 @@
+ HKCU,Software\Wine\DllOverrides,"vcomp140",0x2,"native,builtin"
+ HKCU,Software\Wine\DllOverrides,"vcruntime140",0x2,"native,builtin"
+ HKCU,Software\Wine\DllOverrides,"atiadlxx",,""
++HKCU,Software\Wine\DllOverrides,"winemenubuilder.exe",0x2,""
+ 
+ [ColorFiles]
+ srgb color space profile.icm,"@%11%\mscms.dll,-1"

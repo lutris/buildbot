@@ -54,11 +54,14 @@ GetSources() {
     if [ -d "${root_dir}/wine-tkg-git/" ]; then
       git -C "${root_dir}/wine-tkg-git/" fetch
       git -C "${root_dir}/wine-tkg-git/" clean -fx "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-userpatches/" || true
+      git -C "${root_dir}/wine-tkg-git/" clean -fx "${root_dir}/wine-tkg-git/wine-tkg-git/wine-tkg-patches/" || true
       rm -rf "${root_dir}/wine-tkg-git/wine-tkg-git/src/" || true
       git -C "${root_dir}/wine-tkg-git/" rm "${root_dir}/wine-tkg-git/wine-tkg-git/*.{mypatch,myrevert,patch}" || true
       git -C "${root_dir}/wine-tkg-git/" reset --hard origin/master
+      git -C "${root_dir}/wine-tkg-git/" am < "${root_dir}/commit-2915f92"
     else
       git clone https://github.com/Frogging-Family/wine-tkg-git.git "${root_dir}/wine-tkg-git/"
+      git -C "${root_dir}/wine-tkg-git/" am < "${root_dir}/commit-2915f92"
     fi
 }
 
