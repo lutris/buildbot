@@ -79,7 +79,7 @@ PackageWeb() {
 
     cd "$root_dir"
 
-    dest_file="${runner_name}-${version}-${arch}.tar.gz"
+    dest_file="${runner_name}-${version}-${arch}.tar.xz"
 
     package_arch="$arch"
 
@@ -91,7 +91,7 @@ PackageWeb() {
         package_arch="armv7"
     fi
 
-    tar -zcf "$dest_file" -C "$build_dir/${runner_name}-${package_arch}" --transform "s,^./,./${runner_name}/," .
+    tar -cJf "$dest_file" -C "$build_dir/${runner_name}-${package_arch}" --transform "s,^./,./${runner_name}/," .
 
     runner_upload ${runner_name} ${version} ${arch} "$dest_file"
 }
