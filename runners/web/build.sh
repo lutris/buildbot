@@ -47,6 +47,8 @@ InstallDeps() {
     npm config set cache "$root_dir/npm-cache"
     # disable progress bar (for quicker installs)
     npm set progress=false
+
+    sudo apt install -y bsdiff
 }
 
 BuildWeb() {
