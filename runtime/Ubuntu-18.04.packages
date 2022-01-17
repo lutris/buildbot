@@ -92,3 +92,4 @@ libssl1.1                         libcrypto.so.1.1 libssl.so.1.1
 libunistring2                     libunistring.so.2
 libuuid1                          libuuid.so.1
 librtmp1                          librtmp.so.1
+libxtst6                          libXtst.so.6.1.0 libXtst.so.6
