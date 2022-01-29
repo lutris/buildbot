@@ -7,7 +7,7 @@ source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
-version="0.60.3"
+version="0.90.1723"
 arch=$(uname -m)
 
 root_dir=$(pwd)
@@ -20,9 +20,7 @@ InstallBuildDependencies() {
 }
 
 GetSources() {
-	# TODO: Update to 0.60.4 once it's out. See https://github.com/nesbox/TIC-80/issues/577
-    # clone https://github.com/nesbox/TIC-80.git $source_dir true v${version}
-    clone https://github.com/nesbox/TIC-80.git $source_dir true a783eae76b050bc78f72eb2fc984bd8a60d51774
+    clone https://github.com/nesbox/TIC-80.git $source_dir true v${version)
 }
 
 Build() {
