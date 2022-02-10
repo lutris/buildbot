@@ -1,0 +1,10 @@
+--- a/loader/wine.inf.in
++++ b/loader/wine.inf.in
+@@ -4354,6 +4354,7 @@
+ HKCU,Software\Wine\DllOverrides,"vcruntime140",0x2,"native,builtin"
+ HKCU,Software\Wine\DllOverrides,"atiadlxx",,"disabled"
+ HKCU,Software\Wine\DllOverrides,"nvcuda",0x2,"disabled"
++HKCU,Software\Wine\DllOverrides,"winemenubuilder.exe",0x2,""
+ 
+ [LutrisClient.ntamd64]
+ HKCU,Software\Wine\AppDefaults\LauncherPatcher.exe,"Version",,"win7"

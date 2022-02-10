@@ -1,0 +1,63 @@
+From 7ca8ea89b6e97dc78219f28cf9185607a667e3de Mon Sep 17 00:00:00 2001
+From: Torge Matthies <openglfreak@googlemail.com>
+Date: Mon, 7 Feb 2022 00:54:44 +0100
+Subject: [PATCH] ntdll: MechWarrior Online hack
+
+https://mwomercs.com/forums/topic/268847-running-the-game-on-ubuntu-steam-play/page__st__20__p__6195387#entry6195387
+---
+ dlls/ntdll/path.c | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/dlls/ntdll/path.c b/dlls/ntdll/path.c
+index 11111111111..11111111111 100644
+--- a/dlls/ntdll/path.c
++++ b/dlls/ntdll/path.c
+@@ -510,6 +510,26 @@ static const WCHAR *skip_unc_prefix( const WCHAR *ptr )
+ }
+ 
+ 
++static int mwo_hack(void)
++{
++    static int mwo_hack_state = -1;
++    if (mwo_hack_state == -1)
++    {
++        WCHAR str[11];
++        SIZE_T len;
++        NTSTATUS status = RtlQueryEnvironmentVariable( NULL, L"WINE_MWO_HACK", ARRAY_SIZE(L"WINE_MWO_HACK") - 1, str, ARRAY_SIZE(str) - 1, &len );
++        if (status)
++            mwo_hack_state = 0;
++        else
++        {
++            str[len] = 0;
++            mwo_hack_state = len && atoi( str ) == 1;
++        }
++    }
++    return mwo_hack_state;
++}
++
++
+ /******************************************************************
+  *		get_full_path_helper
+  *
+@@ -523,14 +543,17 @@ static ULONG get_full_path_helper(LPCWSTR name, LPWSTR buffer, ULONG size)
+     LPCWSTR                     ptr;
+     const UNICODE_STRING*       cd;
+     WCHAR                       tmp[4];
++    int                         mwo_hack_status;
+ 
+     /* return error if name only consists of spaces */
+     for (ptr = name; *ptr; ptr++) if (*ptr != ' ') break;
+     if (!*ptr) return 0;
+ 
++    mwo_hack_status = mwo_hack();
++
+     RtlAcquirePebLock();
+ 
+-    if (NtCurrentTeb()->Tib.SubSystemTib)  /* FIXME: hack */
++    if (!mwo_hack_status && NtCurrentTeb()->Tib.SubSystemTib)  /* FIXME: hack */
+         cd = &((WIN16_SUBSYSTEM_TIB *)NtCurrentTeb()->Tib.SubSystemTib)->curdir.DosPath;
+     else
+         cd = &NtCurrentTeb()->Peb->ProcessParameters->CurrentDirectory.DosPath;
+-- 
+2.35.1
+

@@ -1,0 +1,22 @@
+From eae3c0459a5914d9409aa90285b18562c567ff60 Mon Sep 17 00:00:00 2001
+From: Zebediah Figura <zfigura@codeweavers.com>
+Date: Thu, 13 Jan 2022 11:20:10 -0600
+Subject: [PATCH 2/3] fixup! server: Create eventfd file descriptors for message
+ queues.
+
+---
+ server/queue.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/server/queue.c b/server/queue.c
+index 1d4b9f16542..22b4fc81bae 100644
+--- a/server/queue.c
++++ b/server/queue.c
+@@ -1274,6 +1274,7 @@ static void msg_queue_destroy( struct object *obj )
+     release_object( queue->input );
+     if (queue->hooks) release_object( queue->hooks );
+     if (queue->fd) release_object( queue->fd );
++    if (do_esync()) close( queue->esync_fd );
+ }
+ 
+ static void msg_queue_poll_event( struct fd *fd, int event )

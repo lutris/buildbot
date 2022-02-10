@@ -1,0 +1,85 @@
+diff --git a/dlls/ntdll/unix/server.c b/dlls/ntdll/unix/server.c
+index 2460eb9b0fa..6650a16c05f 100644
+--- a/dlls/ntdll/unix/server.c
++++ b/dlls/ntdll/unix/server.c
+@@ -286,6 +286,7 @@ static void read_reply_data( void *buffer, size_t size )
+         if (!ret) break;
+         if (errno == EINTR) continue;
+         if (errno == EPIPE) break;
++        if (errno == EFAULT && virtual_check_buffer_for_write( buffer, size )) continue;
+         server_protocol_perror("read");
+     }
+     /* the server closed the connection; time to die... */
+@@ -320,6 +321,14 @@ unsigned int server_call_unlocked( void *req_ptr )
+ }
+ 
+ 
++static inline BOOL check_buffer_write_access( void *ptr, SIZE_T size )
++{
++    if (size > 16384 && virtual_check_buffer_write_access( ptr, size ))
++        return TRUE;
++    return virtual_check_buffer_for_write( ptr, size );
++}
++
++
+ /***********************************************************************
+  *           wine_server_call
+  *
+@@ -333,7 +342,7 @@ unsigned int CDECL wine_server_call( void *req_ptr )
+ 
+     /* trigger write watches, otherwise read() might return EFAULT */
+     if (req->u.req.request_header.reply_size &&
+-        !virtual_check_buffer_for_write( req->reply_data, req->u.req.request_header.reply_size ))
++        !check_buffer_write_access( req->reply_data, req->u.req.request_header.reply_size ))
+     {
+         return STATUS_ACCESS_VIOLATION;
+     }
+diff --git a/dlls/ntdll/unix/unix_private.h b/dlls/ntdll/unix/unix_private.h
+index e2247200550..81a5438ad26 100644
+--- a/dlls/ntdll/unix/unix_private.h
++++ b/dlls/ntdll/unix/unix_private.h
+@@ -229,6 +229,7 @@ extern ssize_t virtual_locked_recvmsg( int fd, struct msghdr *hdr, int flags ) D
+ extern BOOL virtual_is_valid_code_address( const void *addr, SIZE_T size ) DECLSPEC_HIDDEN;
+ extern void *virtual_setup_exception( void *stack_ptr, size_t size, EXCEPTION_RECORD *rec ) DECLSPEC_HIDDEN;
+ extern BOOL virtual_check_buffer_for_read( const void *ptr, SIZE_T size ) DECLSPEC_HIDDEN;
++extern BOOL virtual_check_buffer_write_access( void *ptr, SIZE_T size ) DECLSPEC_HIDDEN;
+ extern BOOL virtual_check_buffer_for_write( void *ptr, SIZE_T size ) DECLSPEC_HIDDEN;
+ extern SIZE_T virtual_uninterrupted_read_memory( const void *addr, void *buffer, SIZE_T size ) DECLSPEC_HIDDEN;
+ extern NTSTATUS virtual_uninterrupted_write_memory( void *addr, const void *buffer, SIZE_T size ) DECLSPEC_HIDDEN;
+diff --git a/dlls/ntdll/unix/virtual.c b/dlls/ntdll/unix/virtual.c
+index 8bdc860dbd0..f2e6dfeca1a 100644
+--- a/dlls/ntdll/unix/virtual.c
++++ b/dlls/ntdll/unix/virtual.c
+@@ -3784,6 +3784,32 @@ BOOL virtual_check_buffer_for_read( const void *ptr, SIZE_T size )
+ }
+ 
+ 
++/***********************************************************************
++ *           virtual_check_buffer_write_access
++ * Check if a memory buffer is writable, temporarily disabling write watches if necessary.
++ */
++BOOL virtual_check_buffer_write_access( void *ptr, SIZE_T size )
++{
++    size_t i;
++    char *addr;
++    BOOL ret = TRUE;
++
++    if (!size) return TRUE;
++    if (!ptr) return FALSE;
++
++    addr = ROUND_ADDR( ptr, page_mask );
++    size = ROUND_SIZE( ptr, size );
++    for (i = 0; i < size; i += page_size)
++    {
++        BYTE vprot = get_page_vprot( addr + i );
++        if (vprot & VPROT_WRITECOPY) vprot |= VPROT_WRITE;
++        if (!(get_unix_prot( vprot & ~VPROT_WRITEWATCH ) & PROT_WRITE))
++            ret = FALSE;
++    }
++    return ret;
++}
++
++
+ /***********************************************************************
+  *           virtual_check_buffer_for_write
+  *

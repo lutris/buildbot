@@ -1,0 +1,21 @@
+From 3233ee6416192bd3a9db7edadd51745fec1ba223 Mon Sep 17 00:00:00 2001
+From: Zebediah Figura <zfigura@codeweavers.com>
+Date: Thu, 13 Jan 2022 11:20:34 -0600
+Subject: [PATCH 3/3] fixup! server: Create eventfd descriptors for timers.
+
+---
+ server/timer.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/server/timer.c b/server/timer.c
+index cfbc97eb42b..1803e80ffd1 100644
+--- a/server/timer.c
++++ b/server/timer.c
+@@ -277,6 +277,7 @@ static void timer_destroy( struct object *obj )
+ 
+     if (timer->timeout) remove_timeout_user( timer->timeout );
+     if (timer->thread) release_object( timer->thread );
++    if (do_esync()) close( timer->esync_fd );
+ }
+ 
+ /* create a timer */
