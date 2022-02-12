@@ -93,7 +93,7 @@ find "${root_dir}/wine-src" -name \*.orig -type f -delete
 CommitSource() {
     cd "$wine_source_dir"
 
-    cp -R ""${root_dir}"/"$flavour"patches/" "$wine_source_dir/lutris-patches/"
+    cp -R ""${root_dir}"/patches/" "$wine_source_dir/lutris-patches/"
     if [ "$(ls -R | grep .rej)" ]; then
         echo Rejects were found! Aborting.
         exit
