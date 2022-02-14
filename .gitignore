@@ -1,5 +1,6 @@
 .lutris_token
 .doctl_cdn_id
+.vagrant
 ssh/buildbot32/*
 ssh/buildbot64/*
 runners/wine/build-preparation/wine-src
