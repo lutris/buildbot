@@ -16,10 +16,10 @@ bin_dir=${root_dir}/${package_name}
 zmusic_dir=${root_dir}/zmusic-build
 
 InstallDependencies() {
-    install_deps zlib1g-dev libsdl1.2-dev libsdl2-dev libjpeg-dev \
-        nasm libbz2-dev libgtk-3-dev cmake libfluidsynth-dev libgme-dev \
-        libopenal-dev libmpg123-dev libsndfile1-dev timidity libwildmidi-dev \
-        libgl1-mesa-dev libglew-dev
+    install_deps  g++ make cmake libsdl2-dev git zlib1g-dev \
+    libbz2-dev libjpeg-dev libfluidsynth-dev libgme-dev libopenal-dev \
+    libmpg123-dev libsndfile1-dev libgtk-3-dev timidity nasm \
+    libgl1-mesa-dev tar libsdl1.2-dev libglew-dev
 }
 
 GetSources() {
@@ -48,7 +48,6 @@ BuildZmusic() {
 Build() {
     mkdir -p $build_dir
     cd $source_dir
-    cmake -DCMAKE_BUILD_TYPE=Release \
     cmake -B build \
         -D CMAKE_BUILD_TYPE=Release \
         -D DYN_GTK=OFF \
