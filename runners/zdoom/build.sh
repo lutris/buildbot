@@ -22,15 +22,22 @@ InstallDependencies() {
     libgl1-mesa-dev tar libsdl1.2-dev libglew-dev
 }
 
+GetVersion() {
+    cwd="$(pwd)"
+    cd $source_dir
+    version="$(git tag -l | grep -v 9999 | grep -E '^g[0-9]+([.][0-9]+)*$' | \
+                sed 's/^g//' | sort -n -t . -k 1,1 -k 2,2 -k 3,3 -k 4,4 | \
+                tail -n 1)"
+    cd $cwd
+}
+
 GetSources() {
     cd $root_dir
     clone https://github.com/coelckers/gzdoom $source_dir
     cd $source_dir
     git config --local --add remote.origin.fetch +refs/tags/*:refs/tags/*
     git pull
-    version="$(git tag -l | grep -v 9999 | grep -E '^g[0-9]+([.][0-9]+)*$' | \
-                sed 's/^g//' | sort -n -t . -k 1,1 -k 2,2 -k 3,3 -k 4,4 | \
-                tail -n 1)"
+    GetVersion
     git checkout --detach refs/tags/g"$version"
 }
 
@@ -56,9 +63,10 @@ Build() {
 }
 
 Package() {
+    GetVersion
     cd $build_dir
     mkdir -p ${bin_dir}
-    mv gzdoom *.pk3 $bin_dir
+    cp gzdoom *.pk3 $bin_dir
     cd ${bin_dir}
     strip gzdoom
     cd ${root_dir}
@@ -71,6 +79,7 @@ CleanUp() {
 }
 
 Upload() {
+    GetVersion
     runner_upload ${package_name} gzdoom-${version} ${arch} ${dest_file}
 }
 
