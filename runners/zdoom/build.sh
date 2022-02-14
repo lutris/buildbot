@@ -11,9 +11,9 @@ root_dir=$(pwd)
 package_name=$(get_runner)
 arch=$(uname -m)
 source_dir=${root_dir}/${package_name}-src
-build_dir=${root_dir}/${package_name}-build
+build_dir=${source_dir}/build
 bin_dir=${root_dir}/${package_name}
-
+zmusic_dir=${root_dir}/zmusic-build
 
 InstallDependencies() {
     install_deps zlib1g-dev libsdl1.2-dev libsdl2-dev libjpeg-dev \
@@ -28,31 +28,38 @@ GetSources() {
     cd $source_dir
     git config --local --add remote.origin.fetch +refs/tags/*:refs/tags/*
     git pull
-    wget -nc http://zdoom.org/files/fmod/fmodapi44464linux.tar.gz && \
-    tar -xvzf fmodapi44464linux.tar.gz -C ${source_dir}
-
     version="$(git tag -l | grep -v 9999 | grep -E '^g[0-9]+([.][0-9]+)*$' | \
                 sed 's/^g//' | sort -n -t . -k 1,1 -k 2,2 -k 3,3 -k 4,4 | \
                 tail -n 1)"
     git checkout --detach refs/tags/g"$version"
 }
 
+BuildZmusic() {
+    mkdir -pv $zmusic_dir
+    cd $zmusic_build
+    git clone https://github.com/coelckers/ZMusic.git zmusic
+    mkdir -pv zmusic/build
+    cd zmusic/build
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+    make
+    sudo make install
+}
+
 Build() {
     mkdir -p $build_dir
-    cd $build_dir
-    a='' && [ "$(uname -m)" = x86_64 ] && a=64
+    cd $source_dir
     cmake -DCMAKE_BUILD_TYPE=Release \
-        -DFMOD_LIBRARY=$source_dir/fmodapi44464linux/api/lib/libfmodex"$a"-4.44.64.so \
-        -DFMOD_INCLUDE_DIR=$source_dir/fmodapi44464linux/api/inc $source_dir
-    make -j$(getconf _NPROCESSORS_ONLN)
+    cmake -B build \
+        -D CMAKE_BUILD_TYPE=Release \
+        -D DYN_GTK=OFF \
+        -D DYN_OPENAL=OFF
+    make -C build
 }
 
 Package() {
     cd $build_dir
     mkdir -p ${bin_dir}
     mv gzdoom *.pk3 $bin_dir
-    a='' && [ "$(uname -m)" = x86_64 ] && a=64
-    cp ${source_dir}/fmodapi44464linux/api/lib/libfmodex"$a"-4.44.64.so $bin_dir
     cd ${bin_dir}
     strip gzdoom
     cd ${root_dir}
@@ -72,6 +79,7 @@ if [ $1 ]; then
     $1
 else
     GetSources
+    BuildZmusic
     Build
     Package
     Upload
