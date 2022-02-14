@@ -374,6 +374,11 @@ Package() {
 
     rm -rf ${bin_dir}/include
 
+    if [ -d "$source_dir/lutris-patches/" ]; then
+        cp -R "$source_dir/lutris-patches/mono" ${bin_dir}/
+        cp -R "$source_dir/lutris-patches/gecko" ${bin_dir}/
+    fi
+
     if [ -f ${root_dir}/${upload_file} ]; then
         rm ${root_dir}/${upload_file}
     fi
