@@ -37,7 +37,8 @@ fi
 sed -i s#'PATH="'#'PATH="/opt/mingw-mostlyportable/strip:/opt/mingw-mostlyportable/bin:/opt/mingw-mostlyportable/lib:'#g /etc/environment
 
 # Install Doctl
-wget https://github.com/digitalocean/doctl/releases/download/v1.62.0/doctl-1.62.0-linux-amd64.tar.gz
-tar xf ~/doctl-1.62.0-linux-amd64.tar.gz
-mv ~/doctl /usr/local/bin
-rm doctl-1.62.0-linux-amd64.tar.gz
+DOCTL_VERSION="1.65.0"
+wget https://github.com/digitalocean/doctl/releases/download/v$DOCTL_VERSION/doctl-$DOCTL_VERSION-linux-amd64.tar.gz
+tar xf doctl-$DOCTL_VERSION-linux-amd64.tar.gz
+mv doctl /usr/local/bin
+rm doctl-$DOCTL_VERSION-linux-amd64.tar.gz
