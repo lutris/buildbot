@@ -84,13 +84,13 @@ DownloadWine() {
         # The branch name defaults to the build name
         branch_name=${branch_name:-$build_name}
         if [ -d "$source_dir" ]; then
-          git -C "$source_dir" pull
           git -C "$source_dir" clean -dfx
           if [ $(git -C "$source_dir" branch -v | grep -o -E "$branch_name\s+") ]; then
                 git -C "$source_dir" branch -m "$branch_name" "$branch_name"-old
           fi
 	  git -C "$source_dir" fetch "$repo_url" "$branch_name":"$branch_name"
 	  git -C "$source_dir" checkout "$branch_name"
+      git -C "$source_dir" pull --tags origin "$branch_name"
           if [ $(git -C "$source_dir" branch -v | grep -o -E "$branch_name-old\s+") ]; then
                 git -C "$source_dir" branch -D "$branch_name"-old
           fi
