@@ -7,7 +7,6 @@ eval set -- $params
 while true ; do
     case "$1" in
         -v|--version) version=$2; shift 2 ;;
-        -r|--remote) remote=$2; shift 2 ;;
         -f|--flavour) flavour=$2; shift 2 ;;
         -s|--staging-override) staging_version_override=$2; shift 2 ;;
         -d|--disabled-patchset) disabled_patchset=$2; shift 2 ;;
@@ -22,7 +21,6 @@ root_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 if [ $flavour ]; then
   infix="$flavour-"
-  suffix="-$flavour"
 fi
 
 if [ ! $staging_version ]; then
@@ -86,7 +84,7 @@ PrepareWineVersion() {
 }
 
 PrepareSource() {
-"$root_dir"/patches/prepare"$suffix".sh
+"$root_dir"/patches/prepare.sh $flavour
 find "${root_dir}/wine-src" -name \*.orig -type f -delete
 }
 
@@ -102,7 +100,7 @@ CommitSource() {
         git commit -am "${branch_name}"
     fi
     if [ ! $noupload ]; then
-    git -C "$wine_source_dir" push --force origin ${branch_name}
+    git -C "$wine_source_dir" push --force --tag origin ${branch_name}
     fi
 }
 
