@@ -1,6 +1,8 @@
 libaio1                           libaio.so.1
 liballegro4.4                     liballeg.so.4.4
 libatk1.0-0                       libatk-1.0.so.0
+libatk-bridge2.0-0                libatk-bridge-2.0.so.0 libatk-bridge-2.0.so.0.0.0
+libatspi2.0-0                     libatspi.so.0 libatspi.so.0.0.1
 libaudio2                         libaudio.so.2
 libavcodec57                      libavcodec.so.57
 libavformat57                     libavformat.so.57
@@ -29,6 +31,7 @@ libgloox15                        libgloox.so.15
 libgnutls30                       libgnutls.so.30 libnettle.so.6 libhogweed.so.4 libgmp.so.10 libtasn1.so.6 libidn2.so.0
 libgomp1                          libgomp.so.1
 libgraphite2-3                    libgraphite2.so.3
+libgtk-3-0                        libgtk-3.so.0 libgtk-3.so.0.2200.30
 libharfbuzz0b                     libharfbuzz.so.0
 libicu60                          libicui18n.so.60 libicuuc.so.60 libicudata.so.60
 libirrlicht1.8                    libIrrlicht.so.1.8
@@ -50,12 +53,14 @@ libncurses5                       libncurses.so.5
 libncursesw5                      libncursesw.so.5
 libnih1                           libnih.so.1
 libnih-dbus1                      libnih-dbus.so.1
+libnspr4                          libnspr4.so
 libjpeg8                          libjpeg.so.8
 libreadline7                      libhistory.so.7 libreadline.so.7
 libpango-1.0-0                    libpango-1.0.so.0
 libpangocairo-1.0-0               libpangocairo-1.0.so.0
 libpangoft2-1.0-0                 libpangoft2-1.0.so.0
 libphysfs1                        libphysfs.so.1
+libpixman-1-0                     libpixman-1.so.0 libpixman-1.so.0.34.0
 libportaudio2                     libportaudio.so.2
 libpulse0                         libpulse-simple.so.0 libpulse.so.0 /usr/lib/i386-linux-gnu/pulseaudio/libpulsecommon-11.1.so /usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-11.1.so
 libsdl2-image-2.0-0               libSDL2_image-2.0.so.0
@@ -92,4 +97,6 @@ libssl1.1                         libcrypto.so.1.1 libssl.so.1.1
 libunistring2                     libunistring.so.2
 libuuid1                          libuuid.so.1
 librtmp1                          librtmp.so.1
+libxdamage1                       libXdamage.so.1 libXdamage.so.1.1.0
+libxfixes3                        libXfixes.so.3 libXfixes.so.3.1.0
 libxtst6                          libXtst.so.6.1.0 libXtst.so.6
