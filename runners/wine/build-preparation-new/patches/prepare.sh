@@ -13,9 +13,9 @@ REVERT_PATCH=1
 highlight_start='\033[7m'
 highlight_end='\033[0m'
 
-if [ $1 = fshack ]; then
+#if [ $1 = fshack ]; then
     FSHACK=1
-fi
+#fi
 
 if [ $1 = pa ]; then
     FSHACK=1
@@ -352,18 +352,36 @@ if [ $CORE_PATCH = 1 ]; then
     if [ $FSHACK = 1 ]; then
 
     echo -e ""$highlight_start"fullscreen hack"
+    
     echo -e ""$highlight_start"fshack 1"$highlight_end""
     patch -Np1 < ../patches/fshack/01-vulkan-1-prefer-builtin.patch
-    echo -e ""$highlight_start"fshack 2"    
+
+    echo -e ""$highlight_start"fshack 2"$highlight_end""
     patch -Np1 < ../patches/fshack/02-vulkan-childwindow.patch
-    echo -e ""$highlight_start"fshack 3"    
+
+    echo -e ""$highlight_start"fshack 3"$highlight_end""
     patch -Np1 < ../patches/fshack/03-window-manager-fixes.patch
+
     echo -e ""$highlight_start"fshack 4"$highlight_end""
     patch -Np1 < ../patches/fshack/04-fullscreen-hack.patch
+
+    echo -e ""$highlight_start"Winevulkan"$highlight_end""
+    patch -Np1 < ../patches/fshack/09-winevulkan_update.mypatch
+
+    echo -e ""$highlight_start"OpenXR"$highlight_end""
+    patch -Np1 < ../patches/fshack/07-OpenXR-patches.patch
+    
+    echo -e ""$highlight_start"Shared resources"$highlight_end""
+    patch -Np1 < ../patches/fshack/08-shared_resources.patch
+
     echo -e ""$highlight_start"fullscreen hack fsr patch"$highlight_end""
     patch -Np1 < ../patches/fshack/05-fshack_amd_fsr.patch
+
     echo -e ""$highlight_start"Adds envar to fake reported resolution"$highlight_end""
     patch -Np1 < ../patches/fshack/06-fake_current_res_patches.patch
+
+    echo -e ""$highlight_start"fsr add more resolutions"$highlight_end""
+    patch -Np1 < ../patches/fshack/10-add_more_fsr_resolutions.patch
 
     fi
 
