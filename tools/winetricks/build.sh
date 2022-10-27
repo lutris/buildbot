@@ -8,6 +8,7 @@ pkg_name="winetricks"
 arch=$(uname -m)
 root_dir=$(pwd)
 source_dir="${root_dir}/${pkg_name}-src"
+zenity_source_dir="${root_dir}/zenity-src"
 bin_dir="${root_dir}/${pkg_name}"
 date=$(date '+%Y%m%d')
 dest_file="${pkg_name}-${date}-${arch}.tar.xz"
@@ -20,7 +21,14 @@ GetSources() {
     else
       git clone https://github.com/Winetricks/winetricks.git "$source_dir"
     fi
+    if [ -d "$zenity_source_dir" ]; then
+      git -C "$zenity_source_dir" fetch
+      git -C "$zenity_source_dir" reset --hard origin/master
+    else
+      git clone https://gitlab.gnome.org/GNOME/zenity "$zenity_source_dir"
+    fi
 }
+
 
 BuildProject() {
     cd "${source_dir}"
@@ -29,6 +37,12 @@ BuildProject() {
     for i in ../patches/*.patch; do patch -Np1 < $i; done
     mkdir -p "${bin_dir}"
     cp "${source_dir}/src/winetricks" "${bin_dir}"
+    
+    cd "${zenity_source_dir}"
+    meson build
+    meson compile -C build
+    cp "${zenity_source_dir}/build/src/zenity" "${bin_dir}"
+    cp "${zenity_source_dir}/src/zenity.ui" "${bin_dir}"
 }
 
 
@@ -37,12 +51,14 @@ PackageProject() {
     tar cJf "${pkg_name}-${date}-${arch}.tar.xz" "${pkg_name}"
 }
 
+
 UploadRunner() {
     cd ${root_dir}
     aws s3 --endpoint-url=https://nyc3.digitaloceanspaces.com cp ${dest_file} s3://lutris/tools/winetricks/
     s3cmd setacl s3://lutris/tools/winetricks/${dest_file} --acl-public
     echo url="https://lutris.nyc3.cdn.digitaloceanspaces.com/tools/winetricks/${dest_file}"
 }
+
 
 Cleanup() {
     cd "$root_dir"
