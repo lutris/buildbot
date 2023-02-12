@@ -13,14 +13,12 @@ source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-version="1.11"
+version="1.14.4"
 
 deps="cmake libsdl2-dev"
 install_deps $deps
 
-clone https://github.com/hrydgard/ppsspp.git $source_dir
-cd $source_dir
-git submodule update --init --recursive
+clone https://github.com/hrydgard/ppsspp.git $source_dir true v1.14.4
 
 mkdir -p $build_dir
 cd $build_dir
