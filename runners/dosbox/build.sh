@@ -29,7 +29,6 @@ GetSources() {
 
 Build() {
     cd $source_dir
-    # meson setup build -Dtry_static_libs=iir,mt32emu,opusfile,slirp,speexdsp,tracy
     meson setup build -Dtry_static_libs=iir,mt32emu,opusfile,speexdsp,tracy
     meson compile -C build
 }

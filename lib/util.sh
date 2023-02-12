@@ -3,6 +3,7 @@ function clone {
     local source_dir=$2
     local recurse=$3
     local tag=$4
+    local branch="master"
 
     if [ "$recurse" ]; then
         recurse="--recursive"
@@ -12,10 +13,10 @@ function clone {
     if [ -d ${source_dir} ]; then
         echo "Updating sources"
         cd ${source_dir}
-        git checkout master
+        git checkout $branch
         git clean -dfx
         git reset --hard
-        git pull origin master
+        git pull origin $branch
         cd ..
     else
         echo "Cloning sources"
