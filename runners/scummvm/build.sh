@@ -11,24 +11,38 @@ source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
 artifact_dir="${root_dir}/artifacts/"
 arch="$(uname -m)"
-version="2.2.0"
+version="2.6.1"
 
-cd $root_dir
-src_dir="scummvm-${version}"
-src_archive="${src_dir}.tar.xz"
-src_url="http://www.scummvm.org/frs/scummvm/${version}/${src_archive}"
-wget $src_url -O $src_archive
-tar xJf $src_archive
+GetSources() {
+    cd $root_dir
+    src_dir="scummvm-${version}"
+    src_archive="${src_dir}.tar.xz"
+    src_url="http://www.scummvm.org/frs/scummvm/${version}/${src_archive}"
+    wget $src_url -O $src_archive
+    tar xJf $src_archive
+    rm -rf $source_dir
+    mv $src_dir $source_dir
+}
 
-rm -rf $source_dir
-mv $src_dir $source_dir
+Build() {
+    cd $source_dir
+    ./configure --prefix=${build_dir}
+    make
+    make install
+}
 
-cd $source_dir
-./configure --prefix=${build_dir}
-make
-make install
+Package() {
+    cd $root_dir
+    dest_file=${runner_name}-${version}-${arch}.tar.gz
+    tar czf ${dest_file} ${runner_name}
+    cp $dest_file $artifact_dir
+}
 
-cd ..
-dest_file=${runner_name}-${version}-${arch}.tar.gz
-tar czf ${dest_file} ${runner_name}
-cp $dest_file $artifact_dir
+if [ $1 ]; then
+    $1
+else
+    InstallDeps
+    GetSources
+    Build
+    Package
+fi
