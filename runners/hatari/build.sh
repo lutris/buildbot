@@ -13,7 +13,7 @@ source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
-version="2.2.1"
+version="2.5.0-dev"
 
 git clone https://git.tuxfamily.org/hatari/hatari.git/ $source_dir
 
