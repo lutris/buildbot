@@ -174,12 +174,12 @@ BuildWine() {
     # Do not use $arch here since it migth have been changed for the WOW64
     # build on the 32bit container
     if [ "$(uname -m)" = "x86_64" ]; then
-        configure_opts="$configure_opts --enable-win64 --libdir=$prefix/lib64"
+        configure_opts="$configure_opts --enable-win64  --with-wayland --libdir=$prefix/lib64"
     fi
 
     # Third step to stitch together Wine64 and Wine32 build for the WOW64 build
     if [ "$1" = "combo" ]; then
-        configure_opts="$configure_opts --with-wine64=../wine64 --with-wine-tools=../wine32 --libdir=$prefix/lib"
+        configure_opts="$configure_opts --with-wine64=../wine64  --with-wayland --with-wine-tools=../wine32 --libdir=$prefix/lib"
     fi
 
     if [ "$(uname -m)" = "x86_64" ]; then
