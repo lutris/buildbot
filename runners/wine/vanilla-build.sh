@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set +x
+
 trap TrapClean ERR INT
 
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -14,7 +16,7 @@ source ${lib_path}upload_handler.sh
 runner_name=$(get_runner)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
-configure_opts="--disable-tests --with-x --with-gstreamer"
+configure_opts="--disable-tests --with-x"
 arch=$(uname -m)
 version="8.0"
 
@@ -170,17 +172,17 @@ echo "---"
 
 mkdir -p build64
 cd build64
-CC="$ccache gcc" CROSSCC="$ccache x86_64-w64-mingw32-gcc" LDFLAGS="-L${runtime_path}/lib64 -Wl,-rpath-link,${runtime_path}/lib64" ../configure -q -C --enable-win64 --libdir=$prefix/lib64 ${configure_opts} $MINGW_STATE
+CC="$ccache gcc" CROSSCC="$ccache x86_64-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib64 LDFLAGS="-L${runtime_path}/lib64 -Wl,-rpath-link,${runtime_path}/lib64" ../configure -q -C --enable-win64 --libdir=$prefix/lib64 ${configure_opts} $MINGW_STATE
 make -s -j$(nproc)
 cd ..
 
 mkdir -p build32
 cd build32
-CC="$ccache gcc" CROSSCC="$ccache i686-w64-mingw32-gcc" LDFLAGS="-L${runtime_path}/lib32 -Wl,-rpath-link,$runtime_path/lib32" ../configure -q -C --libdir=$prefix/lib ${configure_opts} $MINGW_STATE
+CC="$ccache gcc" CROSSCC="$ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 LDFLAGS="-L${runtime_path}/lib32 -Wl,-rpath-link,$runtime_path/lib32" ../configure -q -C --libdir=$prefix/lib ${configure_opts} $MINGW_STATE
 make -s -j$(nproc)
 cd ..
 
-export $build_dir=/vagrant/$prefix
+build_dir=/vagrant/$prefix
 mkdir -p $build_dir
 
 if ! test -s .git/rebase-merge/git-rebase-todo
