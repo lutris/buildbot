@@ -20,7 +20,7 @@ configure_opts="--disable-tests --with-x"
 arch=$(uname -m)
 version="8.0"
 
-params=$(getopt -n $0 -o a:b:w:v:p:sndfcmt --long as:,branch:,with:,version:,patch:,staging,noupload,dependencies,keep-upload-file,useccache,usemingw,nostrip -- "$@")
+params=$(getopt -n $0 -o a:b:w:v:p:snfcmt --long as:,branch:,with:,version:,patch:,staging,noupload,keep-upload-file,useccache,usemingw,nostrip -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -31,7 +31,6 @@ while true ; do
         -p|--patch) patch=$2; shift 2 ;;
         -s|--staging) STAGING=1; shift ;;
         -n|--noupload) NOUPLOAD=1; shift ;;
-        -d|--dependencies) INSTALL_DEPS=1; shift ;;
         -f|--keep-upload-file) KEEP_UPLOAD_FILE=1; shift ;;
         -c|--useccache) CCACHE=1; shift ;;
         -m|--usemingw) MINGW=1; shift ;;
@@ -211,13 +210,13 @@ fi
 
     #copy sdl2, faudio, vkd3d, and ffmpeg libraries
     cp -R "$runtime_path"/lib64/* "$build_dir"/lib64/
-    
+
     rm -rf "$build_dir"/include
 
     if [ -d "$source_dir/lutris-patches/" ]; then
         cp -R "$source_dir/lutris-patches/mono" "$build_dir"/
         cp -R "$source_dir/lutris-patches/gecko" "$build_dir"/
     fi
-    
+
     cd /vagrant/ && tar cJf ${upload_file} ${bin_dir}
 # git reset --hard
