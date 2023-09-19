@@ -7,7 +7,7 @@ source ${lib_path}util.sh
 source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
-version="0.7.71"
+version="0.7.111"
 arch=$(uname -m)
 
 root_dir=$(pwd)
@@ -15,7 +15,7 @@ source_dir=$(pwd)/${runner_name}-src
 build_dir=$(pwd)/${runner_name}-build
 bin_dir=$(pwd)/${runner_name}
 
-deps="git build-essential libsdl2-dev libepoxy-dev libpixman-1-dev libgtk-3-dev libssl-dev libsamplerate0-dev libpcap-dev ninja-build python3-yaml"
+deps="libsdl2-dev libepoxy-dev libpixman-1-dev libgtk-3-dev libssl-dev libsamplerate0-dev libpcap-dev ninja-build python3-yaml"
 install_deps $deps
 
 
@@ -30,7 +30,7 @@ BuildProject() {
 
 PackageProject() {
     mkdir -p $bin_dir
-    
+
     # TODO
 
     cd ${root_dir}
