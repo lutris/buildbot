@@ -15,7 +15,7 @@ source_dir=$(pwd)/${runner_name}-src
 build_dir=$(pwd)/${runner_name}-build
 bin_dir=$(pwd)/${runner_name}
 
-deps="libsdl2-dev libslirp-dev libepoxy-dev libpixman-1-dev libgtk-3-dev libssl-dev libsamplerate0-dev libpcap-dev ninja-build python3-yaml"
+deps="libsdl2-dev libslirp-dev libglu1-mesa-dev libepoxy-dev libpixman-1-dev libgtk-3-dev libssl-dev libsamplerate0-dev libpcap-dev ninja-build python3-yaml"
 install_deps $deps
 
 
@@ -29,10 +29,8 @@ BuildProject() {
 }
 
 PackageProject() {
-    mkdir -p $bin_dir
-
-    # TODO
-
+    mkdir -p $source_dir
+    mv dist $bin_dir
     cd ${root_dir}
     dest_file="${runner_name}-${version}-${arch}.tar.gz"
     tar czf ${dest_file} ${runner_name}
@@ -41,3 +39,4 @@ PackageProject() {
 
 DownloadGit
 BuildProject
+PackageProject

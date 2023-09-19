@@ -11,20 +11,16 @@ root_dir=$(pwd)
 build_dir="${root_dir}/${runner_name}"
 source_dir="${root_dir}/${runner_name}-src"
 arch=$(uname -m)
-version="1.53"
+version="1.62.3"
 
 repo_url="https://github.com/snes9xgit/snes9x.git"
 deps="autoconf libtool gettext libglib2.0-dev intltool libgtk2.0-dev libxml2-dev libsdl1.2-dev"
 
 install_deps $deps
-clone $repo_url $source_dir
+clone $repo_url $source_dir "" $version
 
 cd ${source_dir}/gtk
 ./autogen.sh
-
-# Compiling with gtk3 produces lots of warning messages
-# and a segfault on 2 Ubuntu 15.04 machines
-# ./configure --prefix=${build_dir} --without-screenshot --without-xv --with-gtk3
 ./configure --prefix=${build_dir} --without-screenshot --without-xv
 make
 make install
