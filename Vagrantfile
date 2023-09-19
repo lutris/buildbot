@@ -1,11 +1,65 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-Vagrant.configure("2") do |config|
-  config.vm.box = "debian/bookworm64"
-  config.vm.synced_folder ".", "/home/vagrant/lutris-buildbot", id: "lutris-buildbot", type: "rsync"
-  config.vm.provision "shell", path:"setup-buildbot.sh"
+
+Vagrant.require_version ">= 2.2.0"
+
+module OS
+  def OS.windows?
+    (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM) != nil
+  end
+
+  def OS.mac?
+    (/darwin/ =~ RUBY_PLATFORM) != nil
+  end
+
+  def OS.unix?
+    !OS.windows?
+  end
+
+  def OS.linux?
+    OS.unix? and not OS.mac?
+  end
+end
+
+# Vagrant file for setting up a build environment for Lutris wine builds.
+if OS.linux?
+  cpus = `nproc`.to_i
+  # meminfo shows KB and we need to convert to MB
+  memory = `grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i / 1024 / 4
+elsif OS.mac?
+  cpus = `sysctl -n hw.physicalcpu`.to_i
+  # sysctl shows bytes and we need to convert to MB
+  memory = `sysctl hw.memsize | sed -e 's/hw.memsize: //'`.to_i / 1024 / 1024 / 4
+else
+  cpus = 1
+  memory = 1024
+  puts "Vagrant launched from unsupported platform."
+end
+memory = [memory, 4096].max
+puts "Platform: " + cpus.to_s + " CPUs, " + memory.to_s + " MB memory"
+
+Vagrant.configure(2) do |config|
+
+  config.vagrant.plugins = "vagrant-sshfs"
+
   config.vm.provider :libvirt do |libvirt|
-    libvirt.cpus = 8
-    libvirt.memory = 8192
+    libvirt.cpus = cpus
+    libvirt.memory = memory
+  end
+
+  config.vm.define "debian", primary: true do |debian|
+
+    debian.vm.box = "debian/bookworm64"
+
+    debian.vm.synced_folder "./vagrant_share/", "/vagrant/", create: true, type: "sshfs", sshfs_opts_append: "-o cache=no"
+    debian.vm.synced_folder ".", "/home/vagrant/lutris-buildbot", id: "lutris-buildbot", type: "rsync", rsync__exclude: ["vagrant_share"]
+
+    debian.vm.provision "shell-1", type: "shell", inline: <<-SHELL
+
+      #install dependencies on host vm
+      apt-get update
+      sudo bash -c /home/vagrant/lutris-buildbot/setup-buildbot.sh
+
+    SHELL
   end
 end
