@@ -15,7 +15,7 @@ source_dir=$(pwd)/${runner_name}-src
 build_dir=$(pwd)/${runner_name}-build
 bin_dir=$(pwd)/${runner_name}
 
-deps="libsdl2-dev libepoxy-dev libpixman-1-dev libgtk-3-dev libssl-dev libsamplerate0-dev libpcap-dev ninja-build python3-yaml"
+deps="libsdl2-dev libslirp-dev libepoxy-dev libpixman-1-dev libgtk-3-dev libssl-dev libsamplerate0-dev libpcap-dev ninja-build python3-yaml"
 install_deps $deps
 
 
