@@ -155,30 +155,33 @@ cd ${source_dir}
 echo "Building $(git log -1)"
 echo "---"
 
-
+echo "Configuring 64 bit build"
 mkdir -p build64
 cd build64
-CC="$ccache gcc" CROSSCC="$ccache x86_64-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib64 LDFLAGS="-L${runtime_path}/lib64 -Wl,-rpath-link,${runtime_path}/lib64" ../configure -q -C --enable-win64 --libdir=$prefix/lib64 ${configure_opts} $MINGW_STATE
-make -s -j$(nproc)
+LDFLAGS="-L${runtime_path}/lib64 -Wl,-rpath-link,${runtime_path}/lib64" ../configure -q -C --enable-win64 --libdir=$prefix/lib64 ${configure_opts} $MINGW_STATE
+CC="$ccache gcc" CROSSCC="$ccache x86_64-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib64 make -s -j$(nproc)
 cd ..
 
+echo "Configuring 32 bit build"
 mkdir -p build32
 cd build32
-CC="$ccache gcc" CROSSCC="$ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 LDFLAGS="-L${runtime_path}/lib32 -Wl,-rpath-link,$runtime_path/lib32" ../configure -q -C --libdir=$prefix/lib ${configure_opts} $MINGW_STATE
-make -s -j$(nproc)
+LDFLAGS="-L${runtime_path}/lib32 -Wl,-rpath-link,$runtime_path/lib32" ../configure -q -C --libdir=$prefix/lib ${configure_opts} $MINGW_STATE
+CC="$ccache gcc" CROSSCC="$ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 make -s -j$(nproc)
 cd ..
 
-build_dir=/vagrant/$prefix
-mkdir -p $build_dir
+
+export BASEDIR=/home/vagrant/$bin_dir/
+mkdir -p $BASEDIR
 
 if ! test -s .git/rebase-merge/git-rebase-todo
 then
-    make -s -j$(nproc) -C build32 install-lib DESTDIR=$build_dir
-    make -s -j$(nproc) -C build64 install-lib DESTDIR=$build_dir
+	echo "Creating build at $build_dir"
+	CC="$ccache gcc" CROSSCC="$ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 make -s -j$(nproc) -C build32 install-lib DESTDIR=$BASEDIR
+	CC="$ccache gcc" CROSSCC="$ccache x86_64-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib64 make -s -j$(nproc) -C build64 install-lib DESTDIR=$BASEDIR
 fi
 
-    # Clean up wine build
-    if [ -z  $NOSTRIP ]; then
+    if [ -z $NOSTRIP ]; then
+	echo "stripping build"
         find "$build_dir"/bin -type f -exec strip {} \;
         for _f in "$build_dir"/{bin,lib,lib64}/{wine/*,*}; do
             if [[ "$_f" = *.so ]] || [[ "$_f" = *.dll ]]; then
@@ -192,18 +195,25 @@ fi
         done
     fi
 
+    echo "Copying 64 bit runtime libraries to build"
     #copy sdl2, faudio, vkd3d, and ffmpeg libraries
-    cp -R "$runtime_path"/lib32/* "$build_dir"/lib/
+    cp -R "$runtime_path"/lib64/* "$BASEDIR"/lib64/
 
+    echo "Copying 32 bit runtime libraries to build"
     #copy sdl2, faudio, vkd3d, and ffmpeg libraries
-    cp -R "$runtime_path"/lib64/* "$build_dir"/lib64/
+    cp -R "$runtime_path"/lib32/* "$BASEDIR"/lib/
 
-    rm -rf "$build_dir"/include
+    echo "Cleaning include files from build"    
+    rm -rf "$BASEDIR"/include
 
+    echo "Copying wine-mono and wine-gecko to build"
     if [ -d "$source_dir/lutris-patches/" ]; then
-        cp -R "$source_dir/lutris-patches/mono" "$build_dir"/
-        cp -R "$source_dir/lutris-patches/gecko" "$build_dir"/
+        cp -R "$source_dir/lutris-patches/mono" "$BASEDIR"/
+        cp -R "$source_dir/lutris-patches/gecko" "$BASEDIR"/
     fi
-
+    
+    echo "Creating tarball from build at $BASEDIR"
     cd /vagrant/ && tar cJf ${upload_file} ${bin_dir}
-
+    
+    echo "Build complete!"
+# git reset --hard
