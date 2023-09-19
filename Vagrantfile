@@ -6,6 +6,6 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path:"setup-buildbot.sh"
   config.vm.provider :libvirt do |libvirt|
     libvirt.cpus = 8
-    libvirt.memory = 16384
+    libvirt.memory = 8192
   end
 end
