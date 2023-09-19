@@ -2,7 +2,6 @@
 
 set +x
 
-trap TrapClean ERR INT
 
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd ${root_dir}
@@ -60,17 +59,7 @@ upload_file="wine-${filename_opts}${version}-${arch}.tar.xz"
         MINGW_STATE="--without-mingw"
     fi
 
-TrapClean() {
-    if [ ! $KEEP ]; then
-        cd ${root_dir}
-        rm -rf ${build_dir} ${bin_dir} ${upload_file}
-    fi
-    printf "Build failed, cleaned up.\n"
-    exit
-}
-
 DownloadWine() {
-    trap TrapClean ERR INT
     # If a git repo as been specified use this instead and return
     if [[ $repo_url ]]; then
         # The branch name defaults to the build name
@@ -119,7 +108,6 @@ DownloadWine() {
 }
 
 DownloadWineStaging() {
-    trap TrapClean ERR INT
     local ignore_errors
     if [  ! -z $STAGING ]; then
         echo "Adding Wine Staging patches"
@@ -144,7 +132,6 @@ DownloadWineStaging() {
 }
 
 ApplyPatch() {
-    trap TrapClean ERR INT
     cd ${root_dir}
     patch_path=$(realpath $patch)
     if [ ! -f $patch_path ]; then
@@ -219,4 +206,4 @@ fi
     fi
 
     cd /vagrant/ && tar cJf ${upload_file} ${bin_dir}
-# git reset --hard
+
