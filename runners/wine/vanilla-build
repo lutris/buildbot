@@ -12,15 +12,20 @@ echo "---"
 ./tools/make_makefiles
 autoreconf -f
 
+mkdir -p build64
 cd build64
 ../configure -q -C --enable-win64 --enable-werror --with-mingw
 make -s -j$(nproc)
 cd ..
 
+mkdir -p build32
 cd build32
 ../configure -q -C --enable-werror --with-mingw
 make -s -j$(nproc)
 cd ..
+
+export BASEDIR=/home/vagrant/winebuild/
+mkdir -p $BASEDIR
 
 if ! test -s .git/rebase-merge/git-rebase-todo
 then
@@ -28,4 +33,4 @@ then
     make -s -j$(nproc) -C build64 install-lib install-test DESTDIR=$BASEDIR
 fi
 
-git reset --hard
+# git reset --hard
