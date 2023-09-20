@@ -1,1 +1,0 @@
--W ntdll-NtAlertThreadByThreadId -W winex11-_NET_ACTIVE_WINDOW -W winex11-WM_WINDOWPOSCHANGING -W winemenubuilder-integration -W dwrite-FontFallback
