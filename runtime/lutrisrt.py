@@ -54,6 +54,7 @@ def get_ldconfig_libs() -> list:
 
 
 def find_lib_paths(required_libs) -> list:
+    """Return library paths needed by the runtime"""
     lib_paths = []
     ld_libs = []
     for parts in get_ldconfig_libs():
@@ -73,13 +74,20 @@ def find_lib_paths(required_libs) -> list:
 
 
 def build_runtime():
+    """Copy libraries from system folders to runtime"""
     required_libs = []
     libs = get_libs()
-    subprocess.Popen(
-        ['sudo', 'apt-get', 'install', '--allow-downgrades', '--allow-remove-essential', '--allow-change-held-packages', '-q=2'] + list(libs.keys())
-    ).communicate()
-    for lib_package in libs:
-        required_libs += libs[lib_package]
+    subprocess.Popen([
+        'sudo',
+        'apt-get',
+        'install',
+        '--allow-downgrades',
+        '--allow-remove-essential',
+        '--allow-change-held-packages',
+        '-q=2'
+    ] + list(libs.keys())).communicate()
+    for lib_list in libs.values():
+        required_libs += lib_list
     lib_paths = find_lib_paths(required_libs)
     for lib in lib_paths:
         exists = os.path.exists(lib)
