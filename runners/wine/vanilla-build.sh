@@ -19,7 +19,7 @@ configure_opts="--disable-tests --with-x"
 arch=$(uname -m)
 version="8.0"
 
-params=$(getopt -n $0 -o a:b:w:v:p:snfcmt --long as:,branch:,with:,version:,patch:,staging,noupload,keep-upload-file,useccache,usemingw,nostrip -- "$@")
+params=$(getopt -n $0 -o a:b:w:v:nfcmt --long as:,branch:,with:,version:,noupload,keep-upload-file,useccache,usemingw,nostrip -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -27,8 +27,6 @@ while true ; do
         -b|--branch) branch_name=$2; shift 2 ;;
         -w|--with) repo_url=$2; shift 2 ;;
         -v|--version) version=$2; shift 2 ;;
-        -p|--patch) patch=$2; shift 2 ;;
-        -s|--staging) STAGING=1; shift ;;
         -n|--noupload) NOUPLOAD=1; shift ;;
         -f|--keep-upload-file) KEEP_UPLOAD_FILE=1; shift ;;
         -c|--useccache) CCACHE=1; shift ;;
@@ -40,8 +38,6 @@ done
 
 if [ "$build_name" ]; then
     filename_opts="${build_name}-"
-elif [ ! -z "$STAGING" ]; then
-    filename_opts="staging-"
 fi
 
 
@@ -107,49 +103,7 @@ DownloadWine() {
     mv wine-${version} ${source_dir}
 }
 
-DownloadWineStaging() {
-    local ignore_errors
-    if [  ! -z $STAGING ]; then
-        echo "Adding Wine Staging patches"
-        cd ${source_dir}
-        staging_archive="v${version}.tar.gz"
-        wget https://github.com/wine-staging/wine-staging/archive/${staging_archive} || true
-        if [ -f $staging_archive ]; then
-            tar xvzf ${staging_archive} --strip-components 1
-            rm ${staging_archive}
-            ignore_errors=false
-        else
-            echo "Wine staging v$version not found, reverting to current git master, safety not guaranteed."
-            clone https://github.com/wine-staging/wine-staging.git ${source_dir}/wine-staging-git
-            cd ${source_dir}
-            mv ${source_dir}/wine-staging-git/* ${source_dir}
-            rm -rf ${source_dir}/wine-staging-git
-            ignore_errors=true
-        fi
-        ${source_dir}/patches/patchinstall.sh DESTDIR="$(pwd)" --all || $ignore_errors
-        configure_opts="$configure_opts --with-xattr"
-    fi
-}
-
-ApplyPatch() {
-    cd ${root_dir}
-    patch_path=$(realpath $patch)
-    if [ ! -f $patch_path ]; then
-        echo "Couldn't find patch $patch_path"
-        exit 2
-    fi
-    echo "Applying patch $patch_path"
-    cd $source_dir
-    patch -p1 < $patch_path
-}
-
 DownloadWine
-DownloadWineStaging
-
-if [ "$patch" ]; then
-    ApplyPatch
-fi
-
 
 cd ${source_dir}
 echo "Building $(git log -1)"
@@ -203,7 +157,7 @@ fi
     #copy sdl2, faudio, vkd3d, and ffmpeg libraries
     cp -R "$runtime_path"/lib32/* "$BASEDIR"/lib/
 
-    echo "Cleaning include files from build"    
+    echo "Cleaning include files from build"
     rm -rf "$BASEDIR"/include
 
     echo "Copying wine-mono and wine-gecko to build"
@@ -211,9 +165,9 @@ fi
         cp -R "$source_dir/lutris-patches/mono" "$BASEDIR"/
         cp -R "$source_dir/lutris-patches/gecko" "$BASEDIR"/
     fi
-    
+
     echo "Creating tarball from build at $BASEDIR"
     cd /vagrant/ && tar cJf ${upload_file} ${bin_dir}
-    
+
     echo "Build complete!"
 # git reset --hard
