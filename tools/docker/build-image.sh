@@ -28,16 +28,16 @@ cd /home/vagrant/lutris-buildbot/
 ./setup-buildbot.sh
 EOF
 chmod +x imageprep.sh
-podman pull debian:bookworm
-podman create --interactive --name bookworm debian:bookworm
-podman start bookworm
-podman cp imageprep.sh bookworm:/
+docker pull debian:bookworm
+docker create --interactive --name bookworm debian:bookworm
+docker start bookworm
+docker cp imageprep.sh bookworm:/
 rm imageprep.sh
-podman exec bookworm bash -c "./imageprep.sh"
-podman exec bookworm bash -c "rm imageprep.sh"
-podman stop bookworm
+docker exec bookworm bash -c "./imageprep.sh"
+docker exec bookworm bash -c "rm imageprep.sh"
+docker stop bookworm
 
 # Change gloriouseggroll/lutris_buildbot:bookworm to your Docker repo and tag
-podman commit bookworm gloriouseggroll/lutris_buildbot:bookworm
-podman push gloriouseggroll/lutris_buildbot:bookworm
+docker commit bookworm gloriouseggroll/lutris_buildbot:bookworm
+docker push gloriouseggroll/lutris_buildbot:bookworm
 
