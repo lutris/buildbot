@@ -2,7 +2,6 @@
 
 set +x
 
-
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd ${root_dir}
 
@@ -10,7 +9,6 @@ lib_path="../../lib/"
 runtime_path=$(readlink -f "../../runtime/extra/")
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
 source_dir="${root_dir}/${runner_name}-src"
@@ -19,7 +17,7 @@ configure_opts="--disable-tests --with-x"
 arch=$(uname -m)
 version="8.0"
 
-params=$(getopt -n $0 -o a:b:w:v:nfcmt --long as:,branch:,with:,version:,noupload,keep-upload-file,useccache,usemingw,nostrip -- "$@")
+params=$(getopt -n $0 -o a:b:w:v:cmt --long as:,branch:,with:,version:,useccache,usemingw,nostrip -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
@@ -27,8 +25,6 @@ while true ; do
         -b|--branch) branch_name=$2; shift 2 ;;
         -w|--with) repo_url=$2; shift 2 ;;
         -v|--version) version=$2; shift 2 ;;
-        -n|--noupload) NOUPLOAD=1; shift ;;
-        -f|--keep-upload-file) KEEP_UPLOAD_FILE=1; shift ;;
         -c|--useccache) CCACHE=1; shift ;;
         -m|--usemingw) MINGW=1; shift ;;
         -t|--nostrip) NOSTRIP=1; shift ;;
@@ -42,7 +38,8 @@ fi
 
 
 bin_dir="${filename_opts}${version}-${arch}"
-upload_file="wine-${filename_opts}${version}-${arch}.tar.xz"
+
+archive_filename="wine-${filename_opts}${version}-${arch}.tar.xz"
 
     if [ ! -z $CCACHE ]; then
         ccache="ccache"
@@ -125,6 +122,8 @@ LDFLAGS="-L${runtime_path}/lib32 -Wl,-rpath-link,$runtime_path/lib32" ../configu
 CC="$ccache gcc" CROSSCC="$ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 make -s -j$(nproc)
 cd ..
 
+export DESTDIR=/vagrant/runners/wine/
+mkdir -p $DESTDIR
 if ! test -s .git/rebase-merge/git-rebase-todo
 then
 	echo "Creating build at $build_dir"
@@ -165,8 +164,8 @@ fi
     fi
 
     echo "Creating tarball from build at $BASEDIR"
-    cd ~ && tar cvJf ${upload_file} ${bin_dir}
-    sudo mv ${upload_file} /vagrant/
+    cd ~ && tar cvJf ${archive_filename} ${bin_dir}
+    sudo mv ${archive_filename} $DESTDIR
 
     echo "Build complete!"
-# git reset --hard
+
