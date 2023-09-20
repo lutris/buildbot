@@ -2,118 +2,81 @@ Lutris buildbot
 ===============
 
 This repository contains various build scripts for runners and games used by
-Lutris. The target system for these scripts is Ubuntu 18.04 (the same system
+Lutris. The target system for these scripts is Debian 12 Bookworm (the same system
 used by the Lutris runtime).
 
-It is advised to run these scripts from a LXC container. It's potentially
-possible to use other container technology such as Docker but we strongly
-advise against it. Virtual machines are ok to use too.
+It is advised to run these scripts from within either a docker/podman container or vagrant
+VM. We have provided setup scripts for both (details below).
 
-The only case where these containers need to communicate is when build 64bit
-builds of Wine. These builds are actually multi-arch and provide 32 and 64bit
-support. Make sure the 32 bit container is able to SSH (without a password) to
-ubuntu@buildbot64 and inversely, that the 64bit container can SSH to
-ubuntu@buildbot32.
+Option 1: docker/podman container 
+----------------------------------
+    On Ubuntu: sudo apt install podman
+    On Arch:   sudo pacman -S podman
+    On Fedora: sudo dnf install podman
 
-To create the containers, first make sure you have the client installed::
+Then build wine:
 
-    On Ubuntu: sudo apt install lxd lxd-client
-    On Arch Linux: sudo pacman -S lxd
+    usage:             ./podman-winebuild.sh name winerepo branch
+    example:           ./podman-winebuild.sh lutris https://github.com/GloriousEggroll/proton-wine GE-Proton8-15
+    build name output: vagrant_share/wine-lutris-GE-Proton8-15-x86_64.tar.xz
 
-Then, enable and start the lxd service::
+Additional tools:
 
-    sudo systemctl enable lxd.service
-    sudo systemctl start lxd.service
+To access the container:
 
-If this is a new lxd installation, prepare the host environment:
+    docker start buildbot
+    docker exec -it buildbot bash
 
-    cat buildbot/preseed | sudo lxd init --preseed
+To exit the container:
 
-alternatively to manually set all lxd options (not recommended) use:
-
-    sudo lxd init
-
-You can create the containers with a command such as::
-
-    sudo lxc launch images:ubuntu/bionic/amd64 buildbot-bionic-amd64
-
-or for the 32bit container::
-
-    sudo lxc launch images:ubuntu/bionic/i386 buildbot-bionic-i386
-
-To set up the container, you can enter it with the following command::
-
-    sudo lxc exec <container name> bash
-
-On each container, set a passwd for your ubuntu user::
-
-    passwd ubuntu
-
-On each container, to install packages without having to enter a root password add with visudo:
-
-    ubuntu ALL=NOPASSWD: /usr/bin/apt
-    ubuntu ALL=NOPASSWD: /usr/bin/apt-get
-    ubuntu ALL=NOPASSWD: /usr/bin/dpkg
-
-Exit both containers, then run setup.sh to setup ssh config files on the host and containers:
-
-    cd buildbot
-    ./setup.sh buildbot-bionic-amd64 buildbot-bionic-i386
-
-Run the container setup script for each container (under host machine):
-
-    ./setup-container.sh buildbot-bionic-amd64
-    ./setup-container.sh buildbot-bionic-i386
-
-Perform the following so that each container can communicate with eachother and are build ready (do not set passphrase):
-
-    ssh buildbot-bionic-amd64
-    chown -R ubuntu:ubuntu ~/.ssh/config
-    ssh-keygen
-    ssh-copy-id ubuntu@buildbot32
     exit
+    docker stop buildbot
 
-    ssh buildbot-bionic-i386
-    chown -R ubuntu:ubuntu ~/.ssh/config
-    ssh-keygen
-    ssh-copy-id ubuntu@buildbot64
+To delete the container and view containers list:
+
+    docker container rm buildbot
+    docker container list -a
+
+To delete the container image and view images list:
+
+    docker rmi docker.io/gloriouseggroll/lutris_buildbot
+    docker images
+----------------------------------
+
+Option 2: Vagrant VM:
+----------------------------------
+    On Ubuntu: sudo apt install vagrant vagrant-sshfs
+    On Arch:   sudo pacman -S vagrant
+               sudo vagrant plugin install vagrant-sshfs
+    On Fedora: sudo dnf install vagrant vagrant-sshfs
+
+Then build wine:
+
+    usage:        ./vagrant-winebuild.sh name winerepo branch
+    example:      ./vagrant-winebuild.sh lutris https://github.com/GloriousEggroll/proton-wine GE-Proton8-15
+    build output: vagrant_share/wine-lutris-GE-Proton8-15-x86_64.tar.xz
+
+Additional tools:
+
+To access the VM:
+
+    vagrant up
+    vagrant ssh
+
+To exit the VM:
+
     exit
+    vagrant halt
 
-Now you are ready to compile. To build a wine runner:
+To delete the VM and view VM list:
 
-   ssh buildbot-bionic-amd64
-   cd buildbot/runners/wine
-   ./build.sh -pass -your -options -here
-
-Options available are:
-
-        -a|--as) usage: -a <custom build name>
-        -b|--branch) usage: -b <git repo branch>
-        -w|--with) usage: -w <git repo>
-        -v|--version) usage: -v <version>
-        -p|--patch) usage: -p <patch>
-        -s|--staging
-        -n|--noupload
-        -d|--dependencies
-        -6|--64bit
-        -k|--keep
-
-Example:
-
-x86_64:
-	ssh ubuntu@buildbot-bionic-amd64
-	./build.sh --as lutris --version 4.16 --with https://github.com/lutris/wine --branch lutris-ge-4.16 --noupload --keep
-
-i386:
-	ssh ubuntu@buildbot-bionic-i386
-	./build.sh --as lutris --version 4.16 --with https://github.com/lutris/wine --branch lutris-ge-4.16 --noupload --keep
-
-Note #1: If you are running a build for the first time, you will also want to use the -d option to install build dependencies
-Note #2: x86_64 build utilizes the i386 lxd container and is built with 32 bit included, you do not need to run both. i386 is for an i386-only build.
+    vagrant destroy
+    vagrant box remove buildbot_debian
+    vagrant box list
+----------------------------------
 
 Uploads
--------
-
+----------------------------------
 Runner uploads are limited to Lutris staff members who have access to our Digital Ocean CDN.
 
 awscli, s3cmd and doctl are required to upload files. All required tools will be installed with the setup-buildbot.sh script.
