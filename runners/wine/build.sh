@@ -13,11 +13,11 @@ source ${lib_path}util.sh
 runner_name=$(get_runner)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
-configure_opts="--disable-tests --with-x"
+configure_opts="--disable-tests --with-x --with-mingw"
 arch=$(uname -m)
 version="8.0"
 
-params=$(getopt -n $0 -o a:b:w:v:cmt --long as:,branch:,with:,version:,useccache,usemingw,nostrip -- "$@")
+params=$(getopt -n $0 -o a:b:w:v:t --long as:,branch:,with:,version:,nostrip -- "$@")
 eval set -- $params
 while true; do
 	case "$1" in
@@ -36,14 +36,6 @@ while true; do
 	-v | --version)
 		version=$2
 		shift 2
-		;;
-	-c | --useccache)
-		CCACHE=1
-		shift
-		;;
-	-m | --usemingw)
-		MINGW=1
-		shift
 		;;
 	-t | --nostrip)
 		NOSTRIP=1
@@ -64,15 +56,8 @@ bin_dir="${filename_opts}${version}-${arch}"
 
 archive_filename="wine-${filename_opts}${version}-${arch}.tar.xz"
 
-if [ ! -z $CCACHE ]; then
-	ccache="ccache"
-fi
 
-if [ ! -z $MINGW ]; then
-	MINGW_STATE="--with-mingw"
-else
-	MINGW_STATE="--without-mingw"
-fi
+
 
 DownloadWine() {
 	# If a git repo as been specified use this instead and return
@@ -134,23 +119,23 @@ echo "---"
 echo "Configuring 64 bit build"
 mkdir -p build64
 cd build64
-LDFLAGS="-L${runtime_path}/lib64 -Wl,-rpath-link,${runtime_path}/lib64" ../configure -q -C --enable-win64 --libdir="$BASEDIR"/lib64 --bindir="$BASEDIR"/bin --datadir="$BASEDIR"/share --mandir="$BASEDIR"/share/man ${configure_opts} $MINGW_STATE
-CC="$ccache gcc" CROSSCC="$ccache x86_64-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib64 make -s -j$(nproc)
+LDFLAGS="-L${runtime_path}/lib64 -Wl,-rpath-link,${runtime_path}/lib64" ../configure -q -C --enable-win64 --libdir="$BASEDIR"/lib64 --bindir="$BASEDIR"/bin --datadir="$BASEDIR"/share --mandir="$BASEDIR"/share/man ${configure_opts}
+CC="ccache gcc" CROSSCC="ccache x86_64-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib64 make -s -j$(nproc)
 cd ..
 
 echo "Configuring 32 bit build"
 mkdir -p build32
 cd build32
-LDFLAGS="-L${runtime_path}/lib32 -Wl,-rpath-link,$runtime_path/lib32" ../configure -q -C --libdir="$BASEDIR"/lib --bindir="$BASEDIR"/bin --datadir="$BASEDIR"/share --mandir="$BASEDIR"/share/man ${configure_opts} $MINGW_STATE
-CC="$ccache gcc" CROSSCC="$ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 make -s -j$(nproc)
+LDFLAGS="-L${runtime_path}/lib32 -Wl,-rpath-link,$runtime_path/lib32" ../configure -q -C --libdir="$BASEDIR"/lib --bindir="$BASEDIR"/bin --datadir="$BASEDIR"/share --mandir="$BASEDIR"/share/man ${configure_opts}
+CC="ccache gcc" CROSSCC="ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 make -s -j$(nproc)
 cd ..
 
 export DESTDIR=/vagrant/runners/wine/
 mkdir -p $DESTDIR
 if ! test -s .git/rebase-merge/git-rebase-todo; then
 	echo "Creating build at $build_dir"
-	CC="$ccache gcc" CROSSCC="$ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 make -s -j$(nproc) -C build32 install-lib
-	CC="$ccache gcc" CROSSCC="$ccache x86_64-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib64 make -s -j$(nproc) -C build64 install-lib
+	CC="ccache gcc" CROSSCC="ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 make -s -j$(nproc) -C build32 install-lib
+	CC="ccache gcc" CROSSCC="ccache x86_64-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib64 make -s -j$(nproc) -C build64 install-lib
 fi
 
 if [ -z $NOSTRIP ]; then
