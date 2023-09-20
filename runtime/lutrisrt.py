@@ -59,7 +59,7 @@ def get_ldconfig_libs(arch) -> list:
             if line.startswith('\t') and arch in line]
 
 
-def find_lib_paths(required_libs, arch="x86_64") -> list:
+def find_lib_paths(required_libs, arch) -> list:
     """Return library paths needed by the runtime"""
     lib_paths = []
     ld_libs = []
@@ -84,14 +84,18 @@ def build_runtime(arch):
     required_libs = []
     libs = get_libs()
     LOGGER.info("Installing packages %s", " ".join(libs.keys()))
+    if arch == "i386":
+        packages = [package + ":i386" for package in libs]
+    else:
+        packages = list(libs.keys())
     subprocess.Popen([
         'sudo',
         'apt-get',
         'install',
-    ] + list(libs.keys())).communicate()
+    ] + packages).communicate()
     for lib_list in libs.values():
         required_libs += lib_list
-    lib_paths = find_lib_paths(required_libs, arch="x86_64")
+    lib_paths = find_lib_paths(required_libs, arch)
     runtime_dir = "-".join([get_runtime_name(), arch])
     if not os.path.exists(runtime_dir):
         os.makedirs(runtime_dir)
