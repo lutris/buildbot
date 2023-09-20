@@ -20,15 +20,21 @@ def get_logger():
 LOGGER = get_logger()
 
 
-
+LDCONFIG_PATH = "/sbin/ldconfig"
 RUNTIME_DIR = "runtime"
+
+
+def get_runtime_name() -> str:
+    """Return the runtime name"""
+    release_name = subprocess.check_output(["lsb_release", "-is"]).decode().strip()
+    version = subprocess.check_output(["lsb_release", "-rs"]).decode().strip()
+    return f"{release_name}-{version}"
 
 
 def get_libs() -> dict:
     """Return a mapping of package name to .so libraries"""
-    release_name = subprocess.check_output(["lsb_release", "-is"]).decode().strip()
-    version = subprocess.check_output(["lsb_release", "-rs"]).decode().strip()
-    package_file = f"{release_name}-{version}.packages"
+    runtime_name = get_runtime_name()
+    package_file = f"{runtime_name}.packages"
     LOGGER.info("Getting packages from %s", package_file)
     libs = {}
     with open(package_file, 'r', encoding="utf-8") as packages:
@@ -44,20 +50,20 @@ def get_libs() -> dict:
     return libs
 
 
-def get_ldconfig_libs() -> list:
+def get_ldconfig_libs(arch) -> list:
     """Return libs available when running ldconfig -p"""
-    ldconfig = subprocess.Popen(['ldconfig', '-p'],
+    ldconfig = subprocess.Popen([LDCONFIG_PATH, '-p'],
                                 stdout=subprocess.PIPE).communicate()[0]
     return [line.strip().split()
             for line in ldconfig.decode().split('\n')
-            if line.startswith('\t')]
+            if line.startswith('\t') and arch in line]
 
 
-def find_lib_paths(required_libs) -> list:
+def find_lib_paths(required_libs, arch="x86_64") -> list:
     """Return library paths needed by the runtime"""
     lib_paths = []
     ld_libs = []
-    for parts in get_ldconfig_libs():
+    for parts in get_ldconfig_libs(arch):
         if parts[0] in required_libs:
             LOGGER.info("Found %s", parts[0])
             lib_paths.append(parts[-1])
@@ -73,32 +79,29 @@ def find_lib_paths(required_libs) -> list:
     return lib_paths
 
 
-def build_runtime():
+def build_runtime(arch):
     """Copy libraries from system folders to runtime"""
     required_libs = []
     libs = get_libs()
+    LOGGER.info("Installing packages %s", " ".join(libs.keys()))
     subprocess.Popen([
         'sudo',
         'apt-get',
         'install',
-        '--allow-downgrades',
-        '--allow-remove-essential',
-        '--allow-change-held-packages',
-        '-q=2'
     ] + list(libs.keys())).communicate()
     for lib_list in libs.values():
         required_libs += lib_list
-    lib_paths = find_lib_paths(required_libs)
+    lib_paths = find_lib_paths(required_libs, arch="x86_64")
+    runtime_dir = "-".join([get_runtime_name(), arch])
+    if not os.path.exists(runtime_dir):
+        os.makedirs(runtime_dir)
     for lib in lib_paths:
-        exists = os.path.exists(lib)
-        if exists:
-            LOGGER.info("Copying %s", lib)
-            shutil.copy(lib, RUNTIME_DIR)
+        if os.path.exists(lib):
+            shutil.copy(lib, runtime_dir)
         else:
             LOGGER.warning("Library not found: %s", lib)
 
 
 if __name__ == "__main__":
-    if not os.path.exists(RUNTIME_DIR):
-        os.makedirs(RUNTIME_DIR)
-    build_runtime()
+    build_runtime("x86_64")
+    build_runtime("i386")

@@ -7,9 +7,7 @@ source ${lib_path}upload_handler.sh
 # Lutris runtime
 runtime_dir="$(lsb_release -is)-$(lsb_release -rs)-$(uname -m)"
 rm -rf ${runtime_dir}
-mkdir -p ${runtime_dir}
 python3 lutrisrt.py
-mv runtime/* ${runtime_dir}
 
 # Copy Lutris runtime extra libs
 cp -a extra/${runtime_dir}/* ${runtime_dir}
