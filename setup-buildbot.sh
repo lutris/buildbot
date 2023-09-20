@@ -57,6 +57,7 @@ apt-get install -y ccache netbase curl ca-certificates xserver-xorg-video-dummy 
 curl -O https://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2016.8.1_all.deb
 dpkg -i deb-multimedia-keyring_2016.8.1_all.deb
 echo 'deb https://www.deb-multimedia.org bookworm main' >> /etc/apt/sources.list
+rm deb-multimedia-keyring_2016.8.1_all.deb
 apt-get update
 apt-get install -y libgstreamer-plugins-base1.0-dev:amd64 libgstreamer-plugins-base1.0-dev:i386 \
                     libasound2-plugins:amd64 libasound2-plugins:i386 \
@@ -65,7 +66,7 @@ apt-get install -y libgstreamer-plugins-base1.0-dev:amd64 libgstreamer-plugins-b
                     gstreamer1.0-plugins-base:amd64 gstreamer1.0-plugins-good:amd64 gstreamer1.0-plugins-bad:amd64 gstreamer1.0-plugins-ugly:amd64 \
                     gstreamer1.0-plugins-base:i386 gstreamer1.0-plugins-good:i386 gstreamer1.0-plugins-bad:i386 gstreamer1.0-plugins-ugly:i386 && \
 
-apt-get -y install wget build-essential s3cmd awscli vim nano fontconfig sshpass
+apt-get -y install wget build-essential vim nano fontconfig
 apt-get clean
 
 # Install Doctl

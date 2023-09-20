@@ -6,6 +6,7 @@ import logging
 
 
 def get_logger():
+    """Logger setup"""
     logger = logging.getLogger("lutrisrt")
     logger.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -23,13 +24,14 @@ LOGGER = get_logger()
 RUNTIME_DIR = "runtime"
 
 
-def get_libs():
+def get_libs() -> dict:
+    """Return a mapping of package name to .so libraries"""
     release_name = subprocess.check_output(["lsb_release", "-is"]).decode().strip()
     version = subprocess.check_output(["lsb_release", "-rs"]).decode().strip()
-    package_file = "%s-%s.packages" % (release_name, version)
+    package_file = f"{release_name}-{version}.packages"
     LOGGER.info("Getting packages from %s", package_file)
     libs = {}
-    with open(package_file, 'r') as packages:
+    with open(package_file, 'r', encoding="utf-8") as packages:
         packages_lines = packages.readlines()
     for line in packages_lines:
         line = line.strip()
@@ -42,7 +44,7 @@ def get_libs():
     return libs
 
 
-def get_ldconfig_libs():
+def get_ldconfig_libs() -> list:
     """Return libs available when running ldconfig -p"""
     ldconfig = subprocess.Popen(['ldconfig', '-p'],
                                 stdout=subprocess.PIPE).communicate()[0]
@@ -51,7 +53,7 @@ def get_ldconfig_libs():
             if line.startswith('\t')]
 
 
-def find_lib_paths(required_libs):
+def find_lib_paths(required_libs) -> list:
     lib_paths = []
     ld_libs = []
     for parts in get_ldconfig_libs():
