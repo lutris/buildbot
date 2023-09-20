@@ -42,7 +42,6 @@ fi
 
 
 bin_dir="${filename_opts}${version}-${arch}"
-prefix=${root_dir}/${bin_dir}
 upload_file="wine-${filename_opts}${version}-${arch}.tar.xz"
 
     if [ ! -z $CCACHE ]; then
@@ -105,6 +104,9 @@ DownloadWine() {
 
 DownloadWine
 
+export BASEDIR=/home/vagrant/$bin_dir/
+mkdir -p $BASEDIR
+
 cd ${source_dir}
 echo "Building $(git log -1)"
 echo "---"
@@ -112,32 +114,28 @@ echo "---"
 echo "Configuring 64 bit build"
 mkdir -p build64
 cd build64
-LDFLAGS="-L${runtime_path}/lib64 -Wl,-rpath-link,${runtime_path}/lib64" ../configure -q -C --enable-win64 --libdir=$prefix/lib64 ${configure_opts} $MINGW_STATE
+LDFLAGS="-L${runtime_path}/lib64 -Wl,-rpath-link,${runtime_path}/lib64" ../configure -q -C --enable-win64 --libdir="$BASEDIR"/lib64 --bindir="$BASEDIR"/bin --datadir="$BASEDIR"/share --mandir="$BASEDIR"/share/man ${configure_opts} $MINGW_STATE
 CC="$ccache gcc" CROSSCC="$ccache x86_64-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib64 make -s -j$(nproc)
 cd ..
 
 echo "Configuring 32 bit build"
 mkdir -p build32
 cd build32
-LDFLAGS="-L${runtime_path}/lib32 -Wl,-rpath-link,$runtime_path/lib32" ../configure -q -C --libdir=$prefix/lib ${configure_opts} $MINGW_STATE
+LDFLAGS="-L${runtime_path}/lib32 -Wl,-rpath-link,$runtime_path/lib32" ../configure -q -C --libdir="$BASEDIR"/lib --bindir="$BASEDIR"/bin --datadir="$BASEDIR"/share --mandir="$BASEDIR"/share/man ${configure_opts} $MINGW_STATE
 CC="$ccache gcc" CROSSCC="$ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 make -s -j$(nproc)
 cd ..
-
-
-export BASEDIR=/home/vagrant/$bin_dir/
-mkdir -p $BASEDIR
 
 if ! test -s .git/rebase-merge/git-rebase-todo
 then
 	echo "Creating build at $build_dir"
-	CC="$ccache gcc" CROSSCC="$ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 make -s -j$(nproc) -C build32 install-lib DESTDIR=$BASEDIR
-	CC="$ccache gcc" CROSSCC="$ccache x86_64-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib64 make -s -j$(nproc) -C build64 install-lib DESTDIR=$BASEDIR
+	CC="$ccache gcc" CROSSCC="$ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 make -s -j$(nproc) -C build32 install-lib
+	CC="$ccache gcc" CROSSCC="$ccache x86_64-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib64 make -s -j$(nproc) -C build64 install-lib
 fi
 
     if [ -z $NOSTRIP ]; then
 	echo "stripping build"
-        find "$build_dir"/bin -type f -exec strip {} \;
-        for _f in "$build_dir"/{bin,lib,lib64}/{wine/*,*}; do
+        find "$BASEDIR"/bin -type f -exec strip {} \;
+        for _f in "$BASEDIR"/{bin,lib,lib64}/{wine/*,*}; do
             if [[ "$_f" = *.so ]] || [[ "$_f" = *.dll ]]; then
                 strip --strip-unneeded "$_f" || true
             fi
@@ -167,7 +165,8 @@ fi
     fi
 
     echo "Creating tarball from build at $BASEDIR"
-    cd /vagrant/ && tar cJf ${upload_file} ${bin_dir}
+    cd ~ && tar cvJf ${upload_file} ${bin_dir}
+    sudo mv ${upload_file} /vagrant/
 
     echo "Build complete!"
 # git reset --hard
