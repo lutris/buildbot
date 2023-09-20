@@ -17,7 +17,7 @@ Option 1: docker/podman container
 Then build wine:
 
     usage:             ./podman-winebuild.sh name winerepo branch
-    example:           ./podman-winebuild.sh lutris https://github.com/GloriousEggroll/proton-wine GE-Proton8-15
+    example:           ./podman-winebuild.sh lutris-GE https://github.com/GloriousEggroll/proton-wine Proton8-15
     build name output: vagrant_share/wine-lutris-GE-Proton8-15-x86_64.tar.xz
 
 Additional tools:
@@ -53,7 +53,7 @@ Option 2: Vagrant VM:
 Then build wine:
 
     usage:        ./vagrant-winebuild.sh name winerepo branch
-    example:      ./vagrant-winebuild.sh lutris https://github.com/GloriousEggroll/proton-wine GE-Proton8-15
+    example:      ./vagrant-winebuild.sh lutris-GE https://github.com/GloriousEggroll/proton-wine Proton8-15
     build output: vagrant_share/wine-lutris-GE-Proton8-15-x86_64.tar.xz
 
 Additional tools:
