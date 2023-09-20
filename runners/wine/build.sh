@@ -13,7 +13,7 @@ source ${lib_path}util.sh
 runner_name=$(get_runner)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
-configure_opts="--disable-tests --with-x --with-mingw"
+configure_opts="--disable-tests --with-x --with-mingw --with-gstreamer"
 arch=$(uname -m)
 version="8.0"
 
@@ -77,24 +77,52 @@ else
 	git clone -b "$branch_name" "$repo_url" "$source_dir"
 fi
 
-export BASEDIR=/home/vagrant/$bin_dir/
+export BASEDIR=/home/vagrant/runners/wine/$bin_dir
 mkdir -p $BASEDIR
 
 cd ${source_dir}
 echo "Building $(git log -1)"
 echo "---"
 
+# The only error we should see after configure is for inotify:
+# $ cd ~/lutris-buildbot/runners/wine/wine-src/build64 (or build32)
+# $ cat config.log | grep -i "was not found"
+# configure:15812: libinotify errors: Package libinotify was not found in the pkg-config search path.
+# https://wiki.winehq.org/Building_Wine
+
+# Library name 	Debian 	Fedora 	Arch 	Function 	                Notes 
+# libinotify 	N/A 	N/A 	N/A 	File change notification 	Only necessary for some platforms (Linux does not need this.) 
+
 echo "Configuring 64 bit build"
 mkdir -p build64
 cd build64
-LDFLAGS="-L${runtime_path}/lib64 -Wl,-rpath-link,${runtime_path}/lib64" ../configure -q -C --enable-win64 --libdir="$BASEDIR"/lib64 --bindir="$BASEDIR"/bin --datadir="$BASEDIR"/share --mandir="$BASEDIR"/share/man ${configure_opts}
+CUPS_CFLAGS="-I/usr/include" \
+PKG_CONFIG_PATH=/usr/share/pkgconfig \
+LDFLAGS="-L${runtime_path}/lib64 -Wl,-rpath-link,${runtime_path}/lib64" \
+../configure -q -C \
+--enable-win64 \
+--libdir="$BASEDIR"/lib64 \
+--bindir="$BASEDIR"/bin \
+--datadir="$BASEDIR"/share \
+--mandir="$BASEDIR"/share/man \
+${configure_opts}
 CC="ccache gcc" CROSSCC="ccache x86_64-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib64 make -s -j$(nproc)
 cd ..
 
 echo "Configuring 32 bit build"
 mkdir -p build32
 cd build32
-LDFLAGS="-L${runtime_path}/lib32 -Wl,-rpath-link,$runtime_path/lib32" ../configure -q -C --libdir="$BASEDIR"/lib --bindir="$BASEDIR"/bin --datadir="$BASEDIR"/share --mandir="$BASEDIR"/share/man ${configure_opts}
+GSTREAMER_CFLAGS="-I/usr/include/gstreamer-1.0 -I/usr/include/glib-2.0 -I/usr/lib/i386-linux-gnu/glib-2.0/include -I/usr/include/i386-linux-gnu -I/usr/lib/i386-linux-gnu/gstreamer-1.0/include -I/usr/include/orc-0.4 -I/usr/include/gudev-1.0 -I/usr/include/libdrm -pthread" \
+GCRYPT_LIBS="-lgcrypt" GCRYPT_CFLAGS="-I/usr/include/gcrypt.h" \
+CUPS_CFLAGS="-I/usr/include" \
+PKG_CONFIG_PATH=/usr/share/pkgconfig \
+LDFLAGS="-L${runtime_path}/lib32 -Wl,-rpath-link,$runtime_path/lib32" \
+../configure -q -C \
+--libdir="$BASEDIR"/lib \
+--bindir="$BASEDIR"/bin \
+--datadir="$BASEDIR"/share \
+--mandir="$BASEDIR"/share/man \
+${configure_opts}
 CC="ccache gcc" CROSSCC="ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 make -s -j$(nproc)
 cd ..
 
@@ -135,10 +163,10 @@ if [ -d "$source_dir/lutris-patches/" ]; then
 	cp -R "$source_dir/lutris-patches/mono" "$BASEDIR"/
 	cp -R "$source_dir/lutris-patches/gecko" "$BASEDIR"/
 fi
-export DESTDIR=/vagrant/runners/wine/
-mkdir -p $DESTDIR
+
 echo "Creating tarball from build at $BASEDIR"
-cd ~ && tar cvJf ${archive_filename} ${bin_dir}
-sudo mv ${archive_filename} $DESTDIR
+cd /home/vagrant/runners/wine/ && tar cvJf ${archive_filename} ${bin_dir}
+mkdir -p /vagrant/runners/wine/
+sudo mv ${archive_filename} /vagrant/runners/wine/
 
 echo "Build complete!"
