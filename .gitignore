@@ -2,8 +2,4 @@
 .doctl_cdn_id
 .vagrant
 vagrant_share
-ssh/buildbot32/*
-ssh/buildbot64/*
-runners/wine/build-preparation/wine-src
-runners/wine/build-preparation/wine-staging-src
-runners/wine/build-preparation/wine-tkg-git
+runners/wine/wine-src
