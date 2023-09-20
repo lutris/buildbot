@@ -56,58 +56,26 @@ bin_dir="${filename_opts}${version}-${arch}"
 
 archive_filename="wine-${filename_opts}${version}-${arch}.tar.xz"
 
-
-
-
-DownloadWine() {
-	# If a git repo as been specified use this instead and return
-	if [[ $repo_url ]]; then
-		# The branch name defaults to the build name
-		branch_name=${branch_name:-$build_name}
-		if [ -d "$source_dir" ]; then
-			git -C "$source_dir" clean -dfx
-			if [ $(git -C "$source_dir" branch -v | grep -o -E "$branch_name\s+") ]; then
-				git -C "$source_dir" branch -m "$branch_name" "$branch_name"-old
-			fi
-			git -C "$source_dir" fetch "$repo_url" "$branch_name":"$branch_name"
-			git -C "$source_dir" checkout "$branch_name"
-			git -C "$source_dir" pull --tags origin "$branch_name"
-			if [ $(git -C "$source_dir" branch -v | grep -o -E "$branch_name-old\s+") ]; then
-				git -C "$source_dir" branch -D "$branch_name"-old
-			fi
-		else
-			git clone -b "$branch_name" "$repo_url" "$source_dir"
-		fi
-		return
+if [[ ! $repo_url ]]; then
+	echo "Please provide repo URL"
+	exit 2
+fi
+# The branch name defaults to the build name
+branch_name=${branch_name:-$build_name}
+if [ -d "$source_dir" ]; then
+	git -C "$source_dir" clean -dfx
+	if [ $(git -C "$source_dir" branch -v | grep -o -E "$branch_name\s+") ]; then
+		git -C "$source_dir" branch -m "$branch_name" "$branch_name"-old
 	fi
-
-	IFS="." read major minor patch_num <<<"$version"
-	if [[ $major -gt 1 && $minor -gt 0 ]]; then
-		version_base="$major.x"
-		wine_archive="wine-${version}.tar.xz"
-	elif [[ $major -gt 1 && $minor -eq 0 ]]; then
-		version_base=${version:0:3}
-		wine_archive="wine-${version}.tar.xz"
-	else
-		version_base=${version:0:3}
-		wine_archive="wine-${version}.tar.bz2"
+	git -C "$source_dir" fetch "$repo_url" "$branch_name":"$branch_name"
+	git -C "$source_dir" checkout "$branch_name"
+	git -C "$source_dir" pull --tags origin "$branch_name"
+	if [ $(git -C "$source_dir" branch -v | grep -o -E "$branch_name-old\s+") ]; then
+		git -C "$source_dir" branch -D "$branch_name"-old
 	fi
-
-	mkdir -p .cache
-	if [ ! -f ".cache/$wine_archive" ]; then
-		echo "Downloading Wine ${version}"
-		wget http://dl.winehq.org/wine/source/$version_base/${wine_archive} -O .cache/${wine_archive}
-	else
-		echo "Wine ${version} already cached"
-	fi
-	tar xf .cache/$wine_archive
-	if [ -d ${source_dir} ]; then
-		rm -rf ${source_dir}
-	fi
-	mv wine-${version} ${source_dir}
-}
-
-DownloadWine
+else
+	git clone -b "$branch_name" "$repo_url" "$source_dir"
+fi
 
 export BASEDIR=/home/vagrant/$bin_dir/
 mkdir -p $BASEDIR
@@ -130,8 +98,6 @@ LDFLAGS="-L${runtime_path}/lib32 -Wl,-rpath-link,$runtime_path/lib32" ../configu
 CC="ccache gcc" CROSSCC="ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 make -s -j$(nproc)
 cd ..
 
-export DESTDIR=/vagrant/runners/wine/
-mkdir -p $DESTDIR
 if ! test -s .git/rebase-merge/git-rebase-todo; then
 	echo "Creating build at $build_dir"
 	CC="ccache gcc" CROSSCC="ccache i686-w64-mingw32-gcc" LD_LIBRARY_PATH=${runtime_path}/lib32 make -s -j$(nproc) -C build32 install-lib
@@ -169,7 +135,8 @@ if [ -d "$source_dir/lutris-patches/" ]; then
 	cp -R "$source_dir/lutris-patches/mono" "$BASEDIR"/
 	cp -R "$source_dir/lutris-patches/gecko" "$BASEDIR"/
 fi
-
+export DESTDIR=/vagrant/runners/wine/
+mkdir -p $DESTDIR
 echo "Creating tarball from build at $BASEDIR"
 cd ~ && tar cvJf ${archive_filename} ${bin_dir}
 sudo mv ${archive_filename} $DESTDIR

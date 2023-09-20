@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# usage: ./makebuild.sh name winerepo branch
-# example: ./makebuild.sh lutris https://github.com/GloriousEggroll/proton-wine GE-Proton8-15
+# usage: ./makewinebuild.sh name winerepo branch
+# example: ./makewinebuild.sh lutris https://github.com/GloriousEggroll/proton-wine GE-Proton8-15
 # build name output: wine-lutris-GE-Proton8-15-x86_64.tar.xz
 
 vagrant up
