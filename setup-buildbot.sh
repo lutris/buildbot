@@ -48,8 +48,10 @@ apt-get install -y gcc gcc-mingw-w64-x86-64 gcc-mingw-w64-i686 gcc-multilib \
                 libxxf86vm-dev:amd64 libxxf86vm-dev:i386 \
                 linux-libc-dev:amd64 linux-libc-dev:i386 \
                 ocl-icd-opencl-dev:amd64 ocl-icd-opencl-dev:i386 \
-                samba-dev:amd64 \
+                samba-dev:amd64 samba-dev:i386\
                 unixodbc-dev:amd64 unixodbc-dev:i386 \
+                gudev-1.0:amd64 gudev-1.0:i386 \
+                libgcrypt-dev libgpg-error-dev \
                 x11proto-dev
 
 apt-get install -y ccache netbase curl ca-certificates xserver-xorg-video-dummy xserver-xorg xfonts-base xinit fvwm \
