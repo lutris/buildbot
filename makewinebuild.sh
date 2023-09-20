@@ -11,7 +11,7 @@ vagrant ssh -c "cd lutris-buildbot && git reset --hard HEAD && git clean -xdf &&
 vagrant ssh -c "rm -Rf lutris-buildbot/runners/wine/wine-src/"
 
 # start build
-vagrant ssh -c "cd lutris-buildbot/runners/wine && ./build.sh --as $1 --version $3 --with $2 --branch $3 --useccache --usemingw"
+vagrant ssh -c "cd lutris-buildbot/runners/wine && ./build.sh --as $1 --version $3 --with $2 --branch $3"
 
 vagrant halt
 
