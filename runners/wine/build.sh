@@ -13,6 +13,7 @@ source ${lib_path}util.sh
 runner_name=$(get_runner)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
+publish_dir="/builds/runners/${runner_name}"
 configure_opts="--disable-tests --with-x --with-mingw --with-gstreamer"
 arch=$(uname -m)
 version="8.0"
@@ -90,8 +91,8 @@ echo "---"
 # configure:15812: libinotify errors: Package libinotify was not found in the pkg-config search path.
 # https://wiki.winehq.org/Building_Wine
 
-# Library name 	Debian 	Fedora 	Arch 	Function 	                Notes 
-# libinotify 	N/A 	N/A 	N/A 	File change notification 	Only necessary for some platforms (Linux does not need this.) 
+# Library name 	Debian 	Fedora 	Arch 	Function 	                Notes
+# libinotify 	N/A 	N/A 	N/A 	File change notification 	Only necessary for some platforms (Linux does not need this.)
 
 echo "Configuring 64 bit build"
 mkdir -p build64
@@ -166,7 +167,7 @@ fi
 
 echo "Creating tarball from build at $BASEDIR"
 cd /home/vagrant/runners/wine/ && tar cvJf ${archive_filename} ${bin_dir}
-mkdir -p /vagrant/runners/wine/
-sudo mv ${archive_filename} /vagrant/runners/wine/
+mkdir -p $publish_dir
+sudo mv ${archive_filename} $publish_dir
 
 echo "Build complete!"

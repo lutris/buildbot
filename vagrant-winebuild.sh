@@ -2,7 +2,7 @@
 
 # usage: ./vagrant-winebuild.sh name winerepo branch
 # example: ./vagrant-winebuild.sh lutris-GE https://github.com/GloriousEggroll/proton-wine Proton8-15
-# build name output: vagrant_share/wine-lutris-GE-Proton8-15-x86_64.tar.xz
+# build name output: builds/wine-lutris-GE-Proton8-15-x86_64.tar.xz
 
 VAGRANT_VAGRANTFILE="$PWD"/tools/vagrant/Vagrantfile vagrant up
 
