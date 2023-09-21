@@ -78,6 +78,13 @@ apt-get clean
 # Set root shell as bash
 usermod -s /bin/bash root
 
-# Setup vagrant user
-useradd -s /bin/bash -m -G sudo vagrant
+# We want to keep the usermod and useradd commands separate for vagrant because on vagrant VM the user and home folder already exist, but does not in docker/podman container
+# Setup vagrant user in case it doesnt exist yet
+useradd -m vagrant
+
+# Set password for vagrant user if it's not done yet
 echo -e 'vagrant\nvagrant\n' | passwd vagrant
+
+# Give vagrant user sudo access and set shell to /bin/bash
+usermod -s /bin/bash -G sudo vagrant
+
