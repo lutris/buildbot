@@ -60,7 +60,7 @@ Additional tools:
 
 To access the VM:
 
-    vagrant up
+    VAGRANT_VAGRANTFILE="$PWD"/tools/vagrant/Vagrantfile vagrant up
     vagrant ssh
 
 To exit the VM:
