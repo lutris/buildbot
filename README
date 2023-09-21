@@ -8,7 +8,7 @@ used by the Lutris runtime).
 It is advised to run these scripts from within either a docker/podman container or vagrant
 VM. We have provided setup scripts for both (details below).
 
-Option 1: docker/podman container 
+Option 1: docker/podman container
 ----------------------------------
     On Ubuntu: sudo apt install podman
     On Arch:   sudo pacman -S podman
@@ -75,10 +75,26 @@ To delete the VM and view VM list:
     vagrant box list
 ----------------------------------
 
-Uploads
-----------------------------------
-Runner uploads are limited to Lutris staff members who have access to our Digital Ocean CDN.
+Build artifacts
+---------------
 
-awscli, s3cmd and doctl are required to upload files. All required tools will be installed with the setup-buildbot.sh script.
+The buildbot no longer uploads files to Lutris servers. Instead you should upload files from your host system.
 
+To make build artifacts easy to find, follow this folder structure:
+
+builds/
+    games/
+        game_1/game_1_build.tar.xz
+        game_2/game_2_build.tar.xz
+        ...
+    runners/
+        wine/wine-lutris-GE-Proton8-15-x86_64.tar.xz
+        mame/mame-0.258-x86_64.tar.xz
+        ...
+    runtime/
+        Debian-12-x86_64/Debian-12-x86_64.tar.xz
+        Debian-12-i386/Debian-12-i386.tar.xz
+        ...
+
+awscli, s3cmd and doctl are required to upload files to Digital Ocean.
 Then configure your credential files in ~/.aws/credentials and ~/.s3cfg
