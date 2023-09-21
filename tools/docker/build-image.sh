@@ -21,5 +21,5 @@ docker exec bookworm bash -c "rm setup-buildbot.sh"
 docker stop bookworm
 
 # Change gloriouseggroll/lutris_buildbot:bookworm to your Docker repo and tag
-docker commit bookworm gloriouseggroll/lutris_buildbot:bookworm
-docker push gloriouseggroll/lutris_buildbot:bookworm
+docker commit bookworm gloriouseggroll/lutris_buildbot:latest
+docker push gloriouseggroll/lutris_buildbot:latest
