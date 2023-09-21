@@ -8,7 +8,7 @@ if [[ ! -d vagrant_share ]]; then
 	mkdir -p vagrant_share
 fi
 if [[ -z $(podman container list -a | grep buildbot) ]]; then
-	docker create --interactive --name buildbot --mount type=bind,source="$PWD"/vagrant_share,destination=/vagrant,readonly=false --mount type=bind,source="$PWD",destination=/home/vagrant/buildbot,readonly=false docker.io/gloriouseggroll/lutris_buildbot:bookworm
+	docker create --interactive --name buildbot --mount type=bind,source="$PWD"/vagrant_share,destination=/vagrant,readonly=false --mount type=bind,source="$PWD",destination=/home/vagrant/buildbot,readonly=false docker.io/gloriouseggroll/lutris_buildbot:latest
 fi
 
 docker start buildbot
