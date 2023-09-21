@@ -69,9 +69,7 @@ PackageProject() {
     rm -rf ${bin_dir}
     mkdir -p ${bin_dir}
     mv Binaries/* ${bin_dir}
-    cp -a ${source_dir}/Data/Sys ${bin_dir}
     mkdir -p ${bin_dir}/lib
-    # cp ${build_dir}/Externals/**/*.so* ${bin_dir}/lib
     cp /usr/lib/x86_64-linux-gnu/libav* ${bin_dir}/lib
     cd ${root_dir}
     dest_file="${runner_name}-${version}-${arch}.tar.xz"
@@ -83,6 +81,7 @@ PackageProject() {
 Clean() {
     rm -rf $build_dir $source_dir
 }
+
 if [ $1 ]; then
     $1
 else
