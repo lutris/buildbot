@@ -4,10 +4,10 @@ set -e
 lib_path="../../lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
 root_dir=$(pwd)
+publish_dir="/builds/runners/${runner_name}"
 version="4.2.0"
 archive="atari800-${version}-src.tgz"
 arch=$(uname -m)
@@ -18,8 +18,8 @@ tar xzf ${archive}
 cd atari800-${version}
 ./configure --prefix=${build_dir}
 make
-make install 
+make install
 cd ..
 dest_file="${runner_name}-${version}-${arch}.tar.gz"
 tar czf ${dest_file} ${runner_name}
-runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+cp $dest_file $publish_dir

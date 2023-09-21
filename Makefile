@@ -10,7 +10,7 @@ teardown:
 
 setup:
 	docker create --interactive --name buildbot \
-		--mount type=bind,source="$$PWD"/vagrant_share,destination=/vagrant,readonly=false \
+		--mount type=bind,source="$$PWD"/builds,destination=/builds,readonly=false \
 		--mount type=bind,source="$$PWD",destination=/home/vagrant/buildbot,readonly=false \
 		docker.io/gloriouseggroll/lutris_buildbot:bookworm
 	docker start buildbot

@@ -5,35 +5,23 @@ set -x
 lib_path="../../lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
 root_dir="$(pwd)"
 source_dir="${root_dir}/libretro-super"
 bin_dir="${root_dir}/retroarch"
 cores_dir="${root_dir}/cores"
-cpus=$(getconf _NPROCESSORS_ONLN)
+cpus=$(nproc)
 arch=$(uname -m)
 buildbotarch="x86"
 if [ "$arch" == "x86_64" ]; then
     buildbotarch="x64"
 fi
 
-params=$(getopt -n $0 -o dn --long dependencies,noupload -- "$@")
-eval set -- $params
-while true ; do
-    case "$1" in
-        -d|--dependencies) INSTALL_DEPS=1; shift ;;
-        -n|--noupload) NOUPLOAD=1; shift ;;
-        *) shift; break ;;
-    esac
-done
-
 core="$1"
 
 clone https://github.com/libretro/libretro-super.git $source_dir
 cd "${source_dir}"
-
 mkdir -p ${bin_dir}
 
 InstallDeps() {
@@ -91,10 +79,8 @@ PackageRetroarch() {
     cd $root_dir
     archive="retroarch-${retroarch_version}-${arch}.tar.xz"
     tar cJf $archive retroarch
-    if [ ! $NOUPLOAD ]; then
-        runner_upload ${runner_name} "retroarch-${retroarch_version}" ${arch} ${archive}
-    fi
-    rm -rf retroarch
+    mkdir -p $publish_dir
+    cp $archive $publish_dir
 }
 
 PackageCore() {
@@ -105,14 +91,9 @@ PackageCore() {
     tar cJf ../${archive} ${core_file}
     rm $core_file
     cd $root_dir
-    if [ ! $NOUPLOAD ]; then
-        runner_upload ${runner_name} ${core} ${arch} $archive
-    fi
+    mkdir -p $publish_dir
+    cp $archive $publish_dir
 }
-
-if [ $INSTALL_DEPS ]; then
-    InstallDeps
-fi
 
 if [ $1 ]; then
     if [[ $1 == 'all' ]]; then
@@ -126,6 +107,7 @@ if [ $1 ]; then
         PackageCore $1
     fi
 else
+    InstallDeps
     BuildRetroarch
     PackageRetroarch
 fi

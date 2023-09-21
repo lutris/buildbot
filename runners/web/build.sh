@@ -4,19 +4,18 @@ set -e
 lib_path="../../lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 runner_name="$(get_runner)"
 root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-src/build"
+publish_dir="/builds/runners/${runner_name}"
 arch=$(uname -m)
 
 params=$(getopt -n $0 -o gd --long armv7l --long i686 --long x86_64 -- "$@")
 eval set -- $params
 while true ; do
     case "$1" in
-        #-d|--dependencies) INSTALL_DEPS=1; shift ;;
         --armv7l) arch="armv7l"; shift ;;
         --i686) arch="i686"; shift ;;
         --x86_64) arch="x86_64"; shift ;;
@@ -72,17 +71,11 @@ BuildWeb() {
 }
 
 PackageWeb() {
-
     cd "$source_dir"
-
     version=$(node -p "require('./package.json').version")
-
     cd "$root_dir"
-
     dest_file="${runner_name}-${version}-${arch}.tar.xz"
-
     package_arch="$arch"
-
     if [ "$arch" == "i386" ] || [ "$arch" == "i686" ]
     then
         package_arch="x86_32"
@@ -93,7 +86,8 @@ PackageWeb() {
 
     tar -cJf "$dest_file" -C "$build_dir/${runner_name}-${package_arch}" --transform "s,^./,./${runner_name}/," .
 
-    runner_upload ${runner_name} ${version} ${arch} "$dest_file"
+    mkdir -p $publish_dir
+    cp $dest_file $publish_dir
 }
 
 

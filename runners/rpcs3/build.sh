@@ -4,7 +4,6 @@ set -e
 lib_path="../../lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
 version="$(date "+%Y%m%d")"
@@ -14,6 +13,7 @@ root_dir=$(pwd)
 source_dir=$(pwd)/${runner_name}-src
 build_dir=$(pwd)/${runner_name}-build
 bin_dir=$(pwd)/${runner_name}
+publish_dir="/builds/runners/${runner_name}"
 dest_file="${runner_name}-${version}-${arch}.tar.gz"
 
 # Change to the base path of your Qt installation
@@ -49,12 +49,9 @@ Package() {
     mkdir -p $bin_dir
     cp -a $build_dir/bin/* $bin_dir
     tar czf ${dest_file} ${runner_name}
+    mkdir -p $publish_dir
+    cp $dest_file $publish_dir
 }
-
-Upload() {
-    runner_upload ${runner_name} ${version} ${arch} ${dest_file}
-}
-
 
 if [ $1 ]; then
     $1
@@ -63,5 +60,4 @@ else
     GetSources
     Build
     Package
-    Upload
 fi

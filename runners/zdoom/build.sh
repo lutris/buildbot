@@ -5,7 +5,6 @@ lib_path="../../lib/"
 
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 root_dir=$(pwd)
 package_name=$(get_runner)
@@ -72,15 +71,9 @@ Package() {
     cd ${root_dir}
     dest_file="gzdoom-${version}-${arch}.tar.gz"
     tar czf ${dest_file} ${package_name}
-}
-
-CleanUp() {
+    mkdir -p $publish_dir
+    cp $dest_file $publish_dir
     rm -rf $bin_dir $source_dir $build_dir
-}
-
-Upload() {
-    GetVersion
-    runner_upload ${package_name} gzdoom-${version} ${arch} ${dest_file}
 }
 
 if [ $1 ]; then
@@ -90,6 +83,4 @@ else
     BuildZmusic
     Build
     Package
-    Upload
-    CleanUp
 fi

@@ -4,7 +4,6 @@ set -e
 lib_path="../../lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 runner_name="$(get_runner)"
 root_dir=$(pwd)
@@ -14,6 +13,7 @@ dosbox_ece_revision=4280
 arch=$(uname -m)
 version=0.80.1
 dest_file="${runner_name}-${version}-${arch}.tar.gz"
+publish_dir="/builds/runners/${runner_name}"
 
 InstallDeps() {
     install_deps "ccache build-essential libasound2-dev libatomic1 libpng-dev \
@@ -40,10 +40,8 @@ Package() {
     cp $source_dir/README $dist_dir
     cd ${root_dir}
     tar czf ${dest_file} ${runner_name}
-}
-
-Upload() {
-    runner_upload dosbox ${version} ${arch} ${dest_file}
+    mkdir -p $publish_dir
+    cp $dest_file $publish_dir
 }
 
 InstallDeps

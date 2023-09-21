@@ -5,7 +5,6 @@ set -e
 lib_path="../../lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
 root_dir=$(pwd)
@@ -32,6 +31,6 @@ cp ${build_dir}/PPSSPPSDL ${bin_dir}
 
 dest_file="${runner_name}-${version}-${arch}.tar.gz"
 tar czf ${dest_file} ${runner_name}
+mkdir -p $publish_dir
+cp $dest_file $publish_dir
 rm -rf ${build_dir} ${source_dir} ${bin_dir}
-
-runner_upload ${runner_name} ${version} ${arch} ${dest_file}

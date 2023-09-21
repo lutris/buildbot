@@ -5,7 +5,6 @@ set -e
 lib_path="./lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 runner_name="pcsx2"
 root_dir=$(pwd)
@@ -13,7 +12,7 @@ source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
 log_file="${root_dir}/${runner_name}.log"
-artifact_dir="${root_dir}/artifacts/"
+publish_dir="/builds/runners/${runner_name}"
 arch=$(uname -m)
 version="1.6.0"
 
@@ -39,8 +38,8 @@ Package() {
     mv ${source_dir}/bin/* ${bin_dir}
     dest_file="${runner_name}-${version}-${arch}.tar.gz"
     tar czf ${dest_file} ${runner_name}
-    mkdir -p $artifact_dir
-    cp $dest_file $artifact_dir
+    mkdir -p $publish_dir
+    cp $dest_file $publish_dir
 }
 
 GetSources

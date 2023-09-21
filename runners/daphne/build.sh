@@ -4,7 +4,6 @@ set -e
 lib_path="../../lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
 version="1.0.13"
@@ -13,6 +12,7 @@ arch=$(uname -m)
 root_dir=$(pwd)
 source_dir=$(pwd)/${runner_name}-src
 bin_dir=$(pwd)/${runner_name}
+publish_dir="/builds/runners/${runner_name}"
 
 InstallDependencies() {
     echo "TODO"
@@ -42,10 +42,7 @@ Package() {
     cd ${root_dir}
     dest_file="${runner_name}-${version}-${arch}.tar.gz"
     tar czf ${dest_file} ${runner_name}
-}
-
-Upload() {
-    runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+    cp $dest_file $publish_dir
 }
 
 
@@ -56,5 +53,4 @@ else
     GetSources
     Build
     Package
-    # Upload
 fi

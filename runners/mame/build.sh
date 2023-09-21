@@ -4,12 +4,12 @@ set -e
 lib_path="../../lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
 root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
+publish_dir="/builds/runners/${runner_name}"
 arch=$(uname -m)
 version=$(curl https://www.mamedev.org/release.html | grep -oP "(?<=MAME )[.0-9]+(?= Source)")
 branch="mame$(echo $version | tr -d .)"
@@ -27,7 +27,7 @@ Fetch() {
 Build() {
     cd ${source_dir}
     unset FULLNAME
-    make NO_OPENGL=0 REGENIE=1 TOOLS=1 -j8
+    make NO_OPENGL=0 REGENIE=1 TOOLS=1 -j$(nproc)
 }
 
 Install() {
@@ -44,13 +44,13 @@ Package() {
     cd ${root_dir}
     dest_file=${runner_name}-${version}-${arch}.tar.gz
     tar czf ${dest_file} ${runner_name}
+    mkdir -p $publish_dir
     cp ${dest_file} ${publish_dir}
 }
 
 Cleanup() {
     rm -rf ${build_dir} ${source_dir}
 }
-
 
 if [ $1 ]; then
     $1

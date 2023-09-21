@@ -2,7 +2,6 @@
 
 lib_path="../../lib/"
 source ${lib_path}path.sh
-source ${lib_path}upload_handler.sh
 set -e
 
 runner_name=$(get_runner)
@@ -29,6 +28,8 @@ cp ../${source_dir}/License.txt LICENSE
 cd ..
 dest_file="${runner_name}-${version}-${arch}.tar.gz"
 tar czf ${dest_file} ${runner_name}
+mkdir -p $publish_dir
+cp $dest_file $publish_dir
 rm -rf ${build_dir} ${source_dir}
 
-runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+

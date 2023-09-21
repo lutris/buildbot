@@ -4,7 +4,6 @@ lib_path="../../lib/"
 
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
 root_dir=$(pwd)
@@ -15,6 +14,7 @@ version="2.44"
 src_dir="${runner_name}-${version}"
 src_archive="${src_dir}.tar.gz"
 src_url="http://www.ifarchive.org/if-archive/infocom/interpreters/frotz/${src_archive}"
+publish_dir="/builds/runners/${runner_name}"
 
 deps="libncurses5-dev"
 install_deps $deps
@@ -25,10 +25,10 @@ cd ${src_dir}
 make
 
 mkdir -p ${bin_dir}
-cp frotz AUTHORS BUGS COPYING HOW_TO_PLAY README ${bin_dir} 
+cp frotz AUTHORS BUGS COPYING HOW_TO_PLAY README ${bin_dir}
 
 cd ..
 dest_file="${runner_name}-${version}-${arch}.tar.gz"
 tar czf ${dest_file} ${runner_name}
-runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+cp $dest_file $publish_dir
 rm -rf ${src_dir} ${src_archive} ${bin_dir}

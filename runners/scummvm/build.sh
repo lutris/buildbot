@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-lib_path="./lib/"
+lib_path="../../lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
 
@@ -9,9 +9,17 @@ runner_name="scummvm"
 root_dir="$(pwd)"
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
-artifact_dir="${root_dir}/artifacts/"
+publish_dir="/builds/runners/${runner_name}"
 arch="$(uname -m)"
-version="2.6.1"
+version="2.7.1"
+
+
+InstallDependencies() {
+    install_deps libgl1-mesa-dev \
+        libglu1-mesa-dev libpng-dev libpng++-dev \
+        libpulse-dev libsdl2-dev libsoundtouch-dev libx11-dev \
+        zlib1g-dev liblzma-dev libfreetype6-dev libjpeg-dev libtheora-dev
+}
 
 GetSources() {
     cd $root_dir
@@ -35,7 +43,8 @@ Package() {
     cd $root_dir
     dest_file=${runner_name}-${version}-${arch}.tar.gz
     tar czf ${dest_file} ${runner_name}
-    cp $dest_file $artifact_dir
+    mkdir -p $publish_dir
+    cp $dest_file $publish_dir
 }
 
 if [ $1 ]; then

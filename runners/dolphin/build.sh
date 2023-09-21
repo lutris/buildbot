@@ -11,7 +11,6 @@ lib_path="../../lib/"
 
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
 root_dir=$(pwd)
@@ -20,6 +19,7 @@ build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
 arch=$(uname -m)
 repo_url="https://github.com/dolphin-emu/dolphin"
+publish_dir="/builds/runners/${runner_name}"
 
 InstallBuildDependencies() {
     sudo apt install -y cmake libxext-dev libreadline-dev libgl1-mesa-dev libevdev-dev \
@@ -29,7 +29,6 @@ InstallBuildDependencies() {
 GetSources() {
     clone $repo_url $source_dir
 }
-
 
 BuildProject() {
     cd "${source_dir}"
@@ -45,7 +44,6 @@ GetVersion() {
     export version=${version%-dirty}
 }
 
-
 PackageProject() {
     cd ${build_dir}
     rm -rf ${bin_dir}
@@ -58,15 +56,8 @@ PackageProject() {
     cd ${root_dir}
     dest_file="${runner_name}-${version}-${arch}.tar.xz"
     tar cJf ${dest_file} ${runner_name}
-}
-
-UploadPackage() {
-    if [ ! $version ]; then
-        GetVersion
-    fi
-    cd $root_dir
-    dest_file="${runner_name}-${version}-${arch}.tar.xz"
-    runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+    mkdir -p $publish_dir
+    cp $dest_file $publish_dir
 }
 
 if [ $1 ]; then
@@ -77,5 +68,4 @@ else
     BuildProject
     GetVersion
     PackageProject
-    UploadPackage
 fi

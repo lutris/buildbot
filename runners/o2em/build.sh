@@ -5,12 +5,12 @@ lib_path="../../lib/"
 
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
 root_dir="$(pwd)"
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
+publish_dir="/builds/runners/${runner_name}"
 arch="$(uname -m)"
 version="1.18"
 
@@ -29,5 +29,6 @@ mv o2em dis48 README ${build_dir}
 cd ..
 dest_file=${runner_name}-${version}-${arch}.tar.gz
 tar czf ${dest_file} ${runner_name}
-runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+mkdir -p $publish_dir
+cp $dest_file $publish_dir
 rm -rf ${build_dir} ${source_dir}

@@ -5,13 +5,13 @@ lib_path="../../lib/"
 
 source ${lib_path}path.sh
 source ${lib_path}util.sh
-source ${lib_path}upload_handler.sh
 
 runner_name=$(get_runner)
 root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
 bin_dir="${root_dir}/${runner_name}"
+publish_dir="/builds/runners/${runner_name}"
 arch=$(uname -m)
 version="2.5.0-dev"
 
@@ -27,4 +27,4 @@ make install
 cd ..
 dest_file="${runner_name}-${version}-${arch}.tar.gz"
 tar czf ${dest_file} ${runner_name}
-runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+cp $dest_file $publish_dir
