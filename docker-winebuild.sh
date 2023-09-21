@@ -14,10 +14,10 @@ fi
 docker start buildbot
 
 # cleanup any old builds first
-docker exec buildbot bash -c "rm -Rf /home/vagrant/lutris-buildbot/runners/wine/wine-src/"
+docker exec buildbot bash -c "rm -Rf /home/vagrant/buildbot/runners/wine/wine-src/"
 
 # start build
-docker exec buildbot bash -c "cd /home/vagrant/lutris-buildbot/runners/wine && ./build.sh --as $1 --version $3 --with $2 --branch $3"
+docker exec buildbot bash -c "cd /home/vagrant/buildbot/runners/wine && ./build.sh --as $1 --version $3 --with $2 --branch $3"
 
 docker stop buildbot
 
