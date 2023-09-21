@@ -57,7 +57,7 @@ Vagrant.configure(2) do |config|
     debian.vm.provision "shell-1", type: "shell", inline: <<-SHELL
 
       #install dependencies on host vm
-      sudo bash -c /home/vagrant/lutris-buildbot/setup-buildbot.sh
+      sudo bash -c /home/vagrant/buildbot/setup-buildbot.sh
 
     SHELL
   end
