@@ -22,12 +22,30 @@ repo_url="https://github.com/dolphin-emu/dolphin"
 publish_dir="/builds/runners/${runner_name}"
 
 InstallBuildDependencies() {
-    sudo apt install -y cmake libxext-dev libreadline-dev libgl1-mesa-dev libevdev-dev \
-        libudev-dev libusb-1.0-0-dev qtbase5-dev qtbase5-private-dev
+    sudo -S apt install -y build-essential git cmake ffmpeg libavcodec-dev libavformat-dev \
+        libavutil-dev libswscale-dev libevdev-dev libusb-1.0-0-dev libxrandr-dev libxi-dev \
+        libpangocairo-1.0-0 qt6-base-private-dev libqt6svg6-dev libbluetooth-dev libasound2-dev \
+        libpulse-dev libgl1-mesa-dev libcurl4-openssl-dev libudev-dev libsystemd-dev
 }
 
 GetSources() {
+    if [[ -d $source_dir ]]; then
+        rm -rf $source_dir
+    fi
     clone $repo_url $source_dir
+    cd $source_dir
+    git submodule update --init --recursive \
+        Externals/mGBA \
+        Externals/spirv_cross \
+        Externals/zlib-ng \
+        Externals/libspng \
+        Externals/VulkanMemoryAllocator \
+        Externals/cubeb \
+        Externals/implot \
+        Externals/gtest \
+        Externals/rcheevos
+    git pull --recurse-submodules
+    cd ..
 }
 
 BuildProject() {
@@ -35,7 +53,9 @@ BuildProject() {
     mkdir -p ${build_dir}
     cd ${build_dir}
     cmake -DLINUX_LOCAL_DEV=1 ${source_dir}
-    make -j 8
+    make -j$(nproc)
+    cp -r ${source_dir}/Data/Sys/ Binaries/
+    touch Binaries/portable.txt
 }
 
 GetVersion() {
@@ -60,6 +80,9 @@ PackageProject() {
     cp $dest_file $publish_dir
 }
 
+Clean() {
+    rm -rf $build_dir $source_dir
+}
 if [ $1 ]; then
     $1
 else
