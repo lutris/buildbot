@@ -85,7 +85,7 @@ echo "Building $(git log -1)"
 echo "---"
 
 # The only error we should see after configure is for inotify:
-# $ cd ~/lutris-buildbot/runners/wine/wine-src/build64 (or build32)
+# $ cd ~/buildbot/runners/wine/wine-src/build64 (or build32)
 # $ cat config.log | grep -i "was not found"
 # configure:15812: libinotify errors: Package libinotify was not found in the pkg-config search path.
 # https://wiki.winehq.org/Building_Wine
