@@ -16,7 +16,7 @@ branch="mame$(echo $version | tr -d .)"
 
 InstallDeps() {
     install_deps curl wget unzip libexpat1-dev libflac-dev libfontconfig1-dev \
-        libjpeg8-dev libportmidi-dev qtbase5-dev libsdl2-ttf-dev libsdl2-dev \
+        libjpeg62-turbo-dev libportmidi-dev qtbase5-dev libsdl2-ttf-dev libsdl2-dev \
         libxinerama-dev zlib1g-dev
 }
 
@@ -44,7 +44,7 @@ Package() {
     cd ${root_dir}
     dest_file=${runner_name}-${version}-${arch}.tar.gz
     tar czf ${dest_file} ${runner_name}
-    runner_upload ${runner_name} ${version} ${arch} ${dest_file}
+    cp ${dest_file} ${publish_dir}
 }
 
 Cleanup() {
