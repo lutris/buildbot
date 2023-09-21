@@ -12,32 +12,14 @@
 # Password: <token>
 
 #!/bin/bash
-cat << EOF > imageprep.sh
-#!/bin/bash
-useradd -s /bin/bash -m vagrant
-mkdir -p /vagrant
-chmod 777 /vagrant
-echo -e 'vagrant\nvagrant\n' | passwd vagrant
-apt-get update && apt-get install -y git sudo
-usermod -aG sudo vagrant
-cd /home/vagrant
-git clone http://github.com/lutris/buildbot lutris-buildbot
-chown -R vagrant:vagrant /home/vagrant/lutris-buildbot/
-chmod +x /home/vagrant/lutris-buildbot/setup-buildbot.sh
-cd /home/vagrant/lutris-buildbot/
-./setup-buildbot.sh
-EOF
-chmod +x imageprep.sh
 docker pull debian:bookworm
 docker create --interactive --name bookworm debian:bookworm
 docker start bookworm
-docker cp imageprep.sh bookworm:/
-rm imageprep.sh
-docker exec bookworm bash -c "./imageprep.sh"
-docker exec bookworm bash -c "rm imageprep.sh"
+docker cp ../../setup-buildbot.sh bookworm:/
+docker exec bookworm bash -c "./setup-buildbot.sh"
+docker exec bookworm bash -c "rm setup-buildbot.sh"
 docker stop bookworm
 
 # Change gloriouseggroll/lutris_buildbot:bookworm to your Docker repo and tag
 docker commit bookworm gloriouseggroll/lutris_buildbot:bookworm
 docker push gloriouseggroll/lutris_buildbot:bookworm
-

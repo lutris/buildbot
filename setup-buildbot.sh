@@ -15,7 +15,7 @@ apt-get update
 
 # Wine dependencies
 apt-get install -y gcc gcc-mingw-w64-x86-64 gcc-mingw-w64-i686 gcc-multilib \
-                git autoconf flex bison perl gettext \
+                git sudo autoconf flex bison perl gettext \
                 libasound2-dev:amd64 libasound2-dev:i386 \
                 libcapi20-dev:amd64 libcapi20-dev:i386 \
                 libcups2-dev:amd64 libcups2-dev:i386 \
@@ -74,3 +74,10 @@ apt-get -y install wget build-essential vim nano fontconfig
 # Runtime dependencies
 apt-get -y install lsb-release
 apt-get clean
+
+# Set root shell as bash
+usermod -s /bin/bash root
+
+# Setup vagrant user
+useradd -s /bin/bash -m -G sudo vagrant
+echo -e 'vagrant\nvagrant\n' | passwd vagrant
