@@ -5,7 +5,7 @@
 # You must prepare podman to be able to login to docker hub before attempting to push images
 # Create an account then create a token
 # https://hub.docker.com/settings/security?generateToken=true
-# 
+#
 # Then:
 # podman login docker.io
 # Username: <username>
@@ -14,14 +14,14 @@
 #!/bin/bash
 cat << EOF > imageprep.sh
 #!/bin/bash
-useradd -m vagrant
+useradd -s /bin/bash -m vagrant
 mkdir -p /vagrant
 chmod 777 /vagrant
 echo -e 'vagrant\nvagrant\n' | passwd vagrant
 apt-get update && apt-get install -y git sudo
 usermod -aG sudo vagrant
 cd /home/vagrant
-git clone --branch debian12 http://github.com/lutris/buildbot lutris-buildbot
+git clone http://github.com/lutris/buildbot lutris-buildbot
 chown -R vagrant:vagrant /home/vagrant/lutris-buildbot/
 chmod +x /home/vagrant/lutris-buildbot/setup-buildbot.sh
 cd /home/vagrant/lutris-buildbot/
