@@ -9,6 +9,7 @@ teardown:
 	docker rm buildbot
 
 setup:
+	mkdir -p builds
 	docker create --interactive --name buildbot \
 		--mount type=bind,source="$$PWD"/builds,destination=/builds,readonly=false \
 		--mount type=bind,source="$$PWD",destination=/home/vagrant/buildbot,readonly=false \

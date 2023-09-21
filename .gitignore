@@ -1,5 +1,3 @@
-.lutris_token
-.doctl_cdn_id
 .vagrant
-vagrant_share
+builds
 runners/wine/wine-src
