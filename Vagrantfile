@@ -52,12 +52,11 @@ Vagrant.configure(2) do |config|
     debian.vm.box = "debian/bookworm64"
 
     debian.vm.synced_folder "./vagrant_share/", "/vagrant/", create: true, type: "sshfs", sshfs_opts_append: "-o cache=no"
-    debian.vm.synced_folder ".", "/home/vagrant/lutris-buildbot", id: "lutris-buildbot", type: "rsync", rsync__exclude: ["vagrant_share"]
+    debian.vm.synced_folder ".", "/home/vagrant/buildbot", create: true, type: "sshfs", sshfs_opts_append: "-o cache=no"
 
     debian.vm.provision "shell-1", type: "shell", inline: <<-SHELL
 
       #install dependencies on host vm
-      apt-get update
       sudo bash -c /home/vagrant/lutris-buildbot/setup-buildbot.sh
 
     SHELL
