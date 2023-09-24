@@ -1,0 +1,9 @@
+NOTE:
+
+The lib64 and lib32 folders are used for building purposes only. 
+
+The contents of lib64 and lib32 folders are copied from steam-linux-runtime and steam-proton.
+
+The contents ot steam-linux-runtime and steam-proton should be kept updated and imported from "Steam Linux Runtime" within any steam library and "Proton" within any Proton-GE build respectively.
+
+The reason it's done this way is so that we can differentiate what we need to keep updated from the steam linux runtime and what we need from proton in order for the gstreamer libraries imported from proton to work properly.
