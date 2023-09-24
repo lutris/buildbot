@@ -151,12 +151,10 @@ fi
 echo "Copying 64 bit runtime libraries to build"
 #copy sdl2, faudio, vkd3d, and ffmpeg libraries
 cp -R "$runtime_path"/lib64/* "$BASEDIR"/lib64/
-cp -R "$runtime_path"/steam-linux-runtime/lib64/* "$BASEDIR"/lib64/
 
 echo "Copying 32 bit runtime libraries to build"
 #copy sdl2, faudio, vkd3d, and ffmpeg libraries
 cp -R "$runtime_path"/lib32/* "$BASEDIR"/lib/
-cp -R "$runtime_path"/steam-linux-runtime/lib32/* "$BASEDIR"/lib/
 
 echo "Cleaning include files from build"
 rm -rf "$BASEDIR"/include
