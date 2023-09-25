@@ -17,6 +17,8 @@ publish_dir="/builds/runners/${runner_name}"
 configure_opts="--disable-tests --with-x --with-mingw --with-gstreamer"
 arch=$(uname -m)
 version="8.0"
+WINE_GECKO="2.47.4"
+WINE_MONO="8.0.0"
 
 params=$(getopt -n $0 -o a:b:w:v:t --long as:,branch:,with:,version:,nostrip -- "$@")
 eval set -- $params
@@ -159,11 +161,21 @@ cp -R "$runtime_path"/lib32/* "$BASEDIR"/lib/
 echo "Cleaning include files from build"
 rm -rf "$BASEDIR"/include
 
-echo "Copying wine-mono and wine-gecko to build"
-if [ -d "$source_dir/lutris-patches/" ]; then
-	cp -R "$source_dir/lutris-patches/mono" "$BASEDIR"/
-	cp -R "$source_dir/lutris-patches/gecko" "$BASEDIR"/
-fi
+echo "Add wine gecko + mono to the build"
+
+mkdir -p "$BASEDIR"/share/wine/{gecko,mono}
+
+wget https://dl.winehq.org/wine/wine-gecko/$WINE_GECKO/wine-gecko-$WINE_GECKO-x86_64.tar.xz -P "$BASEDIR"/share/wine/gecko/
+tar -xf "$BASEDIR"/share/wine/gecko/wine-gecko-$WINE_GECKO-x86_64.tar.xz -C "$BASEDIR"/share/wine/gecko/
+rm "$BASEDIR"/share/wine/gecko/wine-gecko-$WINE_GECKO-x86_64.tar.xz
+
+wget https://dl.winehq.org/wine/wine-gecko/$WINE_GECKO/wine-gecko-$WINE_GECKO-x86.tar.xz -P "$BASEDIR"/share/wine/gecko/
+tar -xf "$BASEDIR"/share/wine/gecko/wine-gecko-$WINE_GECKO-x86.tar.xz -C "$BASEDIR"/share/wine/gecko/
+rm "$BASEDIR"/share/wine/gecko/wine-gecko-$WINE_GECKO-x86.tar.xz
+
+wget https://dl.winehq.org/wine/wine-mono/$WINE_MONO/wine-mono-$WINE_MONO-x86.tar.xz -P "$BASEDIR"/share/wine/mono/
+tar -xf "$BASEDIR"/share/wine/mono/wine-mono-$WINE_MONO-x86.tar.xz -C "$BASEDIR"/share/wine/mono/
+rm "$BASEDIR"/share/wine/mono/wine-mono-$WINE_MONO-x86.tar.xz
 
 echo "Creating tarball from build at $BASEDIR"
 cd /home/vagrant/runners/wine/ && tar cvJf ${archive_filename} ${bin_dir}
