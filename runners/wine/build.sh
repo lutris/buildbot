@@ -143,7 +143,7 @@ if [ -z $NOSTRIP ]; then
 			strip --strip-unneeded "$_f" || true
 		fi
 	done
-	for _f in "$build_dir"/{bin,lib,lib64}/{wine/{x86_64-unix,x86_64-windows,i386-unix,i386-windows}/*,*}; do
+	for _f in "$BASEDIR"/{bin,lib,lib64}/{wine/{x86_64-unix,x86_64-windows,i386-unix,i386-windows}/*,*}; do
 		if [[ "$_f" = *.so ]] || [[ "$_f" = *.dll ]]; then
 			strip --strip-unneeded "$_f" || true
 		fi
