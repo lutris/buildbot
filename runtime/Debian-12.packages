@@ -100,5 +100,5 @@ libuuid1                          libuuid.so.1
 librtmp1                          librtmp.so.1
 libxtst6                          libXtst.so.6
 libvpx7                           libvpx.so.7
-libcrypt.so.1                     libcrypt.so.1
+libcrypt1                         libcrypt.so.1
 libpcre3                          libpcre.so.3
