@@ -2,16 +2,16 @@ libaio1                           libaio.so.1
 liballegro4.4                     liballeg.so.4.4
 libatk1.0-0                       libatk-1.0.so.0
 libaudio2                         libaudio.so.2
-libavcodec57                      libavcodec.so.57
-libavformat57                     libavformat.so.57
-libavutil55                       libavutil.so.55
-libswscale4                       libswscale.so.4
+libavcodec59                      libavcodec.so.59
+libavformat59                     libavformat.so.59
+libavutil57                       libavutil.so.57
+libswscale6                       libswscale.so.6
 libenet7                          libenet.so.7
 libcairo2                         libcairo.so.2
-libcdio17                         libcdio.so.17
+libcdio19                         libcdio.so.19
 libdatrie1                        libdatrie.so.1
 libfaad2                          libfaad.so.2
-libfluidsynth1                    libfluidsynth.so.1
+libfluidsynth3                    libfluidsynth.so.3
 libfribidi0                       libfribidi.so.0
 libfuse2                          libfuse.so.2
 libfontconfig1                    libfontconfig.so.1
@@ -21,35 +21,43 @@ libgpg-error0                     libgpg-error.so.0
 libgtk2.0-0                       libgdk-x11-2.0.so.0
 libgdk-pixbuf2.0-0                libgdk_pixbuf-2.0.so.0
 libgif7                           libgif.so.7
-libglew2.0                        libGLEW.so.2.0
-libgloox15                        libgloox.so.15
+libglew2.2                        libGLEW.so.2.2
+libgloox18                        libgloox.so.18
 libgnutls30                       libgnutls.so.30 libnettle.so.6 libhogweed.so.4 libgmp.so.10 libtasn1.so.6 libidn2.so.0
 libgomp1                          libgomp.so.1
 libgraphite2-3                    libgraphite2.so.3
 libharfbuzz0b                     libharfbuzz.so.0
-libicu60                          libicui18n.so.60 libicuuc.so.60 libicudata.so.60
+libicu72                          libicui18n.so.72 libicuuc.so.72 libicudata.so.72
 libirrlicht1.8                    libIrrlicht.so.1.8
 libjansson4                       libjansson.so.4
 libjbig0                          libjbig.so.0
-libjson-c3                        libjson-c.so.3
-libldap-2.4-2                     libldap_r-2.4.so.2 liblber-2.4.so.2 libsasl2.so.2 libgssapi.so.3 libheimntlm.so.0 libkrb5.so.26 libasn1.so.8 libcom_err.so.2 libhcrypto.so.4 libroken.so.18 libwind.so.0 libheimbase.so.1 libhx509.so.5
-libleveldb1v5                     libleveldb.so.1
+libjson-c5                        libjson-c.so.5
+libldap-2.5-0                     libldap-2.5.so.0 liblber-2.5.so.0
+libsasl2-2                        libsasl2.so.2
+libgssapi3-heimdal                libgssapi.so.3
+libheimntlm0-heimdal              libheimntlm.so.0
+libkrb5-26-heimdal                libkrb5.so.26
+libasn1-8-heimdal                 libasn1.so.8
+libcom-err2                       libcom_err.so.2
+libhcrypto5-heimdal               libhcrypto.so.5
+libroken19-heimdal                libroken.so.19
+libwind0-heimdal                  libwind.so.0
+libheimbase1-heimdal              libheimbase.so.1
+libhx509-5-heimdal                libhx509.so.5
+libleveldb1d                      libleveldb.so.1d
 liblua5.1-0                       liblua5.1.so.0
 liblua5.2-0                       liblua5.2.so.0
 libluajit-5.1-2                   libluajit-5.1.so.2
 libmad0                           libmad.so.0
 libmikmod3                        libmikmod.so.3
-libminiupnpc10                    libminiupnpc.so.10
+libminiupnpc17                    libminiupnpc.so.17
 libmodplug1                       libmodplug.so.1
 libmpeg2-4                        libmpeg2.so.0 libmpeg2convert.so.0
 libmpg123-0                       libmpg123.so.0
 libncurses5                       libncurses.so.5
 libncursesw5                      libncursesw.so.5
-libnih1                           libnih.so.1
-libnih-dbus1                      libnih-dbus.so.1
-libjpeg62                         libjpeg.so.62
-libjpeg8                          libjpeg.so.8
-libreadline7                      libhistory.so.7 libreadline.so.7
+libjpeg62-turbo                   libjpeg.so.62
+libreadline8                      libhistory.so.8 libreadline.so.8
 libpango-1.0-0                    libpango-1.0.so.0
 libpangocairo-1.0-0               libpangocairo-1.0.so.0
 libpangoft2-1.0-0                 libpangoft2-1.0.so.0
@@ -63,19 +71,19 @@ libsdl-net1.2                     libSDL_net-1.2.so.0
 libsdl-sound1.2                   libSDL_sound-1.0.so.1
 libsdl-ttf2.0-0                   libSDL_ttf-2.0.so.0
 libsnappy1v5                      libsnappy.so.1
-libsndio6.1                       libsndio.so.6.1
+libsndio7.0                       libsndio.so.7
 libsoundtouch1                    libSoundTouch.so.1
 libsoxr0                          libsoxr.so.0
 libstdc++5                        libstdc++.so.5
 libthai0                          libthai.so.0
-libtiff5                          libtiff.so.5
+libtiff6                          libtiff.so.6
 libtinfo5                         libtinfo.so.5
-libupnp6                          libixml.so.2 libthreadutil.so.6 libupnp.so.6
+libupnp13                         libupnp.so.13
 libv4lconvert0                    libv4lconvert.so.0
-libwebp6                          libwebp.so.6
-libwxbase3.0-0v5                  libwx_baseu-3.0.so.0
-libwxgtk3.0-0v5                   libwx_gtk2u_core-3.0.so.0 libwx_gtk2u_adv-3.0.so.0
-libx264-152                       libx264.so.152
+libwebp7                          libwebp.so.7
+libwxbase3.2-1                    libwx_baseu-3.2.so.0
+libwxgtk3.2-1                     libwx_gtk3u_core-3.2.so.0 libwx_gtk3u_adv-3.2.so.0
+libx264-164                       libx264.so.164
 libxinerama1                      libXinerama.so.1
 libxshmfence1                     libxshmfence.so.1
 libxml2                           libxml2.so.2
@@ -86,11 +94,11 @@ libcurl4                          libcurl.so.4
 libnghttp2-14                     libnghttp2.so.14
 libpcre3                          libpcre.so.3
 libpsl5                           libpsl.so.5
-libssl1.1                         libcrypto.so.1.1 libssl.so.1.1
+libssl3                           libcrypto.so.3 libssl.so.3
 libunistring2                     libunistring.so.2
 libuuid1                          libuuid.so.1
 librtmp1                          librtmp.so.1
-libxtst6                          libXtst.so.6.1.0 libXtst.so.6
-libvpx5                           libvpx.so.5
-libc6                             libcrypt.so.1
+libxtst6                          libXtst.so.6
+libvpx7                           libvpx.so.7
+libcrypt.so.1                     libcrypt.so.1
 libpcre3                          libpcre.so.3
