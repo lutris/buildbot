@@ -12,14 +12,15 @@
 # Password: <token>
 
 #!/bin/bash
-docker pull debian:bookworm
-docker create --interactive --name bookworm debian:bookworm
-docker start bookworm
-docker cp ../../setup-buildbot.sh bookworm:/
-docker exec bookworm bash -c "./setup-buildbot.sh"
-docker exec bookworm bash -c "rm setup-buildbot.sh"
-docker stop bookworm
+docker pull debian:bullseye
+docker create --interactive --name bullseye debian:bullseye
+docker start bullseye
+docker cp ../../setup-buildbot.sh bullseye:/
+docker exec bullseye bash -c "./setup-buildbot.sh"
+docker exec bullseye bash -c "rm setup-buildbot.sh"
+docker stop bullseye
 
-# Change gloriouseggroll/lutris_buildbot:bookworm to your Docker repo and tag
-docker commit bookworm gloriouseggroll/lutris_buildbot:latest
-docker push gloriouseggroll/lutris_buildbot:latest
+# Change gloriouseggroll/lutris_buildbot:bullseye to your Docker repo and tag
+docker commit bullseye gloriouseggroll/lutris_buildbot:bullseye
+docker push gloriouseggroll/lutris_buildbot:bullseye
+

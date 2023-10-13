@@ -49,7 +49,7 @@ apt-get install -y gcc gcc-mingw-w64-x86-64 gcc-mingw-w64-i686 gcc-multilib \
                 libxxf86vm-dev:amd64 libxxf86vm-dev:i386 \
                 linux-libc-dev:amd64 linux-libc-dev:i386 \
                 ocl-icd-opencl-dev:amd64 ocl-icd-opencl-dev:i386 \
-                samba-dev:amd64 samba-dev:i386\
+                samba-dev:amd64 \
                 unixodbc-dev:amd64 unixodbc-dev:i386 \
                 gudev-1.0:amd64 gudev-1.0:i386 \
                 libgcrypt-dev libgpg-error-dev \
@@ -60,7 +60,7 @@ apt-get install -y ccache netbase curl ca-certificates xserver-xorg-video-dummy 
 # Gstreamer codecs
 curl -O https://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2016.8.1_all.deb
 dpkg -i deb-multimedia-keyring_2016.8.1_all.deb
-echo 'deb https://www.deb-multimedia.org bookworm main' >> /etc/apt/sources.list
+echo 'deb https://www.deb-multimedia.org bullseye main' >> /etc/apt/sources.list
 rm deb-multimedia-keyring_2016.8.1_all.deb
 apt-get update
 apt-get install -y libgstreamer-plugins-base1.0-dev:amd64 libgstreamer-plugins-base1.0-dev:i386 \
