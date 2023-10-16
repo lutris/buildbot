@@ -173,7 +173,7 @@ wget https://dl.winehq.org/wine/wine-gecko/$WINE_GECKO/wine-gecko-$WINE_GECKO-x8
 tar -xf "$BASEDIR"/share/wine/gecko/wine-gecko-$WINE_GECKO-x86.tar.xz -C "$BASEDIR"/share/wine/gecko/
 rm "$BASEDIR"/share/wine/gecko/wine-gecko-$WINE_GECKO-x86.tar.xz
 
-wget https://dl.winehq.org/wine/wine-mono/$WINE_MONO/wine-mono-$WINE_MONO-x86.tar.xz -P "$BASEDIR"/share/wine/mono/
+wget https://github.com/madewokherd/wine-mono/releases/download/wine-mono-$WINE_MONO/wine-mono-$WINE_MONO-x86.tar.xz -P "$BASEDIR"/share/wine/mono/
 tar -xf "$BASEDIR"/share/wine/mono/wine-mono-$WINE_MONO-x86.tar.xz -C "$BASEDIR"/share/wine/mono/
 rm "$BASEDIR"/share/wine/mono/wine-mono-$WINE_MONO-x86.tar.xz
 
