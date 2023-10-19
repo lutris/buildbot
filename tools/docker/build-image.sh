@@ -1,5 +1,5 @@
 # This is used for creating new buildbot docker images (for example when we want to change the buildbot container/VM host distro)
-# Currently based off debian 12 bookworm
+# Currently based off debian 11 bullseye
 #
 # ATTENTION:
 # You must prepare podman to be able to login to docker hub before attempting to push images

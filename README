@@ -2,7 +2,7 @@ Lutris buildbot
 ===============
 
 This repository contains various build scripts for runners and games used by
-Lutris. The target system for these scripts is Debian 12 Bookworm (the same system
+Lutris. The target system for these scripts is Debian 11 Bullseye (the same system
 used by the Lutris runtime).
 
 It is advised to run these scripts from within either a docker/podman container or vagrant

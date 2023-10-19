@@ -49,7 +49,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.define "debian", primary: true do |debian|
 
-    debian.vm.box = "debian/bookworm64"
+    debian.vm.box = "debian/bullseye64"
 
     debian.vm.synced_folder "./builds/", "/builds/", create: true, type: "sshfs", sshfs_opts_append: "-o cache=no"
     debian.vm.synced_folder ".", "/home/vagrant/buildbot", create: true, type: "sshfs", sshfs_opts_append: "-o cache=no"
