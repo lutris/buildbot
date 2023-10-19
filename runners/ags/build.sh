@@ -9,10 +9,10 @@ runner_name=$(get_runner)
 arch=$(uname -m)
 root_dir=$(pwd)
 publish_dir="/builds/runners/${runner_name}"
-deps="debhelper build-essential pkg-config libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev"
+deps="debhelper build-essential pkg-config libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev libsdl-sound1.2-dev"
 install_deps $deps
 
-git clone git://github.com/adventuregamestudio/ags.git ags-src
+clone https://github.com/adventuregamestudio/ags.git ags-src
 cd ags-src
 make --directory=Engine
 cd Engine
