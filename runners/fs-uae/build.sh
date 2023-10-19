@@ -11,12 +11,10 @@ source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}"
 publish_dir="/builds/runners/${runner_name}"
 arch=$(uname -m)
-repo_url="https://github.com/FrodeSolheim/fs-uae.git"
 
-deps="libglew-dev libmpeg2-4-dev libsdl2-dev zip"
-
-install_deps $deps
-clone $repo_url $source_dir
+install_deps "automake libtool libglew-dev libmpeg2-4-dev \
+    libsdl2-dev zip libopenal-dev"
+clone "https://github.com/FrodeSolheim/fs-uae.git" $source_dir
 cd "${source_dir}"
 mkdir -p ${build_dir}
 
@@ -45,5 +43,6 @@ cd ..
 dest_file="${runner_name}-${version}-${arch}.tar.gz"
 tar czf ${dest_file} ${runner_name}
 
+mkdir -p $publish_dir
 cp $dest_file $publish_dir
 
