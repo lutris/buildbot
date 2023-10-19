@@ -2,6 +2,7 @@
 
 set -e
 set -x
+
 lib_path="../../lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
@@ -11,6 +12,7 @@ root_dir="$(pwd)"
 source_dir="${root_dir}/libretro-super"
 bin_dir="${root_dir}/retroarch"
 cores_dir="${root_dir}/cores"
+publish_dir="/builds/runners/${runner_name}"
 cpus=$(nproc)
 arch=$(uname -m)
 buildbotarch="x86"
@@ -68,6 +70,12 @@ BuildRetroarch() {
     make -C media/libretrodb install DESTDIR="${bin_dir}" INSTALLDIR=/database
 }
 
+BuildAllCores() {
+    cd ${source_dir}
+    ./libretro-buildbot-recipe.sh recipes/linux/cores-linux-${buildbotarch}-generic
+    ./libretro-install.sh ${cores_dir}
+}
+
 BuildLibretroCore() {
     core="$1"
     cd ${source_dir}
@@ -77,7 +85,8 @@ BuildLibretroCore() {
 
 PackageRetroarch() {
     cd $root_dir
-    archive="retroarch-${retroarch_version}-${arch}.tar.xz"
+    version=$(echo $retroarch_version | tr -d 'v')
+    archive="retroarch-${version}-${arch}.tar.xz"
     tar cJf $archive retroarch
     mkdir -p $publish_dir
     cp $archive $publish_dir
@@ -89,19 +98,24 @@ PackageCore() {
     archive="libretro-${core}-${arch}.tar.xz"
     core_file="${core}_libretro.so"
     tar cJf ../${archive} ${core_file}
-    rm $core_file
+    # rm $core_file
     cd $root_dir
     mkdir -p $publish_dir
-    cp $archive $publish_dir
+    mv $archive $publish_dir
+}
+
+PackageAllCores() {
+    cd $cores_dir
+    for lib in $(ls *.so); do
+        echo $lib
+    done
 }
 
 if [ $1 ]; then
     if [[ $1 == 'all' ]]; then
-        cd $root_dir
-        for core in $(cat cores.list); do
-            BuildLibretroCore $core
-            PackageCore $core
-        done
+        BuildAllCores
+    elif [[ $1 == 'packages' ]]; then
+        PackageAllCores
     else
         BuildLibretroCore $1
         PackageCore $1

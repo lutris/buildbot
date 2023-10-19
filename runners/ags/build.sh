@@ -10,6 +10,7 @@ runner_name=$(get_runner)
 arch=$(uname -m)
 root_dir=$(pwd)
 publish_dir="/builds/runners/${runner_name}"
+mkdir -p $publish_dir
 deps="cmake debhelper build-essential pkg-config libsdl2-dev libogg-dev libtheora-dev libvorbis-dev"
 install_deps $deps
 
@@ -27,8 +28,10 @@ sudo make install
 cd $root_dir
 clone https://github.com/adventuregamestudio/ags ags-src
 cd ags-src
-make --directory=Engine
-cd Engine
+mkdir build-release
+cd build-release
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build .
 mkdir ags.dir
 mv ags ags.dir
 mv ags.dir ags
@@ -53,6 +56,7 @@ for library in \
     libaldmb.so.1 \
     libdumb.so.1 \
     libfreetype.so.6 \
+    libSDL2_sound.so.2 \
     libogg.so.0 \
     libtheora.so.0 \
     libvorbis.so.0 \
