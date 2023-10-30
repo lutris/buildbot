@@ -161,6 +161,9 @@ cp -R "$runtime_path"/lib32/* "$BASEDIR"/lib/
 echo "Cleaning include files from build"
 rm -rf "$BASEDIR"/include
 
+echo "Cleaning old gecko + mono files from previous builds"
+rm -Rf "$BASEDIR"/share/wine/{gecko,mono}
+
 echo "Add wine gecko + mono to the build"
 
 mkdir -p "$BASEDIR"/share/wine/{gecko,mono}
