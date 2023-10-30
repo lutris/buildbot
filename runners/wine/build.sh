@@ -18,7 +18,7 @@ configure_opts="--disable-tests --with-x --with-mingw --with-gstreamer"
 arch=$(uname -m)
 version="8.0"
 WINE_GECKO="2.47.3"
-WINE_MONO="8.0.1"
+WINE_MONO="8.1.0"
 
 params=$(getopt -n $0 -o a:b:w:v:t --long as:,branch:,with:,version:,nostrip -- "$@")
 eval set -- $params
