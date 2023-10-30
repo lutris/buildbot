@@ -13,7 +13,6 @@ setup:
 	docker create --interactive --name buildbot \
 		--mount type=bind,source="$$PWD"/builds,destination=/builds,readonly=false \
 		--mount type=bind,source="$$PWD",destination=/home/vagrant/buildbot,readonly=false \
-		docker.io/gloriouseggroll/lutris_buildbot:bookworm
+		docker.io/gloriouseggroll/lutris_buildbot:bullseye
 	docker start buildbot
-	# Can be removed after image update
-	docker exec -it buildbot usermod -s /bin/bash vagrant
+

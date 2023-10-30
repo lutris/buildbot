@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+
 lib_path="../../lib/"
 source ${lib_path}path.sh
 source ${lib_path}util.sh
@@ -9,13 +10,28 @@ runner_name=$(get_runner)
 arch=$(uname -m)
 root_dir=$(pwd)
 publish_dir="/builds/runners/${runner_name}"
-deps="debhelper build-essential pkg-config libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev"
+mkdir -p $publish_dir
+deps="cmake debhelper build-essential pkg-config libsdl2-dev libogg-dev libtheora-dev libvorbis-dev"
 install_deps $deps
 
-git clone git://github.com/adventuregamestudio/ags.git ags-src
+rm -f *tar.gz
+
+wget https://github.com/icculus/SDL_sound/archive/495e948b455af48eb45f75cccc060498f1e0e8a2.tar.gz
+tar xvzf "495e948b455af48eb45f75cccc060498f1e0e8a2.tar.gz"
+cd SDL_sound-495e948b455af48eb45f75cccc060498f1e0e8a2
+mkdir -p build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+make
+sudo make install
+
+cd $root_dir
+clone https://github.com/adventuregamestudio/ags ags-src
 cd ags-src
-make --directory=Engine
-cd Engine
+mkdir build-release
+cd build-release
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build .
 mkdir ags.dir
 mv ags ags.dir
 mv ags.dir ags
@@ -40,25 +56,17 @@ for library in \
     libaldmb.so.1 \
     libdumb.so.1 \
     libfreetype.so.6 \
+    libSDL2_sound.so.2 \
     libogg.so.0 \
     libtheora.so.0 \
     libvorbis.so.0 \
     libvorbisfile.so.3 \
-    allegro/4.4.2/alleg-alsadigi.so \
-    allegro/4.4.2/alleg-alsamidi.so \
-    allegro/4.4.2/modules.lst; do
+    allegro/4.4.3/alleg-alsadigi.so \
+    allegro/4.4.3/alleg-alsamidi.so \
+    allegro/4.4.3/modules.lst; do
         cp -L /usr/lib/$TRIPLET/$library ags/data/lib$BIT
 done
 
-for package in \
-    liballegro4.4 \
-    libdumb1 \
-    libfreetype6 \
-    libogg0 \
-    libtheora0 \
-    libvorbis0a; do
-        cp /usr/share/doc/$package/copyright ags/data/licenses/$package-copyright
-done
 
 (
 cat << 'EOF'
@@ -77,9 +85,10 @@ EOF
 ) > ags/ags.sh
 chmod +x ags/ags.sh
 strip ags/ags
-version=$(ags/ags | grep version | head -n 1 | cut -d' ' -f 3)
+version=$(ags/ags.sh 2>/dev/null | grep version | head -n 1 | cut -d' ' -f 3 | tr -d ',')
 ags_archive=ags-${version}-${arch}.tar.gz
 tar czf $ags_archive ags
 mv $ags_archive $root_dir
 cd $root_dir
 cp $ags_archive $publish_dir
+echo $publish_dir/$ags_archive
