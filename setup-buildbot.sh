@@ -56,7 +56,7 @@ apt-get install -y gcc gcc-mingw-w64-x86-64 gcc-mingw-w64-i686 gcc-multilib \
                 x11proto-dev
 # More wine dependencies
 apt-get install -y ccache netbase curl ca-certificates xserver-xorg-video-dummy xserver-xorg xfonts-base xinit fvwm \
-                    winbind fonts-liberation2 fonts-noto-core fonts-noto-cjk pulseaudio
+                    winbind fonts-liberation2 fonts-noto-core fonts-noto-cjk pulseaudio libdrm-dev:amd64 libdrm-dev:i386
 # Gstreamer codecs
 curl -O https://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2016.8.1_all.deb
 dpkg -i deb-multimedia-keyring_2016.8.1_all.deb
