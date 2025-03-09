@@ -27,7 +27,7 @@ Fetch() {
 
 Build() {
     cd $source_dir
-    make
+    make USE_RENDERER_DLOPEN=0 RENDERER_DEFAULT=vulkan
 }
 
 
