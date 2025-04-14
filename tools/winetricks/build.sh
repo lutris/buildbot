@@ -33,8 +33,6 @@ GetSources() {
 BuildProject() {
     cd "${source_dir}"
 
-    # Apply all patches	
-    for i in ../patches/*.patch; do patch -Np1 < $i; done
     mkdir -p "${bin_dir}"
     cp "${source_dir}/src/winetricks" "${bin_dir}"
     
