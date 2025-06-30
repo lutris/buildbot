@@ -1,12 +1,12 @@
 #!/bin/bash
 
 set -e
-lib_path="../../lib/"
+lib_path="./lib/"
 
 source ${lib_path}path.sh
 source ${lib_path}util.sh
 
-runner_name=$(get_runner)
+runner_name="dolphin"
 root_dir=$(pwd)
 source_dir="${root_dir}/${runner_name}-src"
 build_dir="${root_dir}/${runner_name}-build"
@@ -28,16 +28,7 @@ GetSources() {
     fi
     clone $repo_url $source_dir
     cd $source_dir
-    git submodule update --init --recursive \
-        Externals/mGBA \
-        Externals/spirv_cross \
-        Externals/zlib-ng \
-        Externals/libspng \
-        Externals/VulkanMemoryAllocator \
-        Externals/cubeb \
-        Externals/implot \
-        Externals/gtest \
-        Externals/rcheevos
+    git submodule update --init --recursive
     git pull --recurse-submodules
     cd ..
 }
@@ -46,7 +37,7 @@ BuildProject() {
     cd "${source_dir}"
     mkdir -p ${build_dir}
     cd ${build_dir}
-    cmake -DLINUX_LOCAL_DEV=1 ${source_dir}
+    cmake -DLINUX_LOCAL_DEV=1 -DCMAKE_C_COMPILER=gcc-14 -DCMAKE_CXX_COMPILER=g++-14 ${source_dir}
     make -j$(nproc)
     cp -r ${source_dir}/Data/Sys/ Binaries/
     touch Binaries/portable.txt
