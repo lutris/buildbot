@@ -1,3 +1,13 @@
 .vagrant
 builds
 runners/wine/wine-src
+
+# Build artifacts and output directories
+**/build/
+games/acgc-pc-port/lib/
+
+# Downloaded/packaged archives
+tools/gogdl/*.tar.xz
+tools/vkd3d/vkd3d-*/
+tools/vkd3d/*.tar.*
+tools/winetricks/winetricks/
