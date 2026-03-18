@@ -1,0 +1,26 @@
+--- a/src/actor/ac_ball.c
++++ b/src/actor/ac_ball.c
+@@ -268,7 +268,7 @@
+     }
+ }
+
+-static void aBALL_OBJcheck(BALL_ACTOR* actor, GAME*) {
++static void aBALL_OBJcheck(BALL_ACTOR* actor, GAME* game) {
+     int wade;
+     ACTOR* collided;
+     xyz_t pos_speed;
+--- a/src/actor/ac_arrange_room.c
++++ b/src/actor/ac_arrange_room.c
+@@ -172,10 +172,10 @@
+     aAR_DrawWall(&arrange_room->actor_class, &play->game);
+ }
+
+-static void Arrange_Room_Actor_move() {
++static void Arrange_Room_Actor_move(ACTOR* actor, GAME* game) {
+
+ }
+
+-static void aAR_Redma() {
++static void aAR_Redma(void) {
+     aAR_Clip_c* clip = common_data.clip.arrange_room_clip;
+     ARRANGE_ROOM_ACTOR* arrange_room = clip->arrange_room_actor_p;
