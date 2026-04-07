@@ -89,6 +89,7 @@ libcurl4                          libcurl.so.4
 libnghttp2-14                     libnghttp2.so.14
 libpcre3                          libpcre.so.3
 libpsl5                           libpsl.so.5
+libssl1.0                         libcrypto.so.1.0.0 libssl.so.1.0.0
 libssl1.1                         libcrypto.so.1.1 libssl.so.1.1
 libunistring2                     libunistring.so.2
 libuuid1                          libuuid.so.1
